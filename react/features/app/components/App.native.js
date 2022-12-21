@@ -123,7 +123,7 @@ export class App extends AbstractApp {
             }, 50);
         });
 
-        await rootNavigationReady;
+        //await rootNavigationReady;
 
         // Check if serverURL is configured externally and not allowed to change.
         const serverURLChangeEnabled = getFeatureFlag(getState(), SERVER_URL_CHANGE_ENABLED, true);
