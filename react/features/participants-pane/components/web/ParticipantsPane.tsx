@@ -1,5 +1,3 @@
-/* eslint-disable lines-around-comment */
-import { Theme } from '@mui/material';
 import React, { useCallback, useEffect, useState } from 'react';
 import { useTranslation } from 'react-i18next';
 import { useDispatch, useSelector } from 'react-redux';
@@ -12,19 +10,17 @@ import { IconCloseLarge, IconDotsHorizontal } from '../../../base/icons/svg';
 import { isLocalParticipantModerator } from '../../../base/participants/functions';
 import Button from '../../../base/ui/components/web/Button';
 import ClickableIcon from '../../../base/ui/components/web/ClickableIcon';
-import { BUTTON_TYPES } from '../../../base/ui/constants';
+import { BUTTON_TYPES } from '../../../base/ui/constants.web';
 import { findAncestorByClass } from '../../../base/ui/functions.web';
 import { isAddBreakoutRoomButtonVisible } from '../../../breakout-rooms/functions';
-// @ts-ignore
-import { MuteEveryoneDialog } from '../../../video-menu/components/';
-import { close } from '../../actions';
+import MuteEveryoneDialog from '../../../video-menu/components/web/MuteEveryoneDialog';
+import { close } from '../../actions.web';
 import {
     getParticipantsPaneOpen,
     isMoreActionsVisible,
     isMuteAllVisible
 } from '../../functions';
 import { AddBreakoutRoomButton } from '../breakout-rooms/components/web/AddBreakoutRoomButton';
-// @ts-ignore
 import { RoomList } from '../breakout-rooms/components/web/RoomList';
 
 import { FooterContextMenu } from './FooterContextMenu';
@@ -32,18 +28,14 @@ import LobbyParticipants from './LobbyParticipants';
 import MeetingParticipants from './MeetingParticipants';
 
 
-const useStyles = makeStyles()((theme: Theme) => {
+const useStyles = makeStyles()(theme => {
     return {
         container: {
-            boxSizing: 'border-box' as const,
+            boxSizing: 'border-box',
             flex: 1,
-            overflowY: 'auto' as const,
-            position: 'relative' as const,
+            overflowY: 'auto',
+            position: 'relative',
             padding: `0 ${participantsPaneTheme.panePadding}px`,
-
-            [`& > * + *:not(.${participantsPaneTheme.ignoredChildClassName})`]: {
-                marginTop: theme.spacing(3)
-            },
 
             '&::-webkit-scrollbar': {
                 display: 'none'
@@ -59,10 +51,10 @@ const useStyles = makeStyles()((theme: Theme) => {
 
         header: {
             alignItems: 'center',
-            boxSizing: 'border-box' as const,
+            boxSizing: 'border-box',
             display: 'flex',
-            height: `${participantsPaneTheme.headerSize}px`,
-            padding: '0 20px',
+            height: '60px',
+            padding: `0 ${participantsPaneTheme.panePadding}px`,
             justifyContent: 'flex-end'
         },
 
@@ -89,7 +81,7 @@ const useStyles = makeStyles()((theme: Theme) => {
         },
 
         footerMoreContainer: {
-            position: 'relative' as const
+            position: 'relative'
         }
     };
 });

@@ -29,6 +29,12 @@ interface IProps extends WithTranslation {
     isOpen: boolean;
 
     /**
+     * Notify mode for `toolbarButtonClicked` event -
+     * whether to only notify or to also prevent button click routine.
+     */
+    notifyMode?: string;
+
+    /**
      * Callback to change the visibility of the hangup menu.
      */
     onVisibilityChange: Function;
@@ -77,20 +83,23 @@ class HangupMenuButton extends Component<IProps> {
      * @returns {ReactElement}
      */
     render() {
-        const { children, isOpen } = this.props;
+        const { children, isOpen, t } = this.props;
 
         return (
             <div className = 'toolbox-button-wth-dialog context-menu'>
                 <Popover
                     content = { children }
+                    headingLabel = { t('toolbar.accessibilityLabel.hangup') }
                     onPopoverClose = { this._onCloseDialog }
                     position = 'top'
                     trigger = 'click'
                     visible = { isOpen }>
                     <HangupToggleButton
+                        buttonKey = 'hangup-menu'
                         customClass = 'hangup-menu-button'
                         handleClick = { this._toggleDialogVisibility }
                         isOpen = { isOpen }
+                        notifyMode = { this.props.notifyMode }
                         onKeyDown = { this._onEscClick } />
                 </Popover>
             </div>

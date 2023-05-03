@@ -6,10 +6,8 @@ import { createToolbarEvent } from '../../../analytics/AnalyticsEvents';
 import { sendAnalytics } from '../../../analytics/functions';
 import { IconAddUser } from '../../../base/icons/svg';
 import Button from '../../../base/ui/components/web/Button';
-import { BUTTON_TYPES } from '../../../base/ui/constants';
-// eslint-disable-next-line lines-around-comment
-// @ts-ignore
-import { beginAddPeople } from '../../../invite';
+import { BUTTON_TYPES } from '../../../base/ui/constants.web';
+import { beginAddPeople } from '../../../invite/actions';
 
 export const InviteButton = () => {
     const dispatch = useDispatch();

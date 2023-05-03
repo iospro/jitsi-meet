@@ -1,4 +1,3 @@
-import { Theme } from '@mui/material';
 import React, { useCallback, useRef, useState } from 'react';
 import { useTranslation } from 'react-i18next';
 import { useSelector } from 'react-redux';
@@ -10,9 +9,7 @@ import { IParticipant } from '../../../base/participants/types';
 import Button from '../../../base/ui/components/web/Button';
 import ContextMenu from '../../../base/ui/components/web/ContextMenu';
 import ContextMenuItemGroup from '../../../base/ui/components/web/ContextMenuItemGroup';
-import { BUTTON_TYPES } from '../../../base/ui/constants';
-// eslint-disable-next-line lines-around-comment
-// @ts-ignore
+import { BUTTON_TYPES } from '../../../base/ui/constants.web';
 import { showLobbyChatButton } from '../../../lobby/functions';
 import { ACTION_TRIGGER, MEDIA_STATE } from '../../constants';
 import { useLobbyActions } from '../../hooks';
@@ -37,7 +34,7 @@ interface IProps {
     participant: IParticipant;
 }
 
-const useStyles = makeStyles()((theme: Theme) => {
+const useStyles = makeStyles()(theme => {
     return {
         button: {
             marginRight: theme.spacing(2)
