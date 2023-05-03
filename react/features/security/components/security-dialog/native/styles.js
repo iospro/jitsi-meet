@@ -17,7 +17,7 @@ export default {
     },
 
     lobbyModeContainer: {
-        borderBottomColor: BaseTheme.palette.border01,
+        borderBottomColor: BaseTheme.palette.ui07,
         borderBottomWidth: 1,
         marginTop: BaseTheme.spacing[4]
     },
@@ -61,7 +61,6 @@ export default {
 
     savedPasswordContainer: {
         flexDirection: 'row',
-        marginTop: 14,
         width: 208
     },
 
@@ -74,14 +73,12 @@ export default {
         color: BaseTheme.palette.text01
     },
 
-    passwordInput: {
-        color: BaseTheme.palette.text01,
+    customContainer: {
         width: 208
     },
 
     passwordSetupButtonLabel: {
-        color: BaseTheme.palette.link01,
-        marginTop: BaseTheme.spacing[3]
+        color: BaseTheme.palette.link01
     },
 
     passwordSetRemotelyContainer: {
@@ -91,12 +88,10 @@ export default {
     },
 
     passwordSetRemotelyText: {
-        color: BaseTheme.palette.text01,
-        marginTop: BaseTheme.spacing[3]
+        color: BaseTheme.palette.text01
     },
 
     passwordSetRemotelyTextDisabled: {
-        color: BaseTheme.palette.text02,
-        marginTop: BaseTheme.spacing[3]
+        color: BaseTheme.palette.text02
     }
 };

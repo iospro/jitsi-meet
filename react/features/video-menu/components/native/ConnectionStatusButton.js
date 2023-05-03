@@ -1,8 +1,9 @@
-import { openSheet } from '../../../base/dialog';
-import { translate } from '../../../base/i18n';
-import { IconInfo } from '../../../base/icons';
-import { connect } from '../../../base/redux';
-import { AbstractButton, type AbstractButtonProps } from '../../../base/toolbox/components';
+import { connect } from 'react-redux';
+
+import { openSheet } from '../../../base/dialog/actions';
+import { translate } from '../../../base/i18n/functions';
+import { IconInfoCircle } from '../../../base/icons/svg';
+import AbstractButton, { IProps as AbstractButtonProps } from '../../../base/toolbox/components/AbstractButton';
 
 import ConnectionStatusComponent from './ConnectionStatusComponent';
 
@@ -28,7 +29,7 @@ export type Props = AbstractButtonProps & {
  * A remote video menu button which shows the connection statistics.
  */
 class ConnectionStatusButton extends AbstractButton<Props, *> {
-    icon = IconInfo;
+    icon = IconInfoCircle;
     label = 'videothumbnail.connectionInfo';
 
     /**

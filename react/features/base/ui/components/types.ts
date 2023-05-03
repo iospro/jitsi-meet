@@ -1,6 +1,6 @@
 import { GestureResponderEvent } from 'react-native';
 
-import { BUTTON_TYPES } from '../constants';
+import { BUTTON_TYPES } from '../constants.any';
 
 export interface IButtonProps {
 
@@ -33,6 +33,11 @@ export interface IButtonProps {
      * Click callback.
      */
     onClick?: (e?: React.MouseEvent<HTMLButtonElement> | GestureResponderEvent) => void;
+
+    /**
+     * Key press callback.
+     */
+    onKeyPress?: (e?: React.KeyboardEvent<HTMLButtonElement>) => void;
 
     /**
      * The type of button to be displayed.
@@ -100,3 +105,11 @@ export interface ISwitchProps {
      */
     onChange: (on?: boolean) => void;
 }
+
+export type MultiSelectItem = {
+    content: string;
+    description?: string;
+    elemBefore?: Element;
+    isDisabled?: boolean;
+    value: string;
+};

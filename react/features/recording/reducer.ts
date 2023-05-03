@@ -16,21 +16,21 @@ const DEFAULT_STATE = {
     sessionDatas: []
 };
 
-interface ISessionData {
+export interface ISessionData {
     error?: Error;
     id?: string;
-    initiator?: Object;
+    initiator?: { getId: Function; };
     liveStreamViewURL?: string;
     mode?: string;
     status?: string;
-    terminator?: Object;
+    terminator?: { getId: Function; };
     timestamp?: number;
 }
 
 export interface IRecordingState {
     disableHighlightMeetingMoment: boolean;
     pendingNotificationUids: {
-        [key: string]: number | undefined;
+        [key: string]: string | undefined;
     };
     selectedRecordingService: string;
     sessionDatas: Array<ISessionData>;

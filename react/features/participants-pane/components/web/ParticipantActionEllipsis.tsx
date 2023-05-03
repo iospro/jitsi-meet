@@ -1,6 +1,6 @@
 import React from 'react';
 
-import { IconHorizontalPoints } from '../../../base/icons/svg';
+import { IconDotsHorizontal } from '../../../base/icons/svg';
 import Button from '../../../base/ui/components/web/Button';
 
 interface IProps {
@@ -14,14 +14,17 @@ interface IProps {
      * Click handler function.
      */
     onClick: () => void;
+
+    participantID?: string;
 }
 
-const ParticipantActionEllipsis = ({ accessibilityLabel, onClick }: IProps) => (
+const ParticipantActionEllipsis = ({ accessibilityLabel, onClick, participantID }: IProps) => (
     <Button
         accessibilityLabel = { accessibilityLabel }
-        icon = { IconHorizontalPoints }
+        icon = { IconDotsHorizontal }
         onClick = { onClick }
-        size = 'small' />
+        size = 'small'
+        testId = { participantID ? `participant-more-options-${participantID}` : undefined } />
 );
 
 export default ParticipantActionEllipsis;

@@ -1,16 +1,11 @@
-/* eslint-disable lines-around-comment */
-
-import { Theme } from '@mui/material';
 import React from 'react';
 import { WithTranslation } from 'react-i18next';
 import { makeStyles } from 'tss-react/mui';
 
-// @ts-ignore
-import { Avatar } from '../../../../base/avatar';
+import Avatar from '../../../../base/avatar/components/Avatar';
 import { translate } from '../../../../base/i18n/functions';
 import Icon from '../../../../base/icons/components/Icon';
-import { IconClose } from '../../../../base/icons/svg';
-// @ts-ignore
+import { IconCloseLarge } from '../../../../base/icons/svg';
 import Label from '../Label';
 
 interface IProps extends WithTranslation {
@@ -23,12 +18,7 @@ interface IProps extends WithTranslation {
     /**
      * Closes the dialog.
      */
-    onClose: Function;
-
-    /**
-     * Handler used on hangup click.
-     */
-    onHangup: Function;
+    onClose: (e?: React.MouseEvent) => void;
 
     /**
      * The status of the call.
@@ -36,7 +26,7 @@ interface IProps extends WithTranslation {
     status: string;
 }
 
-const useStyles = makeStyles()((theme: Theme) => {
+const useStyles = makeStyles()(theme => {
     return {
         callingDialog: {
             padding: theme.spacing(3),
@@ -78,7 +68,7 @@ function CallingDialog(props: IProps) {
                     onClick = { onClose }
                     role = 'button'
                     size = { 24 }
-                    src = { IconClose } />
+                    src = { IconCloseLarge } />
             </div>
             <Label className = 'prejoin-dialog-calling-label'>
                 {t(status)}

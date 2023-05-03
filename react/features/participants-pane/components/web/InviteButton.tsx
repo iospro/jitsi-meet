@@ -4,12 +4,10 @@ import { useDispatch } from 'react-redux';
 
 import { createToolbarEvent } from '../../../analytics/AnalyticsEvents';
 import { sendAnalytics } from '../../../analytics/functions';
-import { IconInviteMore } from '../../../base/icons/svg';
+import { IconAddUser } from '../../../base/icons/svg';
 import Button from '../../../base/ui/components/web/Button';
-import { BUTTON_TYPES } from '../../../base/ui/constants';
-// eslint-disable-next-line lines-around-comment
-// @ts-ignore
-import { beginAddPeople } from '../../../invite';
+import { BUTTON_TYPES } from '../../../base/ui/constants.web';
+import { beginAddPeople } from '../../../invite/actions';
 
 export const InviteButton = () => {
     const dispatch = useDispatch();
@@ -24,7 +22,7 @@ export const InviteButton = () => {
         <Button
             accessibilityLabel = { t('participantsPane.actions.invite') }
             fullWidth = { true }
-            icon = { IconInviteMore }
+            icon = { IconAddUser }
             labelKey = { 'participantsPane.actions.invite' }
             onClick = { onInvite }
             type = { BUTTON_TYPES.PRIMARY } />

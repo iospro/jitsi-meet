@@ -1,20 +1,15 @@
-/* eslint-disable lines-around-comment */
-
 import React from 'react';
 import { useSelector } from 'react-redux';
 import { makeStyles } from 'tss-react/mui';
 
 import { IReduxState } from '../../../app/types';
 import {
-    getMultipleVideoSupportFeatureFlag,
     isDisplayNameVisible,
     isNameReadOnly
 } from '../../../base/config/functions.any';
 import { isScreenShareParticipantById } from '../../../base/participants/functions';
 import DisplayName from '../../../display-name/components/web/DisplayName';
-import { THUMBNAIL_TYPE } from '../../constants';
 
-// @ts-ignore
 import StatusIndicators from './StatusIndicators';
 
 interface IProps {
@@ -42,7 +37,7 @@ interface IProps {
     /**
      * The type of thumbnail.
      */
-    thumbnailType: string;
+    thumbnailType?: string;
 }
 
 const useStyles = makeStyles()(() => {
@@ -50,15 +45,10 @@ const useStyles = makeStyles()(() => {
         nameContainer: {
             display: 'flex',
             overflow: 'hidden',
-            padding: '2px 0',
 
             '&>div': {
                 display: 'flex',
                 overflow: 'hidden'
-            },
-
-            '&:first-child': {
-                marginLeft: '6px'
             }
         }
     };
@@ -74,7 +64,6 @@ const ThumbnailBottomIndicators = ({
     const { classes: styles } = useStyles();
     const _allowEditing = !useSelector(isNameReadOnly);
     const _defaultLocalDisplayName = interfaceConfig.DEFAULT_LOCAL_DISPLAY_NAME;
-    const _isMultiStreamEnabled = useSelector(getMultipleVideoSupportFeatureFlag);
     const _showDisplayName = useSelector(isDisplayNameVisible);
     const isVirtualScreenshareParticipant = useSelector(
         (state: IReduxState) => isScreenShareParticipantById(state, participantId)
@@ -86,9 +75,7 @@ const ThumbnailBottomIndicators = ({
                 audio = { !isVirtualScreenshareParticipant }
                 moderator = { true }
                 participantID = { participantId }
-                screenshare = { _isMultiStreamEnabled
-                    ? isVirtualScreenshareParticipant
-                    : thumbnailType === THUMBNAIL_TYPE.TILE }
+                screenshare = { isVirtualScreenshareParticipant }
                 thumbnailType = { thumbnailType } />
         }
         {

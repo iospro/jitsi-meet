@@ -1,4 +1,3 @@
-/* eslint-disable lines-around-comment */
 import React, { useCallback, useState } from 'react';
 import { TouchableOpacity, View } from 'react-native';
 import { useDispatch, useSelector } from 'react-redux';
@@ -13,11 +12,10 @@ import { IReduxState } from '../../../../app/types';
 import { AUDIO_MUTE_BUTTON_ENABLED } from '../../../../base/flags/constants';
 import { getFeatureFlag } from '../../../../base/flags/functions';
 import Icon from '../../../../base/icons/components/Icon';
-import { IconMicrophone, IconMicrophoneEmptySlash } from '../../../../base/icons/svg';
+import { IconMic, IconMicSlash } from '../../../../base/icons/svg';
 import { MEDIA_TYPE } from '../../../../base/media/constants';
 import { isLocalTrackMuted } from '../../../../base/tracks/functions';
 import { isAudioMuteButtonDisabled } from '../../../../toolbox/functions.any';
-// @ts-ignore
 import { muteLocal } from '../../../../video-menu/actions';
 
 // @ts-ignore
@@ -83,7 +81,7 @@ const MicrophoneButton = (): JSX.Element | null => {
                 <View
                     style = { styles.microphoneStyles.iconContainer }>
                     <Icon
-                        src = { audioMuted ? IconMicrophoneEmptySlash : IconMicrophone }
+                        src = { audioMuted ? IconMicSlash : IconMic }
                         style = { styles.microphoneStyles.icon } />
                 </View>
             </View>

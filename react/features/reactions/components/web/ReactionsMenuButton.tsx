@@ -1,21 +1,17 @@
-/* eslint-disable lines-around-comment */
 import React, { useCallback } from 'react';
 import { WithTranslation } from 'react-i18next';
-import { useSelector } from 'react-redux';
+import { connect, useSelector } from 'react-redux';
 
 import { IReduxState } from '../../../app/types';
 import { isMobileBrowser } from '../../../base/environment/utils';
 import { translate } from '../../../base/i18n/functions';
 import { IconArrowUp } from '../../../base/icons/svg';
-import { connect } from '../../../base/redux/functions';
-// @ts-ignore
 import ToolboxButtonWithIconPopup from '../../../base/toolbox/components/web/ToolboxButtonWithIconPopup';
 import { toggleReactionsMenuVisibility } from '../../actions.web';
 import { IReactionEmojiProps } from '../../constants';
 import { getReactionsQueue, isReactionsEnabled } from '../../functions.any';
 import { getReactionsMenuVisibility } from '../../functions.web';
 
-// @ts-ignore
 import RaiseHandButton from './RaiseHandButton';
 import ReactionEmoji from './ReactionEmoji';
 import ReactionsMenu from './ReactionsMenu';
@@ -43,9 +39,9 @@ interface IProps extends WithTranslation {
     handleClick: Function;
 
     /**
-     * Whether or not it's a mobile browser.
+     * Whether or not it's narrow mode or mobile browser.
      */
-    isMobile: boolean;
+    isNarrow: boolean;
 
     /**
      * Whether or not the reactions menu is open.
@@ -75,7 +71,7 @@ function ReactionsMenuButton({
     dispatch,
     handleClick,
     isOpen,
-    isMobile,
+    isNarrow,
     notifyMode,
     reactionsQueue,
     t
@@ -95,7 +91,7 @@ function ReactionsMenuButton({
 
     return (
         <div className = 'reactions-menu-popup-container'>
-            {!_reactionsEnabled || isMobile ? (
+            {!_reactionsEnabled || isNarrow ? (
                 <RaiseHandButton
                     buttonKey = { buttonKey }
                     handleClick = { handleClick }
@@ -135,10 +131,12 @@ function ReactionsMenuButton({
  * @returns {Object}
  */
 function mapStateToProps(state: IReduxState) {
+    const { isNarrowLayout } = state['features/base/responsive-ui'];
+
     return {
         _reactionsEnabled: isReactionsEnabled(state),
         isOpen: getReactionsMenuVisibility(state),
-        isMobile: isMobileBrowser(),
+        isNarrow: isMobileBrowser() || isNarrowLayout,
         reactionsQueue: getReactionsQueue(state)
     };
 }

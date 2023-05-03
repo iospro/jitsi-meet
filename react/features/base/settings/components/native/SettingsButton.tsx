@@ -1,25 +1,25 @@
 /* eslint-disable lines-around-comment */
 
+import { connect } from 'react-redux';
+
 import { IReduxState } from '../../../../app/types';
-// @ts-ignore
-import { AbstractButton, type AbstractButtonProps } from '../../../../base/toolbox/components';
+import { translate } from '../../../../base/i18n/functions';
+import { IconGear } from '../../../../base/icons/svg';
+import AbstractButton, { IProps as AbstractButtonProps } from '../../../../base/toolbox/components/AbstractButton';
 import { navigate }
 // @ts-ignore
     from '../../../../mobile/navigation/components/conference/ConferenceNavigationContainerRef';
 // @ts-ignore
 import { screen } from '../../../../mobile/navigation/routes';
-// @ts-ignore
-import { SETTINGS_ENABLED, getFeatureFlag } from '../../../flags';
-import { translate } from '../../../i18n/functions';
-import { IconSettings } from '../../../icons/svg';
-import { connect } from '../../../redux/functions';
+import { SETTINGS_ENABLED } from '../../../flags/constants';
+import { getFeatureFlag } from '../../../flags/functions';
 
 /**
  * Implements an {@link AbstractButton} to open the carmode.
  */
-class SettingsButton extends AbstractButton<AbstractButtonProps, any, any> {
+class SettingsButton extends AbstractButton<AbstractButtonProps> {
     accessibilityLabel = 'toolbar.accessibilityLabel.Settings';
-    icon = IconSettings;
+    icon = IconGear;
     label = 'settings.buttonLabel';
 
     /**
@@ -48,5 +48,4 @@ function _mapStateToProps(state: IReduxState) {
     };
 }
 
-// @ts-ignore
 export default translate(connect(_mapStateToProps)(SettingsButton));

@@ -1,17 +1,24 @@
-/* eslint-disable lines-around-comment */
 // @ts-ignore
 import Bourne from '@hapi/bourne';
+// eslint-disable-next-line lines-around-comment
 // @ts-ignore
 import { jitsiLocalStorage } from '@jitsi/js-utils';
 import _ from 'lodash';
 
 import { IReduxState } from '../../app/types';
 import { browser } from '../lib-jitsi-meet';
+import { IMediaState } from '../media/reducer';
 import { parseURLParams } from '../util/parseURLParams';
 
 import { IConfig } from './configType';
 import CONFIG_WHITELIST from './configWhitelist';
-import { FEATURE_FLAGS, _CONFIG_STORE_PREFIX } from './constants';
+import {
+    DEFAULT_HELP_CENTRE_URL,
+    DEFAULT_PRIVACY_URL,
+    DEFAULT_TERMS_URL,
+    FEATURE_FLAGS,
+    _CONFIG_STORE_PREFIX
+} from './constants';
 import INTERFACE_CONFIG_WHITELIST from './interfaceConfigWhitelist';
 import logger from './logger';
 
@@ -54,35 +61,23 @@ export function getMeetingRegion(state: IReduxState) {
 }
 
 /**
- * Selector for determining if receiving multiple stream support is enabled.
- *
- * @param {Object} state - The global state.
- * @returns {boolean}
- */
-export function getMultipleVideoSupportFeatureFlag(state: IReduxState) {
-    return (getFeatureFlag(state, FEATURE_FLAGS.MULTIPLE_VIDEO_STREAMS_SUPPORT)
-        && getSourceNameSignalingFeatureFlag(state)) ?? true;
-}
-
-/**
  * Selector for determining if sending multiple stream support is enabled.
  *
- * @param {Object} state - The global state.
+ * @param {Object} _state - The global state.
  * @returns {boolean}
  */
-export function getMultipleVideoSendingSupportFeatureFlag(state: IReduxState) {
-    return navigator.product !== 'ReactNative'
-        && ((getMultipleVideoSupportFeatureFlag(state) ?? true) && isUnifiedPlanEnabled(state));
+export function getMultipleVideoSendingSupportFeatureFlag(_state: IReduxState | IMediaState) {
+    return browser.supportsUnifiedPlan();
 }
 
 /**
- * Selector used to get the sourceNameSignaling feature flag.
+ * Selector used to get the SSRC-rewriting feature flag.
  *
  * @param {Object} state - The global state.
  * @returns {boolean}
  */
-export function getSourceNameSignalingFeatureFlag(state: IReduxState) {
-    return getFeatureFlag(state, FEATURE_FLAGS.SOURCE_NAME_SIGNALING) ?? true;
+export function getSsrcRewritingFeatureFlag(state: IReduxState) {
+    return getFeatureFlag(state, FEATURE_FLAGS.SSRC_REWRITING);
 }
 
 /**
@@ -212,19 +207,6 @@ export function isDisplayNameVisible(state: IReduxState): boolean {
 }
 
 /**
- * Selector for determining if Unified plan support is enabled.
- *
- * @param {Object} state - The state of the app.
- * @returns {boolean}
- */
-export function isUnifiedPlanEnabled(state: IReduxState): boolean {
-    const { enableUnifiedOnChrome = true } = state['features/base/config'];
-
-    return browser.supportsUnifiedPlan()
-        && (!browser.isChromiumBased() || (browser.isChromiumBased() && enableUnifiedOnChrome));
-}
-
-/**
  * Restores a Jitsi Meet config.js from {@code localStorage} if it was
  * previously downloaded from a specific {@code baseURL} and stored with
  * {@link storeConfig}.
@@ -250,8 +232,6 @@ export function restoreConfig(baseURL: string) {
 
     return undefined;
 }
-
-/* eslint-disable max-params */
 
 /**
  * Inspects the hash part of the location URI and overrides values specified
@@ -308,3 +288,54 @@ export function setConfigFromURLParams(
 }
 
 /* eslint-enable max-params */
+
+/**
+ * Returns the dial out url.
+ *
+ * @param {Object} state - The state of the app.
+ * @returns {string}
+ */
+export function getDialOutStatusUrl(state: IReduxState) {
+    return state['features/base/config'].guestDialOutStatusUrl;
+}
+
+/**
+ * Returns the dial out status url.
+ *
+ * @param {Object} state - The state of the app.
+ * @returns {string}
+ */
+export function getDialOutUrl(state: IReduxState) {
+    return state['features/base/config'].guestDialOutUrl;
+}
+
+/**
+ * Selector to return the security UI config.
+ *
+ * @param {IReduxState} state - State object.
+ * @returns {Object}
+ */
+export function getSecurityUiConfig(state: IReduxState) {
+    return state['features/base/config']?.securityUi || {};
+}
+
+/**
+ * Returns the terms, privacy and help centre URL's.
+ *
+ * @param {IReduxState} state - The state of the application.
+ * @returns {{
+ *  privacy: string,
+ *  helpCentre: string,
+ *  terms: string
+ * }}
+ */
+export function getLegalUrls(state: IReduxState) {
+    const helpCentreURL = state['features/base/config']?.helpCentreURL;
+    const configLegalUrls = state['features/base/config']?.legalUrls;
+
+    return {
+        privacy: configLegalUrls?.privacy || DEFAULT_PRIVACY_URL,
+        helpCentre: helpCentreURL || configLegalUrls?.helpCentre || DEFAULT_HELP_CENTRE_URL,
+        terms: configLegalUrls?.terms || DEFAULT_TERMS_URL
+    };
+}
