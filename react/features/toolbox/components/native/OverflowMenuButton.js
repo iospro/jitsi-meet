@@ -1,9 +1,11 @@
-import { openSheet } from '../../../base/dialog';
-import { OVERFLOW_MENU_ENABLED, getFeatureFlag } from '../../../base/flags';
-import { translate } from '../../../base/i18n';
-import { IconHorizontalPoints } from '../../../base/icons';
-import { connect } from '../../../base/redux';
-import { AbstractButton, type AbstractButtonProps } from '../../../base/toolbox/components';
+import { connect } from 'react-redux';
+
+import { openSheet } from '../../../base/dialog/actions';
+import { OVERFLOW_MENU_ENABLED } from '../../../base/flags/constants';
+import { getFeatureFlag } from '../../../base/flags/functions';
+import { translate } from '../../../base/i18n/functions';
+import { IconDotsHorizontal } from '../../../base/icons/svg';
+import AbstractButton, { IProps as AbstractButtonProps } from '../../../base/toolbox/components/AbstractButton';
 
 import OverflowMenu from './OverflowMenu';
 
@@ -23,7 +25,7 @@ type Props = AbstractButtonProps & {
  */
 class OverflowMenuButton extends AbstractButton<Props, *> {
     accessibilityLabel = 'toolbar.accessibilityLabel.moreActions';
-    icon = IconHorizontalPoints;
+    icon = IconDotsHorizontal;
     label = 'toolbar.moreActions';
 
     /**

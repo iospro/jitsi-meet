@@ -1,23 +1,19 @@
-/* eslint-disable lines-around-comment */
 import React, { ReactNode, useCallback } from 'react';
 import { useSelector } from 'react-redux';
 import { makeStyles } from 'tss-react/mui';
 
 import { createToolbarEvent } from '../../../analytics/AnalyticsEvents';
 import { sendAnalytics } from '../../../analytics/functions';
-import { IReduxState } from '../../../app/types';
 import Popover from '../../../base/popover/components/Popover.web';
-// @ts-ignore
-import { ReactionEmoji, ReactionsMenu } from '../../../reactions/components';
+import ReactionEmoji from '../../../reactions/components/web/ReactionEmoji';
+import ReactionsMenu from '../../../reactions/components/web/ReactionsMenu';
 import { REACTIONS_MENU_HEIGHT } from '../../../reactions/constants';
 import { getReactionsQueue } from '../../../reactions/functions.any';
 import { DRAWER_MAX_HEIGHT } from '../../constants';
+import { showOverflowDrawer } from '../../functions.web';
 
-// @ts-ignore
 import Drawer from './Drawer';
-// @ts-ignore
 import JitsiPortal from './JitsiPortal';
-// @ts-ignore
 import OverflowToggleButton from './OverflowToggleButton';
 
 /**
@@ -67,7 +63,7 @@ const OverflowMenuButton = ({
     showMobileReactions
 }: IProps) => {
     const { classes } = useStyles();
-    const overflowDrawer = useSelector((state: IReduxState) => state['features/toolbox'].overflowDrawer);
+    const overflowDrawer = useSelector(showOverflowDrawer);
     const reactionsQueue = useSelector(getReactionsQueue);
 
     const onCloseDialog = useCallback(() => {
@@ -124,6 +120,7 @@ const OverflowMenuButton = ({
                 ) : (
                     <Popover
                         content = { children }
+                        headingId = 'overflow-context-menu'
                         onPopoverClose = { onCloseDialog }
                         onPopoverOpen = { onOpenDialog }
                         position = 'top'

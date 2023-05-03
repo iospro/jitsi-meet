@@ -1,7 +1,5 @@
-/* eslint-disable lines-around-comment */
-import { GiphyFetch, TrendingOptions } from '@giphy/js-fetch-api';
+import { GiphyFetch, TrendingOptions, setServerUrl } from '@giphy/js-fetch-api';
 import { Grid } from '@giphy/react-components';
-import { Theme } from '@mui/material';
 import React, { useCallback, useEffect, useState } from 'react';
 import { useTranslation } from 'react-i18next';
 import { batch, useDispatch, useSelector } from 'react-redux';
@@ -14,22 +12,22 @@ import Input from '../../../base/ui/components/web/Input';
 import { sendMessage } from '../../../chat/actions.any';
 import { SCROLL_SIZE } from '../../../filmstrip/constants';
 import { toggleReactionsMenuVisibility } from '../../../reactions/actions.web';
-// @ts-ignore
 import { setOverflowMenuVisible } from '../../../toolbox/actions.web';
-// @ts-ignore
-import { Drawer, JitsiPortal } from '../../../toolbox/components/web';
+import Drawer from '../../../toolbox/components/web/Drawer';
+import JitsiPortal from '../../../toolbox/components/web/JitsiPortal';
 import { showOverflowDrawer } from '../../../toolbox/functions.web';
 import { setGifDrawerVisibility } from '../../actions';
 import {
     formatGifUrlMessage,
     getGifAPIKey,
     getGifRating,
-    getGifUrl
+    getGifUrl,
+    getGiphyProxyUrl
 } from '../../function.any';
 
 const OVERFLOW_DRAWER_PADDING = 16;
 
-const useStyles = makeStyles()((theme: Theme) => {
+const useStyles = makeStyles()(theme => {
     return {
         gifsMenu: {
             width: '100%',
@@ -94,6 +92,7 @@ function GifsMenu() {
     const overflowDrawer: boolean = useSelector(showOverflowDrawer);
     const { clientWidth } = useSelector((state: IReduxState) => state['features/base/responsive-ui']);
     const rating = useSelector(getGifRating);
+    const proxyUrl = useSelector(getGiphyProxyUrl);
 
     const fetchGifs = useCallback(async (offset = 0) => {
         const options: TrendingOptions = {
@@ -116,7 +115,7 @@ function GifsMenu() {
 
     const handleGifClick = useCallback((gif, e) => {
         e?.stopPropagation();
-        const url = getGifUrl(gif);
+        const url = getGifUrl(gif, proxyUrl);
 
         sendAnalytics(createGifSentEvent());
         batch(() => {
@@ -178,6 +177,12 @@ function GifsMenu() {
     // For some reason, the Grid component does not do an initial call on mobile.
     // This fixes that.
     useEffect(() => setSearchKey(''), []);
+
+    useEffect(() => {
+        if (proxyUrl) {
+            setServerUrl(proxyUrl);
+        }
+    }, []);
 
     const onInputKeyPress = useCallback((e: React.KeyboardEvent) => {
         e.stopPropagation();

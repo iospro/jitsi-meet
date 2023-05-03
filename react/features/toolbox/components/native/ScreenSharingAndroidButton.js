@@ -1,14 +1,14 @@
 // @flow
 
-import {
-    ANDROID_SCREENSHARING_ENABLED,
-    getFeatureFlag
-} from '../../../base/flags';
-import { translate } from '../../../base/i18n';
-import { IconShareDesktop } from '../../../base/icons';
-import { connect } from '../../../base/redux';
-import { AbstractButton, type AbstractButtonProps } from '../../../base/toolbox/components';
-import { isLocalVideoTrackDesktop, toggleScreensharing } from '../../../base/tracks';
+import { connect } from 'react-redux';
+
+import { ANDROID_SCREENSHARING_ENABLED } from '../../../base/flags/constants';
+import { getFeatureFlag } from '../../../base/flags/functions';
+import { translate } from '../../../base/i18n/functions';
+import { IconScreenshare } from '../../../base/icons/svg';
+import AbstractButton, { IProps as AbstractButtonProps } from '../../../base/toolbox/components/AbstractButton';
+import { toggleScreensharing } from '../../../base/tracks/actions.native';
+import { isLocalVideoTrackDesktop } from '../../../base/tracks/functions.native';
 
 /**
  * The type of the React {@code Component} props of {@link ScreenSharingAndroidButton}.
@@ -36,7 +36,7 @@ type Props = AbstractButtonProps & {
  */
 class ScreenSharingAndroidButton extends AbstractButton<Props, *> {
     accessibilityLabel = 'toolbar.accessibilityLabel.shareYourScreen';
-    icon = IconShareDesktop;
+    icon = IconScreenshare;
     label = 'toolbar.startScreenSharing';
     toggledLabel = 'toolbar.stopScreenSharing';
 

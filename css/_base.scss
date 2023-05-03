@@ -126,6 +126,12 @@ form {
     background-size: contain;
 }
 
+.leftwatermarknomargin {
+    background-position: center left;
+    background-repeat: no-repeat;
+    background-size: contain;
+}
+
 .rightwatermark {
     right: 32px;
     top: 32px;
@@ -181,4 +187,9 @@ form {
 ::-webkit-scrollbar-thumb {
     background: rgba(0, 0, 0, .5);
     border-radius: 4px;
+}
+
+/* Necessary for the new icons to work properly. */
+.jitsi-icon svg path {
+    fill: inherit !important;
 }

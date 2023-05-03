@@ -1,13 +1,14 @@
 // @flow
 
+import { connect } from 'react-redux';
+
 import { approveParticipant } from '../../../av-moderation/actions';
 import { isSupported } from '../../../av-moderation/functions';
-import { translate } from '../../../base/i18n';
-import { IconCamera, IconMicrophone } from '../../../base/icons';
-import { MEDIA_TYPE } from '../../../base/media';
-import { getParticipantById, isLocalParticipantModerator } from '../../../base/participants';
-import { connect } from '../../../base/redux';
-import { AbstractButton, type AbstractButtonProps } from '../../../base/toolbox/components';
+import { translate } from '../../../base/i18n/functions';
+import { IconMic, IconVideo } from '../../../base/icons/svg';
+import { MEDIA_TYPE } from '../../../base/media/constants';
+import { getParticipantById, isLocalParticipantModerator } from '../../../base/participants/functions';
+import AbstractButton, { IProps as AbstractButtonProps } from '../../../base/toolbox/components/AbstractButton';
 import { isForceMuted } from '../../../participants-pane/functions';
 
 export type Props = AbstractButtonProps & {
@@ -39,7 +40,7 @@ export type Props = AbstractButtonProps & {
  */
 class AskUnmuteButton extends AbstractButton<Props, *> {
     accessibilityLabel = 'participantsPane.actions.askUnmute';
-    icon = IconMicrophone;
+    icon = IconMic;
     label = 'participantsPane.actions.askUnmute';
 
     /**
@@ -66,7 +67,7 @@ class AskUnmuteButton extends AbstractButton<Props, *> {
         const { isAudioForceMuted, isVideoForceMuted } = this.props;
 
         if (!isAudioForceMuted && isVideoForceMuted) {
-            return IconCamera;
+            return IconVideo;
         }
 
         return this.icon;

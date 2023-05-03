@@ -1,13 +1,14 @@
 // @flow
 
+import { connect } from 'react-redux';
 import type { Dispatch } from 'redux';
 
-import { VIDEO_SHARE_BUTTON_ENABLED, getFeatureFlag } from '../../../base/flags';
-import { translate } from '../../../base/i18n';
-import { IconShareVideo } from '../../../base/icons';
-import { getLocalParticipant } from '../../../base/participants';
-import { connect } from '../../../base/redux';
-import { AbstractButton, type AbstractButtonProps } from '../../../base/toolbox/components';
+import { VIDEO_SHARE_BUTTON_ENABLED } from '../../../base/flags/constants';
+import { getFeatureFlag } from '../../../base/flags/functions';
+import { translate } from '../../../base/i18n/functions';
+import { IconPlay } from '../../../base/icons/svg';
+import { getLocalParticipant } from '../../../base/participants/functions';
+import AbstractButton, { IProps as AbstractButtonProps } from '../../../base/toolbox/components/AbstractButton';
 import { toggleSharedVideo } from '../../actions.native';
 import { isSharingStatus } from '../../functions';
 
@@ -39,7 +40,7 @@ type Props = AbstractButtonProps & {
  */
 class VideoShareButton extends AbstractButton<Props, *> {
     accessibilityLabel = 'toolbar.accessibilityLabel.sharedvideo';
-    icon = IconShareVideo;
+    icon = IconPlay;
     label = 'toolbar.sharedvideo';
     toggledLabel = 'toolbar.stopSharedVideo';
 

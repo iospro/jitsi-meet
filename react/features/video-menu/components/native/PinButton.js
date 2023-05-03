@@ -1,10 +1,11 @@
 // @flow
 
-import { translate } from '../../../base/i18n';
-import { IconPin } from '../../../base/icons';
-import { pinParticipant } from '../../../base/participants';
-import { connect } from '../../../base/redux';
-import { AbstractButton, type AbstractButtonProps } from '../../../base/toolbox/components';
+import { connect } from 'react-redux';
+
+import { translate } from '../../../base/i18n/functions';
+import { IconEnlarge } from '../../../base/icons/svg';
+import { pinParticipant } from '../../../base/participants/actions';
+import AbstractButton, { IProps as AbstractButtonProps } from '../../../base/toolbox/components/AbstractButton';
 import { shouldDisplayTileView } from '../../../video-layout/functions';
 
 export type Props = AbstractButtonProps & {
@@ -35,7 +36,7 @@ export type Props = AbstractButtonProps & {
  */
 class PinButton extends AbstractButton<Props, *> {
     accessibilityLabel = 'toolbar.accessibilityLabel.show';
-    icon = IconPin;
+    icon = IconEnlarge;
     label = 'videothumbnail.show';
 
     /**

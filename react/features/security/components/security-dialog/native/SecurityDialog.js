@@ -3,26 +3,27 @@ import {
     Text,
     View
 } from 'react-native';
+import { connect } from 'react-redux';
 import type { Dispatch } from 'redux';
 
-import { MEETING_PASSWORD_ENABLED, getFeatureFlag } from '../../../../base/flags';
-import { translate } from '../../../../base/i18n';
+import { getSecurityUiConfig } from '../../../../base/config/functions.any';
+import { MEETING_PASSWORD_ENABLED } from '../../../../base/flags/constants';
+import { getFeatureFlag } from '../../../../base/flags/functions';
+import { translate } from '../../../../base/i18n/functions';
 import JitsiScreen from '../../../../base/modal/components/JitsiScreen';
-import { isLocalParticipantModerator } from '../../../../base/participants';
-import { connect } from '../../../../base/redux';
-import BaseTheme from '../../../../base/ui/components/BaseTheme';
+import { isLocalParticipantModerator } from '../../../../base/participants/functions';
 import Button from '../../../../base/ui/components/native/Button';
 import Input from '../../../../base/ui/components/native/Input';
 import Switch from '../../../../base/ui/components/native/Switch';
-import { BUTTON_TYPES } from '../../../../base/ui/constants';
+import { BUTTON_TYPES } from '../../../../base/ui/constants.native';
 import { copyText } from '../../../../base/util/copyText.native';
 import { isInBreakoutRoom } from '../../../../breakout-rooms/functions';
 import { toggleLobbyMode } from '../../../../lobby/actions.any';
-import { LOCKED_LOCALLY, LOCKED_REMOTELY } from '../../../../room-lock';
 import {
     endRoomLockRequest,
     unlockRoom
 } from '../../../../room-lock/actions';
+import { LOCKED_LOCALLY, LOCKED_REMOTELY } from '../../../../room-lock/constants';
 
 import styles from './styles';
 
@@ -352,10 +353,9 @@ class SecurityDialog extends PureComponent<Props, State> {
                         accessibilityLabel = { t('info.addPassword') }
                         autoFocus = { true }
                         clearable = { true }
-                        customStyles = {{ container: styles.passwordInput }}
+                        customStyles = {{ container: styles.customContainer }}
                         onChange = { this._onChangeText }
                         placeholder = { t('dialog.password') }
-                        placeholderTextColor = { BaseTheme.palette.text03 }
                         value = { passwordInputValue }
                         { ...textInputProps } />
                 );
@@ -504,7 +504,7 @@ class SecurityDialog extends PureComponent<Props, State> {
  */
 function _mapStateToProps(state: Object): Object {
     const { conference, locked, password } = state['features/base/conference'];
-    const { hideLobbyButton } = state['features/base/config'];
+    const { disableLobbyPassword, hideLobbyButton } = getSecurityUiConfig(state);
     const { lobbyEnabled } = state['features/lobby'];
     const { roomPasswordNumberOfDigits } = state['features/base/config'];
     const lobbySupported = conference && conference.isLobbySupported();
@@ -520,7 +520,7 @@ function _mapStateToProps(state: Object): Object {
         _lockedConference: Boolean(conference && locked),
         _password: password,
         _passwordNumberOfDigits: roomPasswordNumberOfDigits,
-        _roomPasswordControls: visible
+        _roomPasswordControls: visible && !disableLobbyPassword
     };
 }
 

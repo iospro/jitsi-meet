@@ -1,31 +1,33 @@
 /* eslint-disable lines-around-comment */
-import { NavigationContainer } from '@react-navigation/native';
+
+import { NavigationContainer, Theme } from '@react-navigation/native';
 import { createStackNavigator } from '@react-navigation/stack';
 import React from 'react';
 import { useTranslation } from 'react-i18next';
 import { useSelector } from 'react-redux';
 
 // @ts-ignore
-import { Chat, ChatAndPolls } from '../../../../../chat';
+import Chat from '../../../../../chat/components/native/Chat';
 // @ts-ignore
 import Conference from '../../../../../conference/components/native/Conference';
+// @ts-ignore
 import CarMode from '../../../../../conference/components/native/carmode/CarMode';
 // @ts-ignore
 import { getDisablePolls } from '../../../../../conference/functions';
 // @ts-ignore
-import { SharedDocument } from '../../../../../etherpad';
+import SharedDocument from '../../../../../etherpad/components/native/SharedDocument';
 // @ts-ignore
-import { GifsMenu } from '../../../../../gifs/components';
+import GifsMenu from '../../../../../gifs/components/native/GifsMenu';
 import AddPeopleDialog
 // @ts-ignore
     from '../../../../../invite/components/add-people-dialog/native/AddPeopleDialog';
 // @ts-ignore
-import { ParticipantsPane } from '../../../../../participants-pane/components/native';
+import ParticipantsPane from '../../../../../participants-pane/components/native/ParticipantsPane';
 // @ts-ignore
-import { StartLiveStreamDialog } from '../../../../../recording';
-import { StartRecordingDialog }
+import StartLiveStreamDialog from '../../../../../recording/components/LiveStream/native/StartLiveStreamDialog';
+import StartRecordingDialog
 // @ts-ignore
-    from '../../../../../recording/components/Recording/native';
+    from '../../../../../recording/components/Recording/native/StartRecordingDialog';
 import SalesforceLinkDialog
 // @ts-ignore
     from '../../../../../salesforce/components/native/SalesforceLinkDialog';
@@ -35,6 +37,9 @@ import SecurityDialog
 import SpeakerStats
 // @ts-ignore
     from '../../../../../speaker-stats/components/native/SpeakerStats';
+import LanguageSelectorDialog
+// @ts-ignore
+    from '../../../../../subtitles/components/native/LanguageSelectorDialog';
 // @ts-ignore
 import { screen } from '../../../routes';
 import {
@@ -52,15 +57,16 @@ import {
     securityScreenOptions,
     settingsNavigationContainerScreenOptions,
     sharedDocumentScreenOptions,
-    speakerStatsScreenOptions
+    speakerStatsScreenOptions,
+    subtitlesScreenOptions
     // @ts-ignore
 } from '../../../screenOptions';
-import LobbyNavigationContainer
 // @ts-ignore
-    from '../../lobby/components/LobbyNavigationContainer';
-import SettingsNavigationContainer
+import ChatAndPollsNavigator from '../../chat/components/ChatAndPollsNavigator';
 // @ts-ignore
-    from '../../settings/components/SettingsNavigationContainer';
+import LobbyNavigationContainer from '../../lobby/components/LobbyNavigationContainer';
+// @ts-ignore
+import SettingsNavigationContainer from '../../settings/components/SettingsNavigationContainer';
 import {
     conferenceNavigationRef
     // @ts-ignore
@@ -80,7 +86,7 @@ const ConferenceNavigationContainer = () => {
         chatScreenName = screen.conference.chat;
         chatTitleString = 'chat.title';
     } else {
-        ChatScreen = ChatAndPolls;
+        ChatScreen = ChatAndPollsNavigator;
         chatScreenName = screen.conference.chatandpolls.main;
         chatTitleString = 'chat.titleWithPolls';
     }
@@ -90,7 +96,7 @@ const ConferenceNavigationContainer = () => {
         <NavigationContainer
             independent = { true }
             ref = { conferenceNavigationRef }
-            theme = { navigationContainerTheme }>
+            theme = { navigationContainerTheme as Theme }>
             <ConferenceStack.Navigator
                 screenOptions = {{
                     presentation: 'modal'
@@ -177,15 +183,24 @@ const ConferenceNavigationContainer = () => {
                         title: t('documentSharing.title')
                     }} />
                 <ConferenceStack.Screen
+                    // @ts-ignore
                     component = { SettingsNavigationContainer }
                     name = { screen.settings.main }
                     options = { settingsNavigationContainerScreenOptions } />
                 <ConferenceStack.Screen
+                    // @ts-ignore
                     component = { CarMode }
                     name = { screen.conference.carmode }
                     options = {{
                         ...carmodeScreenOptions,
                         title: t('carmode.labels.title')
+                    }} />
+                <ConferenceStack.Screen
+                    component = { LanguageSelectorDialog }
+                    name = { screen.conference.subtitles }
+                    options = {{
+                        ...subtitlesScreenOptions,
+                        title: t('transcribing.subtitles')
                     }} />
             </ConferenceStack.Navigator>
         </NavigationContainer>

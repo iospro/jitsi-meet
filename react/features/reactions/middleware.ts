@@ -28,12 +28,12 @@ import {
 } from './actionTypes';
 import {
     addReactionsToChat,
+    displayReactionSoundsNotification,
     flushReactionBuffer,
     pushReactions,
     sendReactions,
     setReactionQueue
-} from './actions.any';
-import { displayReactionSoundsNotification } from './actions.web';
+} from './actions';
 import {
     ENDPOINT_REACTION_NAME,
     IMuteCommandAttributes,
@@ -259,7 +259,6 @@ function _onMuteReactionsCommand(attributes: IMuteCommandAttributes = {}, id: st
 
     const oldState = Boolean(state['features/base/conference'].startReactionsMuted);
 
-    // @ts-ignore
     const newState = attributes.startReactionsMuted === 'true';
 
     if (oldState !== newState) {

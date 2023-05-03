@@ -17,7 +17,6 @@ import { getRemoteParticipants } from '../base/participants/functions';
 import { createDesiredLocalTracks } from '../base/tracks/actions';
 import {
     getLocalTracks,
-    isLocalCameraTrackMuted,
     isLocalTrackMuted
 } from '../base/tracks/functions';
 import { clearNotifications, showNotification } from '../notifications/actions';
@@ -208,7 +207,7 @@ export function moveToRoom(roomId?: string) {
             dispatch(conferenceWillLeave(conference));
 
             try {
-                await conference.leave(CONFERENCE_LEAVE_REASONS.SWITCH_ROOM);
+                await conference?.leave(CONFERENCE_LEAVE_REASONS.SWITCH_ROOM);
             } catch (error) {
                 logger.warn('JitsiConference.leave() rejected with:', error);
 
@@ -216,16 +215,14 @@ export function moveToRoom(roomId?: string) {
             }
 
             dispatch(clearNotifications());
-
-            // dispatch(setRoom(_roomId));
-            dispatch(createConference(_roomId?.toString()));
+            dispatch(createConference(_roomId));
             dispatch(setAudioMuted(audio.muted));
             dispatch(setVideoMuted(Boolean(video.muted)));
             dispatch(createDesiredLocalTracks());
         } else {
             const localTracks = getLocalTracks(getState()['features/base/tracks']);
             const isAudioMuted = isLocalTrackMuted(localTracks, MEDIA_TYPE.AUDIO);
-            const isVideoMuted = isLocalCameraTrackMuted(localTracks);
+            const isVideoMuted = isLocalTrackMuted(localTracks, MEDIA_TYPE.VIDEO);
 
             try {
                 // all places we fire notifyConferenceLeft we pass the room name from APP.conference
@@ -269,7 +266,7 @@ export function moveToRoom(roomId?: string) {
  * @param {string} participantId - ID of the given participant.
  * @returns {string|undefined} - The participant connection JID if found.
  */
-function _findParticipantJid(getState: Function, participantId: string) {
+function _findParticipantJid(getState: IStore['getState'], participantId: string) {
     const conference = getCurrentConference(getState);
 
     if (!conference) {

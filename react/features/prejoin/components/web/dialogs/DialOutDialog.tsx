@@ -1,17 +1,12 @@
-/* eslint-disable lines-around-comment */
-
-import { Theme } from '@mui/material';
 import React from 'react';
 import { WithTranslation } from 'react-i18next';
 import { makeStyles } from 'tss-react/mui';
 
 import { translate } from '../../../../base/i18n/functions';
 import Icon from '../../../../base/icons/components/Icon';
-import { IconClose } from '../../../../base/icons/svg';
+import { IconCloseLarge } from '../../../../base/icons/svg';
 import Button from '../../../../base/ui/components/web/Button';
-// @ts-ignore
 import Label from '../Label';
-// @ts-ignore
 import CountryPicker from '../country-picker/CountryPicker';
 
 interface IProps extends WithTranslation {
@@ -19,7 +14,7 @@ interface IProps extends WithTranslation {
     /**
      * Closes a dialog.
      */
-    onClose: Function;
+    onClose: (e?: React.MouseEvent) => void;
 
     /**
      * Submit handler.
@@ -32,7 +27,7 @@ interface IProps extends WithTranslation {
     onTextButtonClick: Function;
 }
 
-const useStyles = makeStyles()((theme: Theme) => {
+const useStyles = makeStyles()(theme => {
     return {
         dialOutDialog: {
             padding: theme.spacing(3)
@@ -70,7 +65,7 @@ function DialOutDialog(props: IProps) {
                     onClick = { onClose }
                     role = 'button'
                     size = { 24 }
-                    src = { IconClose } />
+                    src = { IconCloseLarge } />
             </div>
             <Label>{t('prejoin.callMeAtNumber')}</Label>
             <div className = { classes.picker }>

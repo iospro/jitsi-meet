@@ -1,31 +1,30 @@
 import debounce from 'lodash/debounce';
 
-import { IStore } from '../app/types';
+import { IReduxState, IStore } from '../app/types';
 import { _handleParticipantError } from '../base/conference/functions';
-import { getSourceNameSignalingFeatureFlag } from '../base/config/functions';
+import { getSsrcRewritingFeatureFlag } from '../base/config/functions.any';
 import { MEDIA_TYPE } from '../base/media/constants';
-import { getLocalParticipant } from '../base/participants/functions';
-import StateListenerRegistry from '../base/redux/StateListenerRegistry';
 import {
-    getRemoteScreenSharesSourceNames,
-    getTrackSourceNameByMediaTypeAndParticipant
-} from '../base/tracks/functions';
+    getLocalParticipant,
+    getSourceNamesByMediaType
+} from '../base/participants/functions';
+import StateListenerRegistry from '../base/redux/StateListenerRegistry';
+import { getTrackSourceNameByMediaTypeAndParticipant } from '../base/tracks/functions';
 import { reportError } from '../base/util/helpers';
 import {
     getActiveParticipantsIds,
     getScreenshareFilmstripParticipantId,
     isTopPanelEnabled
-
-    // @ts-ignore
 } from '../filmstrip/functions';
 import { LAYOUTS } from '../video-layout/constants';
 import {
+    getCurrentLayout,
     getVideoQualityForLargeVideo,
     getVideoQualityForResizableFilmstripThumbnails,
+    getVideoQualityForScreenSharingFilmstrip,
     getVideoQualityForStageThumbnails,
     shouldDisplayTileView
 } from '../video-layout/functions';
-import { getCurrentLayout, getVideoQualityForScreenSharingFilmstrip } from '../video-layout/functions.any';
 
 import {
     setMaxReceiverVideoQualityForLargeVideo,
@@ -98,6 +97,15 @@ StateListenerRegistry.register(
         deepEquals: true
     }
 );
+
+/**
+ * Updates the receiver constraints when new video sources are added to the conference.
+ */
+StateListenerRegistry.register(
+    /* selector */ state => state['features/base/participants'].remoteVideoSources,
+    /* listener */ (remoteVideoSources, store) => {
+        getSsrcRewritingFeatureFlag(store.getState()) && _updateReceiverVideoConstraints(store);
+    });
 
 /**
  * StateListenerRegistry provides a reliable way of detecting changes to
@@ -300,6 +308,42 @@ StateListenerRegistry.register(
     });
 
 /**
+ * Returns the source names asociated with the given participants list.
+ *
+ * @param {Array<string>} participantList - The list of participants.
+ * @param {Object} state - The redux state.
+ * @returns {Array<string>}
+ */
+function _getSourceNames(participantList: Array<string>, state: IReduxState): Array<string> {
+    const { remoteScreenShares } = state['features/video-layout'];
+    const tracks = state['features/base/tracks'];
+    const sourceNamesList: string[] = [];
+
+    participantList.forEach(participantId => {
+        if (getSsrcRewritingFeatureFlag(state)) {
+            const sourceNames: string[] | undefined
+                = getSourceNamesByMediaType(state, participantId, MEDIA_TYPE.VIDEO);
+
+            sourceNames?.length && sourceNamesList.push(...sourceNames);
+        } else {
+            let sourceName: string;
+
+            if (remoteScreenShares.includes(participantId)) {
+                sourceName = participantId;
+            } else {
+                sourceName = getTrackSourceNameByMediaTypeAndParticipant(tracks, MEDIA_TYPE.VIDEO, participantId);
+            }
+
+            if (sourceName) {
+                sourceNamesList.push(sourceName);
+            }
+        }
+    });
+
+    return sourceNamesList;
+}
+
+/**
  * Helper function for updating the preferred sender video constraint, based on the user preference.
  *
  * @param {number} preferred - The user preferred max frame height.
@@ -355,7 +399,6 @@ function _updateReceiverVideoConstraints({ getState }: IStore) {
     const { remoteScreenShares } = state['features/video-layout'];
     const { visibleRemoteParticipants } = state['features/filmstrip'];
     const tracks = state['features/base/tracks'];
-    const sourceNameSignaling = getSourceNameSignalingFeatureFlag(state);
     const localParticipantId = getLocalParticipant(state)?.id;
     const activeParticipantsIds = getActiveParticipantsIds(state);
     const screenshareFilmstripParticipantId = isTopPanelEnabled(state) && getScreenshareFilmstripParticipantId(state);
@@ -366,67 +409,30 @@ function _updateReceiverVideoConstraints({ getState }: IStore) {
         lastN
     };
 
-    let remoteScreenSharesSourceNames: string[];
+    let activeParticipantsSources: string[] = [];
     let visibleRemoteTrackSourceNames: string[] = [];
     let largeVideoSourceName: string | undefined;
-    let activeParticipantsSources: string[] = [];
 
-    if (sourceNameSignaling) {
-        receiverConstraints.onStageSources = [];
-        receiverConstraints.selectedSources = [];
+    receiverConstraints.onStageSources = [];
+    receiverConstraints.selectedSources = [];
 
-        remoteScreenSharesSourceNames = getRemoteScreenSharesSourceNames(state, remoteScreenShares);
+    if (visibleRemoteParticipants?.size) {
+        visibleRemoteTrackSourceNames = _getSourceNames(Array.from(visibleRemoteParticipants), state);
+    }
 
-        if (visibleRemoteParticipants?.size) {
-            visibleRemoteParticipants.forEach(participantId => {
-                let sourceName;
+    if (activeParticipantsIds?.length > 0) {
+        activeParticipantsSources = _getSourceNames(activeParticipantsIds, state);
+    }
 
-                if (remoteScreenSharesSourceNames.includes(participantId)) {
-                    sourceName = participantId;
-                } else {
-                    sourceName = getTrackSourceNameByMediaTypeAndParticipant(tracks, MEDIA_TYPE.VIDEO, participantId);
-                }
-
-                if (sourceName) {
-                    visibleRemoteTrackSourceNames.push(sourceName);
-                }
-            });
+    if (localParticipantId !== largeVideoParticipantId) {
+        if (remoteScreenShares.includes(largeVideoParticipantId)) {
+            largeVideoSourceName = largeVideoParticipantId;
+        } else {
+            largeVideoSourceName = getSsrcRewritingFeatureFlag(state)
+                ? getSourceNamesByMediaType(state, largeVideoParticipantId, MEDIA_TYPE.VIDEO)?.[0]
+                : getTrackSourceNameByMediaTypeAndParticipant(
+                    tracks, MEDIA_TYPE.VIDEO, largeVideoParticipantId);
         }
-
-        if (activeParticipantsIds?.length > 0) {
-            activeParticipantsIds.forEach((participantId: string) => {
-                let sourceName;
-
-                if (remoteScreenSharesSourceNames.includes(participantId)) {
-                    sourceName = participantId;
-                } else {
-                    sourceName = getTrackSourceNameByMediaTypeAndParticipant(tracks, MEDIA_TYPE.VIDEO, participantId);
-                }
-
-                if (sourceName) {
-                    activeParticipantsSources.push(sourceName);
-                }
-            });
-
-        }
-
-        if (localParticipantId !== largeVideoParticipantId) {
-            if (remoteScreenSharesSourceNames.includes(largeVideoParticipantId)) {
-                largeVideoSourceName = largeVideoParticipantId;
-            } else {
-                largeVideoSourceName = getTrackSourceNameByMediaTypeAndParticipant(
-                    tracks, MEDIA_TYPE.VIDEO, largeVideoParticipantId
-                );
-            }
-        }
-    } else {
-        receiverConstraints.onStageEndpoints = [];
-        receiverConstraints.selectedEndpoints = [];
-
-        remoteScreenSharesSourceNames = remoteScreenShares;
-        visibleRemoteTrackSourceNames = [ ...visibleRemoteParticipants ];
-        largeVideoSourceName = largeVideoParticipantId;
-        activeParticipantsSources = activeParticipantsIds;
     }
 
     // Tile view.
@@ -440,9 +446,8 @@ function _updateReceiverVideoConstraints({ getState }: IStore) {
         });
 
         // Prioritize screenshare in tile view.
-        if (remoteScreenSharesSourceNames?.length) {
-            receiverConstraints[sourceNameSignaling ? 'selectedSources' : 'selectedEndpoints']
-                = remoteScreenSharesSourceNames;
+        if (remoteScreenShares?.length) {
+            receiverConstraints.selectedSources = remoteScreenShares;
         }
 
     // Stage view.
@@ -458,7 +463,17 @@ function _updateReceiverVideoConstraints({ getState }: IStore) {
         }
 
         if (getCurrentLayout(state) === LAYOUTS.STAGE_FILMSTRIP_VIEW && activeParticipantsSources.length > 0) {
-            const onStageSources = [ ...activeParticipantsSources ];
+            const selectedSources: string[] = [];
+            const onStageSources: string[] = [];
+
+            // If more than one video source is pinned to the stage filmstrip, they need to be added to the
+            // 'selectedSources' so that the bridge can allocate bandwidth for all the sources as opposed to doing
+            // greedy allocation for the sources (which happens when they are added to 'onStageSources').
+            if (activeParticipantsSources.length > 1) {
+                selectedSources.push(...activeParticipantsSources);
+            } else {
+                onStageSources.push(activeParticipantsSources[0]);
+            }
 
             activeParticipantsSources.forEach(sourceName => {
                 const isScreenSharing = remoteScreenShares.includes(sourceName);
@@ -479,7 +494,8 @@ function _updateReceiverVideoConstraints({ getState }: IStore) {
                     };
             }
 
-            receiverConstraints[sourceNameSignaling ? 'onStageSources' : 'onStageEndpoints'] = onStageSources;
+            receiverConstraints.onStageSources = onStageSources;
+            receiverConstraints.selectedSources = selectedSources;
         } else if (largeVideoSourceName) {
             let quality = VIDEO_QUALITY_UNLIMITED;
 
@@ -488,8 +504,7 @@ function _updateReceiverVideoConstraints({ getState }: IStore) {
                 quality = maxFrameHeightForLargeVideo;
             }
             receiverConstraints.constraints[largeVideoSourceName] = { 'maxHeight': quality };
-            receiverConstraints[sourceNameSignaling ? 'onStageSources' : 'onStageEndpoints']
-                = [ largeVideoSourceName ];
+            receiverConstraints.onStageSources = [ largeVideoSourceName ];
         }
     }
 
