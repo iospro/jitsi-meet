@@ -1,4 +1,3 @@
-/* eslint-disable lines-around-comment */
 import React, { useCallback, useEffect, useState } from 'react';
 import { useTranslation } from 'react-i18next';
 import { useDispatch, useSelector } from 'react-redux';
@@ -14,8 +13,7 @@ import ClickableIcon from '../../../base/ui/components/web/ClickableIcon';
 import { BUTTON_TYPES } from '../../../base/ui/constants.web';
 import { findAncestorByClass } from '../../../base/ui/functions.web';
 import { isAddBreakoutRoomButtonVisible } from '../../../breakout-rooms/functions';
-// @ts-ignore
-import { MuteEveryoneDialog } from '../../../video-menu/components/';
+import MuteEveryoneDialog from '../../../video-menu/components/web/MuteEveryoneDialog';
 import { close } from '../../actions.web';
 import {
     getParticipantsPaneOpen,
@@ -23,7 +21,6 @@ import {
     isMuteAllVisible
 } from '../../functions';
 import { AddBreakoutRoomButton } from '../breakout-rooms/components/web/AddBreakoutRoomButton';
-// @ts-ignore
 import { RoomList } from '../breakout-rooms/components/web/RoomList';
 
 import { FooterContextMenu } from './FooterContextMenu';
@@ -34,15 +31,11 @@ import MeetingParticipants from './MeetingParticipants';
 const useStyles = makeStyles()(theme => {
     return {
         container: {
-            boxSizing: 'border-box' as const,
+            boxSizing: 'border-box',
             flex: 1,
-            overflowY: 'auto' as const,
-            position: 'relative' as const,
+            overflowY: 'auto',
+            position: 'relative',
             padding: `0 ${participantsPaneTheme.panePadding}px`,
-
-            [`& > * + *:not(.${participantsPaneTheme.ignoredChildClassName})`]: {
-                marginTop: theme.spacing(3)
-            },
 
             '&::-webkit-scrollbar': {
                 display: 'none'
@@ -58,10 +51,10 @@ const useStyles = makeStyles()(theme => {
 
         header: {
             alignItems: 'center',
-            boxSizing: 'border-box' as const,
+            boxSizing: 'border-box',
             display: 'flex',
-            height: `${participantsPaneTheme.headerSize}px`,
-            padding: '0 20px',
+            height: '60px',
+            padding: `0 ${participantsPaneTheme.panePadding}px`,
             justifyContent: 'flex-end'
         },
 
@@ -88,7 +81,7 @@ const useStyles = makeStyles()(theme => {
         },
 
         footerMoreContainer: {
-            position: 'relative' as const
+            position: 'relative'
         }
     };
 });
