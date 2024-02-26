@@ -3,11 +3,13 @@ import { WithTranslation } from 'react-i18next';
 
 import { createRecordingDialogEvent } from '../../../analytics/AnalyticsEvents';
 import { sendAnalytics } from '../../../analytics/functions';
-import { IReduxState } from '../../../app/types';
+import { IReduxState, IStore } from '../../../app/types';
 import ColorSchemeRegistry from '../../../base/color-scheme/ColorSchemeRegistry';
 import { _abstractMapStateToProps } from '../../../base/dialog/functions';
+import { isLocalParticipantModerator } from '../../../base/participants/functions';
 import { authorizeDropbox, updateDropboxToken } from '../../../dropbox/actions';
 import { isVpaasMeeting } from '../../../jaas/functions';
+import { canAddTranscriber } from '../../../transcribing/functions';
 import { RECORDING_TYPES } from '../../constants';
 import { supportsLocalRecording } from '../../functions';
 
@@ -18,6 +20,11 @@ import { supportsLocalRecording } from '../../functions';
 export interface IProps extends WithTranslation {
 
     /**
+     * Whether the local participant can start transcribing.
+     */
+    _canStartTranscribing: boolean;
+
+    /**
      * Style of the dialogs feature.
      */
     _dialogStyles: any;
@@ -26,6 +33,11 @@ export interface IProps extends WithTranslation {
      * Whether to hide the storage warning or not.
      */
     _hideStorageWarning: boolean;
+
+    /**
+     * Whether local participant is moderator.
+     */
+    _isModerator: boolean;
 
     /**
      * Whether local recording is available or not.
@@ -55,7 +67,7 @@ export interface IProps extends WithTranslation {
     /**
      * The redux dispatch function.
      */
-    dispatch: Function;
+    dispatch: IStore['dispatch'];
 
     /**
      * Whether to show file recordings service, even if integrations
@@ -106,9 +118,19 @@ export interface IProps extends WithTranslation {
     onLocalRecordingSelfChange?: () => void;
 
     /**
+     * Callback to change the audio and video recording setting.
+     */
+    onRecordAudioAndVideoChange: Function;
+
+    /**
      * Callback to be invoked on sharing setting change.
      */
     onSharingSettingChanged: () => void;
+
+    /**
+     * Callback to change the transcription recording setting.
+     */
+    onTranscriptionChange: Function;
 
     /**
      * The currently selected recording service of type: RECORDING_TYPES.
@@ -121,6 +143,16 @@ export interface IProps extends WithTranslation {
     sharingSetting: boolean;
 
     /**
+     * Whether to show the audio and video related content.
+     */
+    shouldRecordAudioAndVideo: boolean;
+
+    /**
+     * Whether to show the transcription related content.
+     */
+    shouldRecordTranscription: boolean;
+
+    /**
      * Number of MiB of available space in user's Dropbox account.
      */
     spaceLeft?: number;
@@ -131,18 +163,26 @@ export interface IProps extends WithTranslation {
     userName?: string;
 }
 
+export interface IState {
+
+    /**
+     * Whether to show the advanced options or not.
+     */
+    showAdvancedOptions: boolean;
+}
+
 /**
- * React Component for getting confirmation to start a file recording session.
+ * React Component for getting confirmation to start a recording session.
  *
  * @augments Component
  */
-class AbstractStartRecordingDialogContent<P extends IProps> extends Component<P> {
+class AbstractStartRecordingDialogContent extends Component<IProps, IState> {
     /**
      * Initializes a new {@code AbstractStartRecordingDialogContent} instance.
      *
      * @inheritdoc
      */
-    constructor(props: P) {
+    constructor(props: IProps) {
         super(props);
 
         // Bind event handler; it bounds once for every instance.
@@ -151,6 +191,13 @@ class AbstractStartRecordingDialogContent<P extends IProps> extends Component<P>
         this._onDropboxSwitchChange = this._onDropboxSwitchChange.bind(this);
         this._onRecordingServiceSwitchChange = this._onRecordingServiceSwitchChange.bind(this);
         this._onLocalRecordingSwitchChange = this._onLocalRecordingSwitchChange.bind(this);
+        this._onTranscriptionSwitchChange = this._onTranscriptionSwitchChange.bind(this);
+        this._onRecordAudioAndVideoSwitchChange = this._onRecordAudioAndVideoSwitchChange.bind(this);
+        this._onToggleShowOptions = this._onToggleShowOptions.bind(this);
+
+        this.state = {
+            showAdvancedOptions: true
+        };
     }
 
     /**
@@ -171,12 +218,21 @@ class AbstractStartRecordingDialogContent<P extends IProps> extends Component<P>
      *
      * @inheritdoc
      */
-    componentDidUpdate(prevProps: P) {
+    componentDidUpdate(prevProps: IProps) {
         // Auto sign-out when the use chooses another recording service.
         if (prevProps.selectedRecordingService === RECORDING_TYPES.DROPBOX
                 && this.props.selectedRecordingService !== RECORDING_TYPES.DROPBOX && this.props.isTokenValid) {
             this._onSignOut();
         }
+    }
+
+    /**
+     * Returns whether the advanced options should be rendered.
+     *
+     * @returns {boolean}
+     */
+    _onToggleShowOptions() {
+        this.setState({ showAdvancedOptions: !this.state.showAdvancedOptions });
     }
 
     /**
@@ -200,6 +256,15 @@ class AbstractStartRecordingDialogContent<P extends IProps> extends Component<P>
         }
 
         return true;
+    }
+
+    /**
+     * Whether the save transcription content should be rendered or not.
+     *
+     * @returns {boolean}
+     */
+    _canStartTranscribing() {
+        return this.props._canStartTranscribing;
     }
 
     /**
@@ -228,6 +293,26 @@ class AbstractStartRecordingDialogContent<P extends IProps> extends Component<P>
         }
 
         return true;
+    }
+
+    /**
+     * Handler for transcription switch change.
+     *
+     * @param {boolean} value - The new value.
+     * @returns {void}
+     */
+    _onTranscriptionSwitchChange(value: boolean | undefined) {
+        this.props.onTranscriptionChange(value);
+    }
+
+    /**
+     * Handler for audio and video switch change.
+     *
+     * @param {boolean} value - The new value.
+     * @returns {void}
+     */
+    _onRecordAudioAndVideoSwitchChange(value: boolean | undefined) {
+        this.props.onRecordAudioAndVideoChange(value);
     }
 
     /**
@@ -333,7 +418,9 @@ export function mapStateToProps(state: IReduxState) {
     return {
         ..._abstractMapStateToProps(state),
         isVpaas: isVpaasMeeting(state),
+        _canStartTranscribing: canAddTranscriber(state),
         _hideStorageWarning: Boolean(recordingService?.hideStorageWarning),
+        _isModerator: isLocalParticipantModerator(state),
         _localRecordingAvailable,
         _localRecordingEnabled: !localRecording?.disable,
         _localRecordingSelfEnabled: !localRecording?.disableSelfRecording,

@@ -69,7 +69,7 @@ interface IProps {
     /**
      * Object containing the safe area insets.
      */
-    insets: Object;
+    insets?: Object;
 }
 
 /**
@@ -280,6 +280,8 @@ class Filmstrip extends PureComponent<IProps> {
                 <FlatList
                     bounces = { false }
                     data = { participants }
+
+                    /* @ts-ignore */
                     getItemLayout = { this._getItemLayout }
                     horizontal = { isNarrowAspectRatio }
                     initialNumToRender = { initialNumToRender }

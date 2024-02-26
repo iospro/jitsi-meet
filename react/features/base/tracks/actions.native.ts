@@ -1,6 +1,6 @@
+import { NativeModules, Platform } from 'react-native';
+
 import { IReduxState, IStore } from '../../app/types';
-// eslint-disable-next-line lines-around-comment
-// @ts-ignore
 import { setPictureInPictureEnabled } from '../../mobile/picture-in-picture/functions';
 import { showNotification } from '../../notifications/actions';
 import { NOTIFICATION_TIMEOUT_TYPE } from '../../notifications/constants';
@@ -13,6 +13,8 @@ import { VIDEO_MUTISM_AUTHORITY } from '../media/constants';
 
 import { addLocalTrack, replaceLocalTrack } from './actions.any';
 import { getLocalDesktopTrack, getTrackState, isLocalVideoTrackDesktop } from './functions.native';
+
+const { JitsiMeetMediaProjectionModule } = NativeModules;
 
 export * from './actions.any';
 
@@ -31,7 +33,10 @@ export function toggleScreensharing(enabled: boolean, _ignore1?: boolean, _ignor
         if (enabled) {
             const isSharing = isLocalVideoTrackDesktop(state);
 
-            if (!isSharing) {
+            if (isSharing) {
+                Platform.OS === 'android' && JitsiMeetMediaProjectionModule.abort();
+            } else {
+                Platform.OS === 'android' && JitsiMeetMediaProjectionModule.launch();
                 _startScreenSharing(dispatch, state);
             }
         } else {
@@ -50,7 +55,7 @@ export function toggleScreensharing(enabled: boolean, _ignore1?: boolean, _ignor
  * @param {Object} state - The redux state.
  * @returns {void}
  */
-async function _startScreenSharing(dispatch: Function, state: IReduxState) {
+async function _startScreenSharing(dispatch: IStore['dispatch'], state: IReduxState) {
     setPictureInPictureEnabled(false);
 
     try {
@@ -79,7 +84,7 @@ async function _startScreenSharing(dispatch: Function, state: IReduxState) {
             }, NOTIFICATION_TIMEOUT_TYPE.LONG));
         }
     } catch (error: any) {
-        console.log('ERROR creating ScreeSharing stream ', error);
+        console.log('ERROR creating screen-sharing stream ', error);
 
         setPictureInPictureEnabled(true);
     }

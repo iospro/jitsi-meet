@@ -16,8 +16,9 @@ import { normalizeAccents } from '../../../base/util/strings.web';
 import { getBreakoutRooms, getCurrentRoomId, isInBreakoutRoom } from '../../../breakout-rooms/functions';
 import { showOverflowDrawer } from '../../../toolbox/functions.web';
 import { muteRemote } from '../../../video-menu/actions.web';
-import { getSortedParticipantIds, shouldRenderInviteButton } from '../../functions';
+import { getSortedParticipantIds, isCurrentRoomRenamable, shouldRenderInviteButton } from '../../functions';
 import { useParticipantDrawer } from '../../hooks';
+import RenameButton from '../breakout-rooms/components/web/RenameButton';
 
 import { InviteButton } from './InviteButton';
 import MeetingParticipantContextMenu from './MeetingParticipantContextMenu';
@@ -50,7 +51,10 @@ const useStyles = makeStyles()(theme => {
 });
 
 interface IProps {
-    currentRoom?: { name: string; };
+    currentRoom?: {
+        jid: string;
+        name: string;
+    };
     overflowDrawer?: boolean;
     participantsCount?: number;
     searchString: string;
@@ -101,9 +105,9 @@ function MeetingParticipants({
     const participantActionEllipsisLabel = t('participantsPane.actions.moreParticipantOptions');
     const youText = t('chat.you');
     const isBreakoutRoom = useSelector(isInBreakoutRoom);
-    const visitorsCount = useSelector((state: IReduxState) => state['features/visitors'].count || 0);
+    const _isCurrentRoomRenamable = useSelector(isCurrentRoomRenamable);
 
-    const { classes: styles, cx } = useStyles();
+    const { classes: styles } = useStyles();
 
     return (
         <>
@@ -113,20 +117,21 @@ function MeetingParticipants({
                 role = 'heading'>
                 { t('participantsPane.title') }
             </span>
-            {visitorsCount > 0 && (
-                <div className = { cx(styles.heading, styles.headingW) }>
-                    {t('participantsPane.headings.visitors', { count: visitorsCount })}
-                </div>
-            )}
             <div className = { styles.heading }>
                 {currentRoom?.name
                     ? `${currentRoom.name} (${participantsCount})`
                     : t('participantsPane.headings.participantsList', { count: participantsCount })}
+                { currentRoom?.name && _isCurrentRoomRenamable
+                    && <RenameButton
+                        breakoutRoomJid = { currentRoom?.jid }
+                        name = { currentRoom?.name } /> }
             </div>
             {showInviteButton && <InviteButton />}
             <Input
+                accessibilityLabel = { t('participantsPane.search') }
                 className = { styles.search }
                 clearable = { true }
+                id = 'participants-search-input'
                 onChange = { setSearchString }
                 placeholder = { t('participantsPane.search') }
                 value = { searchString } />

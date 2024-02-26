@@ -25,6 +25,11 @@ interface IProps {
     footer?: any;
 
     /**
+     * Id for the included input, necessary for screen readers.
+     */
+    id: string;
+
+    /**
      * Indicates if the component is disabled.
      */
     isDisabled: boolean;
@@ -163,7 +168,7 @@ class MultiSelectAutocomplete extends Component<IProps, IState> {
         const autoFocus = this.props.shouldFocus || false;
         const disabled = this.props.isDisabled || false;
         const placeholder = this.props.placeholder || '';
-        const noMatchesFound = this.props.noMatchesFound || '';
+        const noMatchesFound = this.state.loading ? this.props.loadingMessage : this.props.noMatchesFound || '';
         const errorDialog = this._renderError();
 
         return (
@@ -174,6 +179,7 @@ class MultiSelectAutocomplete extends Component<IProps, IState> {
                     error = { this.state.error }
                     errorDialog = { errorDialog }
                     filterValue = { this.state.filterValue }
+                    id = { this.props.id }
                     isOpen = { this.state.isOpen }
                     items = { this.state.items }
                     noMatchesText = { noMatchesFound }
@@ -200,7 +206,7 @@ class MultiSelectAutocomplete extends Component<IProps, IState> {
             error: this.state.error && Boolean(filterValue),
             filterValue,
             isOpen: Boolean(this.state.items.length) && Boolean(filterValue),
-            items: filterValue ? this.state.items : [],
+            items: [],
             loading: Boolean(filterValue)
         });
         if (filterValue) {

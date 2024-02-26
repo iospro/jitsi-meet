@@ -5,7 +5,6 @@ import { showErrorNotification, showNotification } from '../../notifications/act
 import { NOTIFICATION_TIMEOUT, NOTIFICATION_TIMEOUT_TYPE } from '../../notifications/constants';
 import { getCurrentConference } from '../conference/functions';
 import { IJitsiConference } from '../conference/reducer';
-import { getMultipleVideoSendingSupportFeatureFlag } from '../config/functions.any';
 import { JitsiTrackErrors, JitsiTrackEvents } from '../lib-jitsi-meet';
 import { createLocalTrack } from '../lib-jitsi-meet/functions.any';
 import { setAudioMuted, setScreenshareMuted, setVideoMuted } from '../media/actions';
@@ -35,6 +34,7 @@ import {
 } from './actionTypes';
 import {
     createLocalTracksF,
+    getCameraFacingMode,
     getLocalTrack,
     getLocalTracks,
     getLocalVideoTrack,
@@ -58,8 +58,7 @@ export function addLocalTrack(newTrack: any) {
         }
 
         const setMuted = newTrack.isVideoTrack()
-            ? getMultipleVideoSendingSupportFeatureFlag(getState())
-            && newTrack.getVideoType() === VIDEO_TYPE.DESKTOP
+            ? newTrack.getVideoType() === VIDEO_TYPE.DESKTOP
                 ? setScreenshareMuted
                 : setVideoMuted
             : setAudioMuted;
@@ -139,9 +138,11 @@ export function createLocalTracksA(options: ITrackOptions = {}) {
             dispatch,
             getState
         };
+        const promises = [];
+        const state = getState();
 
         // The following executes on React Native only at the time of this
-        // writing. The effort to port Web's createInitialLocalTracksAndConnect
+        // writing. The effort to port Web's createInitialLocalTracks
         // is significant and that's where the function createLocalTracksF got
         // born. I started with the idea a porting so that we could inherit the
         // ability to getUserMedia for audio only or video only if getUserMedia
@@ -152,7 +153,7 @@ export function createLocalTracksA(options: ITrackOptions = {}) {
         // device separately.
         for (const device of devices) {
             if (getLocalTrack(
-                    getState()['features/base/tracks'],
+                state['features/base/tracks'],
                     device as MediaType,
                     /* includePending */ true)) {
                 throw new Error(`Local track for ${device} already exists`);
@@ -164,7 +165,7 @@ export function createLocalTracksA(options: ITrackOptions = {}) {
                         cameraDeviceId: options.cameraDeviceId,
                         devices: [ device ],
                         facingMode:
-                            options.facingMode || CAMERA_FACING_MODE.USER,
+                            options.facingMode || getCameraFacingMode(state),
                         micDeviceId: options.micDeviceId
                     },
                     store)
@@ -196,6 +197,8 @@ export function createLocalTracksA(options: ITrackOptions = {}) {
                                     reason,
                                     device)));
 
+            promises.push(gumProcess.catch(() => undefined));
+
             /**
              * Cancels the {@code getUserMedia} process represented by this
              * {@code Promise}.
@@ -217,6 +220,8 @@ export function createLocalTracksA(options: ITrackOptions = {}) {
                 }
             });
         }
+
+        return Promise.all(promises);
     };
 }
 
@@ -330,7 +335,7 @@ export function replaceLocalTrack(oldTrack: any, newTrack: any, conference?: IJi
  * @returns {Function}
  */
 function replaceStoredTracks(oldTrack: any, newTrack: any) {
-    return async (dispatch: IStore['dispatch'], getState: IStore['getState']) => {
+    return async (dispatch: IStore['dispatch']) => {
         // We call dispose after doing the replace because dispose will
         // try and do a new o/a after the track removes itself. Doing it
         // after means the JitsiLocalTrack.conference is already
@@ -346,8 +351,7 @@ function replaceStoredTracks(oldTrack: any, newTrack: any) {
             // state. If this is not done, the current mute state of the app will be reflected on the track,
             // not vice-versa.
             const setMuted = newTrack.isVideoTrack()
-                ? getMultipleVideoSendingSupportFeatureFlag(getState())
-                    && newTrack.getVideoType() === VIDEO_TYPE.DESKTOP
+                ? newTrack.getVideoType() === VIDEO_TYPE.DESKTOP
                     ? setScreenshareMuted
                     : setVideoMuted
                 : setAudioMuted;
@@ -381,8 +385,7 @@ export function trackAdded(track: any) {
             JitsiTrackEvents.TRACK_OWNER_CHANGED,
             (owner: string) => dispatch(trackOwnerChanged(track, owner)));
         const local = track.isLocal();
-        const isVirtualScreenshareParticipantCreated = !local || getMultipleVideoSendingSupportFeatureFlag(getState());
-        const mediaType = track.getVideoType() === VIDEO_TYPE.DESKTOP && isVirtualScreenshareParticipantCreated
+        const mediaType = track.getVideoType() === VIDEO_TYPE.DESKTOP
             ? MEDIA_TYPE.SCREENSHARE
             : track.getType();
         let isReceivingData, noDataFromSourceNotificationInfo, participantId;

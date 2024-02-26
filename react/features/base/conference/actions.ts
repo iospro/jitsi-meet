@@ -1,11 +1,11 @@
 import { createStartMutedConfigurationEvent } from '../../analytics/AnalyticsEvents';
 import { sendAnalytics } from '../../analytics/functions';
-import { appNavigate } from '../../app/actions';
 import { IReduxState, IStore } from '../../app/types';
-import { endpointMessageReceived } from '../../subtitles/actions.any';
+import { setIAmVisitor } from '../../visitors/actions';
 import { iAmVisitor } from '../../visitors/functions';
+import { overwriteConfig } from '../config/actions';
 import { getReplaceParticipant } from '../config/functions';
-import { disconnect } from '../connection/actions';
+import { connect, disconnect, hangup } from '../connection/actions';
 import { JITSI_CONNECTION_CONFERENCE_KEY } from '../connection/constants';
 import { JitsiConferenceEvents, JitsiE2ePingEvents } from '../lib-jitsi-meet';
 import { setAudioMuted, setAudioUnmutePermissions, setVideoMuted, setVideoUnmutePermissions } from '../media/actions';
@@ -41,16 +41,19 @@ import {
     CONFERENCE_SUBJECT_CHANGED,
     CONFERENCE_TIMESTAMP_CHANGED,
     CONFERENCE_UNIQUE_ID_SET,
+    CONFERENCE_WILL_INIT,
     CONFERENCE_WILL_JOIN,
     CONFERENCE_WILL_LEAVE,
     DATA_CHANNEL_CLOSED,
     DATA_CHANNEL_OPENED,
     E2E_RTT_CHANGED,
+    ENDPOINT_MESSAGE_RECEIVED,
     KICKED_OUT,
     LOCK_STATE_CHANGED,
     NON_PARTICIPANT_MESSAGE_RECEIVED,
     P2P_STATUS_CHANGED,
     SEND_TONES,
+    SET_ASSUMED_BANDWIDTH_BPS,
     SET_FOLLOW_ME,
     SET_OBFUSCATED_ROOM,
     SET_PASSWORD,
@@ -58,7 +61,8 @@ import {
     SET_PENDING_SUBJECT_CHANGE,
     SET_ROOM,
     SET_START_MUTED_POLICY,
-    SET_START_REACTIONS_MUTED
+    SET_START_REACTIONS_MUTED,
+    UPDATE_CONFERENCE_METADATA
 } from './actionTypes';
 import {
     AVATAR_URL_COMMAND,
@@ -72,10 +76,11 @@ import {
     getConferenceOptions,
     getConferenceState,
     getCurrentConference,
+    getVisitorOptions,
     sendLocalParticipant
 } from './functions';
 import logger from './logger';
-import { IJitsiConference } from './reducer';
+import { IConferenceMetadata, IJitsiConference } from './reducer';
 
 /**
  * Adds conference (event) listeners.
@@ -94,38 +99,41 @@ function _addConferenceListeners(conference: IJitsiConference, dispatch: IStore[
 
     // Dispatches into features/base/conference follow:
 
+    // we want to ignore this event in case of tokenAuthUrl config
+    // we are deprecating this and at some point will get rid of it
+    if (!state['features/base/config'].tokenAuthUrl) {
+        conference.on(
+            JitsiConferenceEvents.AUTH_STATUS_CHANGED,
+            (authEnabled: boolean, authLogin: string) => dispatch(authStatusChanged(authEnabled, authLogin)));
+    }
+
     conference.on(
-        JitsiConferenceEvents.AUTH_STATUS_CHANGED,
-        (authEnabled: boolean, authLogin: string) => dispatch(authStatusChanged(authEnabled, authLogin)));
+        JitsiConferenceEvents.CONFERENCE_FAILED,
+        (err: string, ...args: any[]) => dispatch(conferenceFailed(conference, err, ...args)));
     conference.on(
-        JitsiConferenceEvents.CONFERENCE_FAILED, // @ts-ignore
-        (...args: any[]) => dispatch(conferenceFailed(conference, ...args)));
+        JitsiConferenceEvents.CONFERENCE_JOINED,
+        (..._args: any[]) => dispatch(conferenceJoined(conference)));
     conference.on(
-        JitsiConferenceEvents.CONFERENCE_JOINED, // @ts-ignore
-        (...args: any[]) => dispatch(conferenceJoined(conference, ...args)));
+        JitsiConferenceEvents.CONFERENCE_UNIQUE_ID_SET,
+        (..._args: any[]) => dispatch(conferenceUniqueIdSet(conference)));
     conference.on(
-        JitsiConferenceEvents.CONFERENCE_UNIQUE_ID_SET, // @ts-ignore
-        (...args: any[]) => dispatch(conferenceUniqueIdSet(conference, ...args)));
-    conference.on(
-        JitsiConferenceEvents.CONFERENCE_JOIN_IN_PROGRESS, // @ts-ignore
-        (...args: any[]) => dispatch(conferenceJoinInProgress(conference, ...args)));
+        JitsiConferenceEvents.CONFERENCE_JOIN_IN_PROGRESS,
+        (..._args: any[]) => dispatch(conferenceJoinInProgress(conference)));
     conference.on(
         JitsiConferenceEvents.CONFERENCE_LEFT,
-        (...args: any[]) => {
+        (..._args: any[]) => {
             dispatch(conferenceTimestampChanged(0));
-
-            // @ts-ignore
-            dispatch(conferenceLeft(conference, ...args));
+            dispatch(conferenceLeft(conference));
         });
-    conference.on(JitsiConferenceEvents.SUBJECT_CHANGED, // @ts-ignore
-        (...args: any[]) => dispatch(conferenceSubjectChanged(...args)));
+    conference.on(JitsiConferenceEvents.SUBJECT_CHANGED,
+        (subject: string) => dispatch(conferenceSubjectChanged(subject)));
 
-    conference.on(JitsiConferenceEvents.CONFERENCE_CREATED_TIMESTAMP, // @ts-ignore
-        (...args: any[]) => dispatch(conferenceTimestampChanged(...args)));
+    conference.on(JitsiConferenceEvents.CONFERENCE_CREATED_TIMESTAMP,
+        (timestamp: number) => dispatch(conferenceTimestampChanged(timestamp)));
 
     conference.on(
-        JitsiConferenceEvents.KICKED, // @ts-ignore
-        (...args: any[]) => dispatch(kickedOut(conference, ...args)));
+        JitsiConferenceEvents.KICKED,
+        (participant: any) => dispatch(kickedOut(conference, participant)));
 
     conference.on(
         JitsiConferenceEvents.PARTICIPANT_KICKED,
@@ -136,8 +144,8 @@ function _addConferenceListeners(conference: IJitsiConference, dispatch: IStore[
         (jitsiParticipant: IJitsiParticipant) => dispatch(participantSourcesUpdated(jitsiParticipant)));
 
     conference.on(
-        JitsiConferenceEvents.LOCK_STATE_CHANGED, // @ts-ignore
-        (...args: any[]) => dispatch(lockStateChanged(conference, ...args)));
+        JitsiConferenceEvents.LOCK_STATE_CHANGED,
+        (locked: boolean) => dispatch(lockStateChanged(conference, locked)));
 
     // Dispatches into features/base/media follow:
 
@@ -220,12 +228,12 @@ function _addConferenceListeners(conference: IJitsiConference, dispatch: IStore[
         });
 
     conference.on(
-        JitsiConferenceEvents.ENDPOINT_MESSAGE_RECEIVED, // @ts-ignore
-        (...args: any[]) => dispatch(endpointMessageReceived(...args)));
+        JitsiConferenceEvents.ENDPOINT_MESSAGE_RECEIVED,
+        (participant: Object, json: Object) => dispatch(endpointMessageReceived(participant, json)));
 
     conference.on(
-        JitsiConferenceEvents.NON_PARTICIPANT_MESSAGE_RECEIVED, // @ts-ignore
-        (...args: any[]) => dispatch(nonParticipantMessageReceived(...args)));
+        JitsiConferenceEvents.NON_PARTICIPANT_MESSAGE_RECEIVED,
+        (id: string, json: Object) => dispatch(nonParticipantMessageReceived(id, json)));
 
     conference.on(
         JitsiConferenceEvents.USER_JOINED,
@@ -234,15 +242,15 @@ function _addConferenceListeners(conference: IJitsiConference, dispatch: IStore[
         JitsiConferenceEvents.USER_LEFT,
         (_id: string, user: any) => commonUserLeftHandling({ dispatch }, conference, user));
     conference.on(
-        JitsiConferenceEvents.USER_ROLE_CHANGED, // @ts-ignore
-        (...args: any[]) => dispatch(participantRoleChanged(...args)));
+        JitsiConferenceEvents.USER_ROLE_CHANGED,
+        (id: string, role: string) => dispatch(participantRoleChanged(id, role)));
     conference.on(
-        JitsiConferenceEvents.USER_STATUS_CHANGED, // @ts-ignore
-        (...args: any[]) => dispatch(participantPresenceChanged(...args)));
+        JitsiConferenceEvents.USER_STATUS_CHANGED,
+        (id: string, presence: string) => dispatch(participantPresenceChanged(id, presence)));
 
     conference.on(
-        JitsiE2ePingEvents.E2E_RTT_CHANGED, // @ts-ignore
-        (...args: any[]) => dispatch(e2eRttChanged(...args)));
+        JitsiE2ePingEvents.E2E_RTT_CHANGED,
+        (participant: Object, rtt: number) => dispatch(e2eRttChanged(participant, rtt)));
 
     conference.on(
         JitsiConferenceEvents.BOT_TYPE_CHANGED,
@@ -268,6 +276,21 @@ function _addConferenceListeners(conference: IJitsiConference, dispatch: IStore[
         })));
 }
 
+/**
+ * Action for updating the conference metadata.
+ *
+ * @param {IConferenceMetadata} metadata - The metadata object.
+ * @returns {{
+ *    type: UPDATE_CONFERENCE_METADATA,
+ *    metadata: IConferenceMetadata
+ * }}
+ */
+export function updateConferenceMetadata(metadata: IConferenceMetadata | null) {
+    return {
+        type: UPDATE_CONFERENCE_METADATA,
+        metadata
+    };
+}
 
 /**
  * Create an action for when the end-to-end RTT against a specific remote participant has changed.
@@ -465,6 +488,19 @@ export function _conferenceWillJoin(conference: IJitsiConference) {
 }
 
 /**
+ * Signals the intention of the application to have a conference initialized.
+ *
+ * @returns {{
+ *     type: CONFERENCE_WILL_INIT
+ * }}
+ */
+export function conferenceWillInit() {
+    return {
+        type: CONFERENCE_WILL_INIT
+    };
+}
+
+/**
  * Signals the intention of the application to have the local participant
  * join the specified conference.
  *
@@ -490,15 +526,18 @@ export function conferenceWillJoin(conference?: IJitsiConference) {
  *
  * @param {JitsiConference} conference - The JitsiConference instance which will
  * be left by the local participant.
+ * @param {boolean} isRedirect - Indicates if the action has been dispatched as part of visitor promotion.
  * @returns {{
  *     type: CONFERENCE_LEFT,
- *     conference: JitsiConference
+ *     conference: JitsiConference,
+ *     isRedirect: boolean
  * }}
  */
-export function conferenceWillLeave(conference?: IJitsiConference) {
+export function conferenceWillLeave(conference?: IJitsiConference, isRedirect?: boolean) {
     return {
         type: CONFERENCE_WILL_LEAVE,
-        conference
+        conference,
+        isRedirect
     };
 }
 
@@ -608,6 +647,25 @@ export function dataChannelClosed(code: number, reason: string) {
 }
 
 /**
+ * Signals that a participant sent an endpoint message on the data channel.
+ *
+ * @param {Object} participant - The participant details sending the message.
+ * @param {Object} data - The data carried by the endpoint message.
+ * @returns {{
+*      type: ENDPOINT_MESSAGE_RECEIVED,
+*      participant: Object,
+*      data: Object
+* }}
+*/
+export function endpointMessageReceived(participant: Object, data: Object) {
+    return {
+        type: ENDPOINT_MESSAGE_RECEIVED,
+        participant,
+        data
+    };
+}
+
+/**
  * Action to end a conference for all participants.
  *
  * @returns {Function}
@@ -633,7 +691,7 @@ export function endConference() {
  *     participant: JitsiParticipant
  * }}
  */
-export function kickedOut(conference: Object, participant: Object) {
+export function kickedOut(conference: IJitsiConference, participant: Object) {
     return {
         type: KICKED_OUT,
         conference,
@@ -648,17 +706,8 @@ export function kickedOut(conference: Object, participant: Object) {
  * @returns {Function}
  */
 export function leaveConference() {
-    return async (dispatch: IStore['dispatch']) => {
-
-        // FIXME: these should be unified.
-        if (navigator.product === 'ReactNative') {
-            dispatch(appNavigate(undefined));
-        } else {
-            dispatch(disconnect(true));
-        }
-    };
+    return async (dispatch: IStore['dispatch']) => dispatch(hangup(true));
 }
-
 
 /**
  * Signals that the lock state of a specific JitsiConference changed.
@@ -673,7 +722,7 @@ export function leaveConference() {
  *     locked: boolean
  * }}
  */
-export function lockStateChanged(conference: Object, locked: boolean) {
+export function lockStateChanged(conference: IJitsiConference, locked: boolean) {
     return {
         type: LOCK_STATE_CHANGED,
         conference,
@@ -692,7 +741,7 @@ export function lockStateChanged(conference: Object, locked: boolean) {
  *      json: Object
  * }}
  */
-export function nonParticipantMessageReceived(id: String, json: Object) {
+export function nonParticipantMessageReceived(id: string, json: Object) {
     return {
         type: NON_PARTICIPANT_MESSAGE_RECEIVED,
         id,
@@ -956,5 +1005,57 @@ export function setLocalSubject(localSubject: string) {
     return {
         type: CONFERENCE_LOCAL_SUBJECT_CHANGED,
         localSubject
+    };
+}
+
+
+/**
+ * Sets the assumed bandwidth bps.
+ *
+ * @param {number} assumedBandwidthBps - The new assumed bandwidth.
+ * @returns {{
+*     type: SET_ASSUMED_BANDWIDTH_BPS,
+*     assumedBandwidthBps: number
+* }}
+*/
+export function setAssumedBandwidthBps(assumedBandwidthBps: number) {
+    return {
+        type: SET_ASSUMED_BANDWIDTH_BPS,
+        assumedBandwidthBps
+    };
+}
+
+/**
+ * Redirects to a new visitor node.
+ *
+ * @param {string | undefined} vnode - The vnode to use or undefined if moving back to the main room.
+ * @param {string} focusJid - The focus jid to use.
+ * @param {string} username - The username to use.
+ * @returns {void}
+ */
+export function redirect(vnode: string, focusJid: string, username: string) {
+    return (dispatch: IStore['dispatch'], getState: IStore['getState']) => {
+        const newConfig = getVisitorOptions(getState, vnode, focusJid, username);
+
+        if (!newConfig) {
+            logger.warn('Not redirected missing params');
+
+            return;
+        }
+
+        dispatch(overwriteConfig(newConfig)) // @ts-ignore
+            .then(() => dispatch(disconnect(true)))
+            .then(() => dispatch(setIAmVisitor(Boolean(vnode))))
+
+            // we do not clear local tracks on error, so we need to manually clear them
+            .then(() => dispatch(destroyLocalTracks()))
+            .then(() => dispatch(conferenceWillInit()))
+            .then(() => dispatch(connect()))
+            .then(() => {
+                // FIXME: Workaround for the web version. To be removed once we get rid of conference.js
+                if (typeof APP !== 'undefined') {
+                    APP.conference.startConference([]);
+                }
+            });
     };
 }

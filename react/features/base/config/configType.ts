@@ -1,4 +1,4 @@
-type ToolbarButtons = 'camera' |
+export type ToolbarButton = 'camera' |
     'chat' |
     'closedcaptions' |
     'desktop' |
@@ -15,9 +15,13 @@ type ToolbarButtons = 'camera' |
     'linktosalesforce' |
     'livestreaming' |
     'microphone' |
+    'mute-everyone' |
+    'mute-video-everyone' |
+    'noisesuppression' |
     'participants-pane' |
     'profile' |
     'raisehand' |
+    'reactions' |
     'recording' |
     'security' |
     'select-background' |
@@ -29,6 +33,7 @@ type ToolbarButtons = 'camera' |
     'tileview' |
     'toggle-camera' |
     'videoquality' |
+    'whiteboard' |
     '__end';
 
 type ButtonsWithNotifyClick = 'camera' |
@@ -67,6 +72,33 @@ type ButtonsWithNotifyClick = 'camera' |
     'add-passcode' |
     '__end';
 
+type ParticipantMenuButtonsWithNotifyClick = 'allow-video' |
+    'ask-unmute' |
+    'conn-status' |
+    'flip-local-video' |
+    'grant-moderator' |
+    'hide-self-view' |
+    'kick' |
+    'mute' |
+    'mute-others' |
+    'mute-others-video' |
+    'mute-video' |
+    'pinToStage' |
+    'privateMessage' |
+    'remote-control' |
+    'send-participant-to-room' |
+    'verify';
+
+type NotifyClickButtonKey = string |
+    ButtonsWithNotifyClick |
+    ParticipantMenuButtonsWithNotifyClick;
+
+export type NotifyClickButton = NotifyClickButtonKey |
+    {
+        key: NotifyClickButtonKey;
+        preventExecution: boolean;
+    };
+
 export type Sounds = 'ASKED_TO_UNMUTE_SOUND' |
     'E2EE_OFF_SOUND' |
     'E2EE_ON_SOUND' |
@@ -99,19 +131,30 @@ export interface IMobileDynamicLink {
 
 export interface IDeeplinkingPlatformConfig {
     appName: string;
+    appScheme: string;
 }
 
 export interface IDeeplinkingMobileConfig extends IDeeplinkingPlatformConfig {
     appPackage?: string;
-    appScheme: string;
     downloadLink: string;
     dynamicLink?: IMobileDynamicLink;
     fDroidUrl?: string;
 }
 
+export interface IDesktopDownloadConfig {
+    linux?: string;
+    macos?: string;
+    windows?: string;
+}
+
+export interface IDeeplinkingDesktopConfig extends IDeeplinkingPlatformConfig {
+    download?: IDesktopDownloadConfig;
+    enabled: boolean;
+}
+
 export interface IDeeplinkingConfig {
     android?: IDeeplinkingMobileConfig;
-    desktop?: IDeeplinkingPlatformConfig;
+    desktop?: IDeeplinkingDesktopConfig;
     disabled?: boolean;
     hideLogo?: boolean;
     ios?: IDeeplinkingMobileConfig;
@@ -125,12 +168,39 @@ export interface INoiseSuppressionConfig {
     };
 }
 
+export interface IWhiteboardConfig {
+    collabServerBaseUrl?: string;
+    enabled?: boolean;
+    limitUrl?: string;
+    userLimit?: number;
+}
+
+export interface IWatchRTCConfiguration {
+    allowBrowserLogCollection?: boolean;
+    collectionInterval?: number;
+    console?: {
+        level: string;
+        override: boolean;
+    };
+    debug?: boolean;
+    keys?: any;
+    logGetStats?: boolean;
+    proxyUrl?: string;
+    rtcApiKey: string;
+    rtcPeerId?: string;
+    rtcRoomId?: string;
+    rtcTags?: string[];
+    rtcToken?: string;
+    wsUrl?: string;
+}
+
 export interface IConfig {
     _desktopSharingSourceDevice?: string;
     _immediateReloadThreshold?: string;
     _screenshotHistoryRegionUrl?: number;
     analytics?: {
         amplitudeAPPKey?: string;
+        amplitudeIncludeUTM?: boolean;
         blackListedEvents?: string[];
         disabled?: boolean;
         googleAnalyticsTrackingId?: string;
@@ -141,8 +211,10 @@ export interface IConfig {
         rtcstatsEndpoint?: string;
         rtcstatsPollInterval?: number;
         rtcstatsSendSdp?: boolean;
+        rtcstatsStoreLogs?: boolean;
         rtcstatsUseLegacy?: boolean;
         scriptURLs?: Array<string>;
+        watchRTCEnabled?: boolean;
         whiteListedEvents?: string[];
     };
     apiLogLevels?: Array<'warn' | 'log' | 'error' | 'info' | 'debug'>;
@@ -169,27 +241,9 @@ export interface IConfig {
     }>;
     callDisplayName?: string;
     callFlowsEnabled?: boolean;
-    callStatsConfigParams?: {
-        additionalIDs?: {
-            customerID?: string;
-            fqExtensionID?: string;
-            meetingsName?: string;
-            pbxExtensionID?: string;
-            pbxID?: string;
-            productName?: string;
-            serverName?: string;
-            sessionID?: string;
-            tenantID?: string;
-        };
-        applicationVersion?: string;
-        collectIP?: boolean;
-        collectLegacyStats?: boolean;
-        disableBeforeUnloadHandler?: boolean;
-        disablePrecalltest?: boolean;
-        siteID?: string;
-    };
-    callStatsID?: string;
-    callStatsSecret?: string;
+    callHandle?: string;
+    callUUID?: string;
+    cameraFacingMode?: string;
     channelLastN?: number;
     chromeExtensionBanner?: {
         chromeExtensionsInfo?: Array<{ id: string; path: string; }>;
@@ -219,7 +273,7 @@ export interface IConfig {
     };
     corsAvatarURLs?: Array<string>;
     customParticipantMenuButtons?: Array<{ icon: string; id: string; text: string; }>;
-    customToolbarButtons?: Array<{ icon: string; id: string; text: string; }>;
+    customToolbarButtons?: Array<{ backgroundColor?: string; icon: string; id: string; text: string; }>;
     deeplinking?: IDeeplinkingConfig;
     defaultLanguage?: string;
     defaultLocalDisplayName?: string;
@@ -269,7 +323,6 @@ export interface IConfig {
     disableRemoveRaisedHandOnFocus?: boolean;
     disableResponsiveTiles?: boolean;
     disableRtx?: boolean;
-    disableScreensharingVirtualBackground?: boolean;
     disableSelfView?: boolean;
     disableSelfViewSettings?: boolean;
     disableShortcuts?: boolean;
@@ -279,6 +332,7 @@ export interface IConfig {
     disableThirdPartyRequests?: boolean;
     disableTileEnlargement?: boolean;
     disableTileView?: boolean;
+    disableVirtualBackground?: boolean;
     disabledNotifications?: Array<string>;
     disabledSounds?: Array<Sounds>;
     doNotFlipLocalVideo?: boolean;
@@ -289,12 +343,6 @@ export interface IConfig {
     };
     dynamicBrandingUrl?: string;
     e2ee?: {
-        e2eeLabels?: {
-            description?: string;
-            label?: string;
-            tooltip?: string;
-            warning?: string;
-        };
         externallyManagedKey?: boolean;
         labels?: {
             description?: string;
@@ -324,7 +372,6 @@ export interface IConfig {
     enableForcedReload?: boolean;
     enableIceRestart?: boolean;
     enableInsecureRoomNameWarning?: boolean;
-    enableLipSync?: boolean;
     enableLobbyChat?: boolean;
     enableNoAudioDetection?: boolean;
     enableNoisyMicDetection?: boolean;
@@ -351,6 +398,7 @@ export interface IConfig {
         disableResizable?: boolean;
         disableStageFilmstrip?: boolean;
         disableTopPanel?: boolean;
+        disabled?: boolean;
         minParticipantCountForTopPanel?: number;
     };
     firefox_fake_device?: string;
@@ -392,7 +440,7 @@ export interface IConfig {
         domain: string;
         focus?: string;
         muc: string;
-        visitorFocus: string;
+        visitorFocus?: string;
     };
     iAmRecorder?: boolean;
     iAmSipGateway?: boolean;
@@ -400,11 +448,13 @@ export interface IConfig {
     inviteServiceCallFlowsUrl?: string;
     inviteServiceUrl?: string;
     jaasActuatorUrl?: string;
+    jaasConferenceCreatorUrl?: string;
     jaasFeedbackMetadataURL?: string;
     jaasTokenUrl?: string;
     legalUrls?: {
         helpCentre: string;
         privacy: string;
+        security: string;
         terms: string;
     };
     liveStreaming?: {
@@ -442,12 +492,16 @@ export interface IConfig {
     opusMaxAverageBitrate?: number;
     p2p?: {
         backToP2PDelay?: number;
-        disabledCodec?: string;
+        codecPreferenceOrder?: Array<string>;
         enabled?: boolean;
         iceTransportPolicy?: string;
-        preferredCodec?: string;
+        mobileCodecPreferenceOrder?: Array<string>;
         stunServers?: Array<{ urls: string; }>;
     };
+    participantMenuButtonsWithNotifyClick?: Array<string | ParticipantMenuButtonsWithNotifyClick | {
+        key: string | ParticipantMenuButtonsWithNotifyClick;
+        preventExecution: boolean;
+    }>;
     participantsPane?: {
         hideModeratorSettingsTab?: boolean;
         hideMoreActionsButton?: boolean;
@@ -456,6 +510,7 @@ export interface IConfig {
     pcStatsInterval?: number;
     peopleSearchQueryTypes?: string[];
     peopleSearchUrl?: string;
+    preferBosh?: boolean;
     preferredTranscribeLanguage?: string;
     prejoinConfig?: {
         enabled?: boolean;
@@ -475,6 +530,10 @@ export interface IConfig {
         sharingEnabled?: boolean;
     };
     recordingSharingUrl?: string;
+    recordings?: {
+        showPrejoinWarning?: boolean;
+        suggestRecording?: boolean;
+    };
     remoteVideoMenu?: {
         disableGrantModerator?: boolean;
         disableKick?: boolean;
@@ -513,18 +572,23 @@ export interface IConfig {
     stereo?: boolean;
     subject?: string;
     testing?: {
-        callStatsThreshold?: number;
+        assumeBandwidth?: boolean;
         disableE2EE?: boolean;
+        dumpTranscript?: boolean;
         mobileXmppWsThreshold?: number;
         noAutoPlayVideo?: boolean;
         p2pTestMode?: boolean;
+        skipInterimTranscriptions?: boolean;
         testMode?: boolean;
     };
     tileView?: {
+        disabled?: boolean;
         numberOfVisibleTiles?: number;
     };
     tokenAuthUrl?: string;
-    toolbarButtons?: Array<ToolbarButtons>;
+    tokenAuthUrlAutoRedirect?: string;
+    tokenLogoutUrl?: string;
+    toolbarButtons?: Array<ToolbarButton>;
     toolbarConfig?: {
         alwaysVisible?: boolean;
         autoHideWhileChatIsOpen?: boolean;
@@ -534,8 +598,7 @@ export interface IConfig {
     transcribeWithAppLanguage?: boolean;
     transcribingEnabled?: boolean;
     transcription?: {
-        autoCaptionOnRecord?: boolean;
-        disableStartForAll?: boolean;
+        autoTranscribeOnRecord?: boolean;
         enabled?: boolean;
         preferredLanguage?: string;
         translationLanguages?: Array<string>;
@@ -545,8 +608,7 @@ export interface IConfig {
     useHostPageLocalStorage?: boolean;
     useTurnUdp?: boolean;
     videoQuality?: {
-        disabledCodec?: string;
-        enforcePreferredCodec?: boolean;
+        codecPreferenceOrder?: Array<string>;
         maxBitratesVideo?: {
             [key: string]: {
                 high?: number;
@@ -557,9 +619,10 @@ export interface IConfig {
         minHeightForQualityLvl?: {
             [key: number]: string;
         };
+        mobileCodecPreferenceOrder?: Array<string>;
         persist?: boolean;
-        preferredCodec?: string;
     };
+    watchRTCConfigParams?: IWatchRTCConfiguration;
     webhookProxyUrl?: string;
     webrtcIceTcpDisable?: boolean;
     webrtcIceUdpDisable?: boolean;
@@ -569,8 +632,5 @@ export interface IConfig {
         customUrl?: string;
         disabled?: boolean;
     };
-    whiteboard?: {
-        collabServerBaseUrl?: string;
-        enabled?: boolean;
-    };
+    whiteboard?: IWhiteboardConfig;
 }

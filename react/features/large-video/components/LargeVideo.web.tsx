@@ -3,7 +3,7 @@ import { connect } from 'react-redux';
 
 // @ts-expect-error
 import VideoLayout from '../../../../modules/UI/videolayout/VideoLayout';
-import { IReduxState } from '../../app/types';
+import { IReduxState, IStore } from '../../app/types';
 import { VIDEO_TYPE } from '../../base/media/constants';
 import { getLocalParticipant } from '../../base/participants/functions';
 import Watermarks from '../../base/react/components/web/Watermarks';
@@ -17,7 +17,7 @@ import SharedVideo from '../../shared-video/components/web/SharedVideo';
 import Captions from '../../subtitles/components/web/Captions';
 import { setTileView } from '../../video-layout/actions.web';
 import Whiteboard from '../../whiteboard/components/web/Whiteboard';
-import { isWhiteboardEnabled } from '../../whiteboard/functions';
+import { isWhiteboardReady } from '../../whiteboard/functions';
 import { setSeeWhatIsBeingShared } from '../actions.web';
 import { getLargeVideoParticipant } from '../functions';
 
@@ -110,14 +110,14 @@ interface IProps {
     _visibleFilmstrip: boolean;
 
     /**
-     * Whether or not the whiteboard is enabled.
+     * Whether or not the whiteboard is ready to be used.
      */
-    _whiteboardEnabled: boolean;
+    _whiteboardReady: boolean;
 
     /**
      * The Redux dispatch function.
      */
-    dispatch: Function;
+    dispatch: IStore['dispatch'];
 }
 
 /** .
@@ -193,7 +193,7 @@ class LargeVideo extends Component<IProps> {
             _isChatOpen,
             _noAutoPlayVideo,
             _showDominantSpeakerBadge,
-            _whiteboardEnabled
+            _whiteboardReady
         } = this.props;
         const style = this._getCustomStyles();
         const className = `videocontainer${_isChatOpen ? ' shift-right' : ''}`;
@@ -205,7 +205,7 @@ class LargeVideo extends Component<IProps> {
                 ref = { this._containerRef }
                 style = { style }>
                 <SharedVideo />
-                {_whiteboardEnabled && <Whiteboard />}
+                {_whiteboardReady && <Whiteboard />}
                 <div id = 'etherpad' />
 
                 <Watermarks />
@@ -228,16 +228,17 @@ class LargeVideo extends Component<IProps> {
                       * another container for the background and the
                       * largeVideoWrapper in order to hide/show them.
                       */}
+                    { _displayScreenSharingPlaceholder ? <ScreenSharePlaceholder /> : <></>}
                     <div
                         id = 'largeVideoWrapper'
                         onTouchEnd = { this._onDoubleTap }
                         ref = { this._wrapperRef }
                         role = 'figure' >
-                        { _displayScreenSharingPlaceholder ? <ScreenSharePlaceholder /> : <video
+                        <video
                             autoPlay = { !_noAutoPlayVideo }
                             id = 'largeVideo'
                             muted = { true }
-                            playsInline = { true } /* for Safari on iOS to work */ /> }
+                            playsInline = { true } /* for Safari on iOS to work */ />
                     </div>
                 </div>
                 { interfaceConfig.DISABLE_TRANSCRIPTION_SUBTITLES
@@ -377,7 +378,7 @@ function _mapStateToProps(state: IReduxState) {
         _verticalFilmstripWidth: verticalFilmstripWidth.current,
         _verticalViewMaxWidth: getVerticalViewMaxWidth(state),
         _visibleFilmstrip: visible,
-        _whiteboardEnabled: isWhiteboardEnabled(state)
+        _whiteboardReady: isWhiteboardReady(state)
     };
 }
 
