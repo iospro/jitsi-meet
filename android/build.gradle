@@ -34,7 +34,7 @@ ext {
     moduleGroupId = 'com.facebook.react'
 
     // Maven repo where artifacts will be published
-    mavenRepo = System.env.MVN_REPO ?: ""
+    mavenRepo = System.env.MVN_REPO ?: "file://Users/malex/Work/Git/1Forma/maven"
     mavenUser = System.env.MVN_USER ?: ""
     mavenPassword = System.env.MVN_PASSWORD ?: ""
 
