@@ -1,13 +1,11 @@
 // @ts-ignore
-import Bourne from '@hapi/bourne';
+import { jitsiLocalStorage } from '@jitsi/js-utils';
 // eslint-disable-next-line lines-around-comment
 // @ts-ignore
-import { jitsiLocalStorage } from '@jitsi/js-utils';
+import { safeJsonParse } from '@jitsi/js-utils/json';
 import _ from 'lodash';
 
 import { IReduxState } from '../../app/types';
-import { browser } from '../lib-jitsi-meet';
-import { IMediaState } from '../media/reducer';
 import { parseURLParams } from '../util/parseURLParams';
 
 import { IConfig } from './configType';
@@ -58,16 +56,6 @@ export function createFakeConfig(baseURL: string) {
  */
 export function getMeetingRegion(state: IReduxState) {
     return state['features/base/config']?.deploymentInfo?.region || '';
-}
-
-/**
- * Selector for determining if sending multiple stream support is enabled.
- *
- * @param {Object} _state - The global state.
- * @returns {boolean}
- */
-export function getMultipleVideoSendingSupportFeatureFlag(_state: IReduxState | IMediaState) {
-    return browser.supportsUnifiedPlan();
 }
 
 /**
@@ -223,7 +211,7 @@ export function restoreConfig(baseURL: string) {
 
     if (config) {
         try {
-            return Bourne.parse(config) || undefined;
+            return safeJsonParse(config) || undefined;
         } catch (e) {
             // Somehow incorrect data ended up in the storage. Clean it up.
             jitsiLocalStorage.removeItem(key);

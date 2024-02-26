@@ -17,6 +17,11 @@ interface IWindow {
     innerWidth: number;
     interfaceConfig: any;
     location: ILocation;
+    PressureObserver?: any;
+    PressureRecord?: any;
+    ReactNativeWebView?: any;
+    TextDecoder?: any;
+    TextEncoder?: any;
     self: any;
     top: any;
 
@@ -30,6 +35,7 @@ interface IWindow {
     setImmediate: typeof setImmediate;
     clearImmediate: typeof clearImmediate;
     addEventListener: Function;
+    removeEventListener: Function;
 }
 
 interface INavigator {

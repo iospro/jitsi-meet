@@ -2,10 +2,7 @@ import _ from 'lodash';
 
 import { IStore } from '../../app/types';
 import { getCurrentConference } from '../conference/functions';
-import {
-    getMultipleVideoSendingSupportFeatureFlag,
-    getSsrcRewritingFeatureFlag
-} from '../config/functions.any';
+import { getSsrcRewritingFeatureFlag } from '../config/functions.any';
 import { VIDEO_TYPE } from '../media/constants';
 import StateListenerRegistry from '../redux/StateListenerRegistry';
 
@@ -78,6 +75,10 @@ function _updateScreenshareParticipants(store: IStore): void {
         if (track.videoType === VIDEO_TYPE.DESKTOP && !track.jitsiTrack.isMuted()) {
             const sourceName: string = track.jitsiTrack.getSourceName();
 
+            // Ignore orphan tracks in ssrc-rewriting mode.
+            if (!sourceName && getSsrcRewritingFeatureFlag(state)) {
+                return acc;
+            }
             if (track.local) {
                 newLocalSceenshareSourceName = sourceName;
             } else if (getParticipantById(state, getVirtualScreenshareParticipantOwnerId(sourceName))) {
@@ -88,16 +89,14 @@ function _updateScreenshareParticipants(store: IStore): void {
         return acc;
     }, []);
 
-    if (getMultipleVideoSendingSupportFeatureFlag(state)) {
-        if (!localScreenShare && newLocalSceenshareSourceName) {
-            dispatch(createVirtualScreenshareParticipant(newLocalSceenshareSourceName, true, conference));
-        }
+    if (!localScreenShare && newLocalSceenshareSourceName) {
+        dispatch(createVirtualScreenshareParticipant(newLocalSceenshareSourceName, true, conference));
+    }
 
-        if (localScreenShare && !newLocalSceenshareSourceName) {
-            dispatch(participantLeft(localScreenShare.id, conference, {
-                fakeParticipant: FakeParticipant.LocalScreenShare
-            }));
-        }
+    if (localScreenShare && !newLocalSceenshareSourceName) {
+        dispatch(participantLeft(localScreenShare.id, conference, {
+            fakeParticipant: FakeParticipant.LocalScreenShare
+        }));
     }
 
     if (getSsrcRewritingFeatureFlag(state)) {

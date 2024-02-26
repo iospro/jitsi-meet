@@ -14,6 +14,7 @@ interface IProps {
     error?: boolean;
     errorDialog?: JSX.Element | null;
     filterValue?: string;
+    id: string;
     isOpen?: boolean;
     items: MultiSelectItem[];
     noMatchesText?: string;
@@ -23,6 +24,8 @@ interface IProps {
     placeholder?: string;
     selectedItems?: MultiSelectItem[];
 }
+
+const MULTI_SELECT_HEIGHT = 200;
 
 const useStyles = makeStyles()(theme => {
     return {
@@ -41,7 +44,7 @@ const useStyles = makeStyles()(theme => {
             borderRadius: `${Number(theme.shape.borderRadius)}px`,
             ...withPixelLineHeight(theme.typography.bodyShortRegular),
             zIndex: 2,
-            maxHeight: '400px',
+            maxHeight: `${MULTI_SELECT_HEIGHT}px`,
             overflowY: 'auto',
             padding: '0'
         },
@@ -99,6 +102,7 @@ const MultiSelect = ({
     error,
     errorDialog,
     placeholder,
+    id,
     items,
     filterValue,
     onFilterChange,
@@ -128,7 +132,7 @@ const MultiSelect = ({
                             </div>
                         </div>
                     ))
-                    : <div>{noMatchesText}</div>
+                    : <div className = { classes.listItem }>{noMatchesText}</div>
             }
         </div>
     ), [ items ]);
@@ -143,6 +147,7 @@ const MultiSelect = ({
             <Input
                 autoFocus = { autoFocus }
                 disabled = { disabled }
+                id = { id }
                 onChange = { onFilterChange }
                 placeholder = { placeholder }
                 ref = { inputRef }

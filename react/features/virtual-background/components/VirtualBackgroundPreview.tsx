@@ -4,28 +4,23 @@ import React, { PureComponent } from 'react';
 import { WithTranslation } from 'react-i18next';
 import { connect } from 'react-redux';
 
-import { IReduxState } from '../../app/types';
+import { IStore } from '../../app/types';
 import { hideDialog } from '../../base/dialog/actions';
 import { translate } from '../../base/i18n/functions';
 import { Video } from '../../base/media/components/index';
 import { equals } from '../../base/redux/functions';
-import { getCurrentCameraDeviceId } from '../../base/settings/functions.web';
 import { createLocalTracksF } from '../../base/tracks/functions';
 import Spinner from '../../base/ui/components/web/Spinner';
 import { showWarningNotification } from '../../notifications/actions';
 import { NOTIFICATION_TIMEOUT_TYPE } from '../../notifications/constants';
 import { toggleBackgroundEffect } from '../actions';
 import logger from '../logger';
+import { IVirtualBackground } from '../reducer';
 
 /**
  * The type of the React {@code PureComponent} props of {@link VirtualBackgroundPreview}.
  */
 export interface IProps extends WithTranslation {
-
-    /**
-     * The deviceId of the camera device currently being used.
-     */
-    _currentCameraDeviceId: string;
 
     /**
      * An object containing the CSS classes.
@@ -35,7 +30,7 @@ export interface IProps extends WithTranslation {
     /**
      * The redux {@code dispatch} function.
      */
-    dispatch: Function;
+    dispatch: IStore['dispatch'];
 
     /**
      * Dialog callback that indicates if the background preview was loaded.
@@ -45,7 +40,12 @@ export interface IProps extends WithTranslation {
     /**
      * Represents the virtual background set options.
      */
-    options: any;
+    options: IVirtualBackground;
+
+    /**
+     * The id of the selected video device.
+     */
+    selectedVideoInputId: string;
 }
 
 /**
@@ -162,7 +162,7 @@ class VirtualBackgroundPreview extends PureComponent<IProps, IState> {
         try {
             this.setState({ loading: true });
             const [ jitsiTrack ] = await createLocalTracksF({
-                cameraDeviceId: this.props._currentCameraDeviceId,
+                cameraDeviceId: this.props.selectedVideoInputId,
                 devices: [ 'video' ]
             });
 
@@ -271,7 +271,7 @@ class VirtualBackgroundPreview extends PureComponent<IProps, IState> {
      * @inheritdoc
      */
     async componentDidUpdate(prevProps: IProps) {
-        if (!equals(this.props._currentCameraDeviceId, prevProps._currentCameraDeviceId)) {
+        if (!equals(this.props.selectedVideoInputId, prevProps.selectedVideoInputId)) {
             this._setTracks();
         }
         if (!equals(this.props.options, prevProps.options) && this.state.localTrackLoaded) {
@@ -288,26 +288,14 @@ class VirtualBackgroundPreview extends PureComponent<IProps, IState> {
         const { jitsiTrack } = this.state;
         const { classes } = this.props;
 
-        return (<div className = { classes.virtualBackgroundPreview }>
-            {jitsiTrack
-                ? this._renderPreviewEntry(jitsiTrack)
-                : this._loadVideoPreview()
-            }</div>);
+        return (
+            <div className = { classes.virtualBackgroundPreview }>
+                {jitsiTrack
+                    ? this._renderPreviewEntry(jitsiTrack)
+                    : this._loadVideoPreview()
+                }</div>
+        );
     }
 }
 
-/**
- * Maps (parts of) the redux state to the associated props for the
- * {@code VirtualBackgroundPreview} component.
- *
- * @param {Object} state - The Redux state.
- * @private
- * @returns {{Props}}
- */
-function _mapStateToProps(state: IReduxState) {
-    return {
-        _currentCameraDeviceId: getCurrentCameraDeviceId(state)
-    };
-}
-
-export default translate(connect(_mapStateToProps)(withStyles(styles)(VirtualBackgroundPreview)));
+export default translate(connect()(withStyles(styles)(VirtualBackgroundPreview)));

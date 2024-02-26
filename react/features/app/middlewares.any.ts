@@ -1,4 +1,5 @@
 import '../analytics/middleware';
+import '../authentication/middleware';
 import '../av-moderation/middleware';
 import '../base/conference/middleware';
 import '../base/config/middleware';
@@ -25,6 +26,7 @@ import '../connection-indicator/middleware';
 import '../deep-linking/middleware';
 import '../device-selection/middleware';
 import '../display-name/middleware';
+import '../dynamic-branding/middleware';
 import '../etherpad/middleware';
 import '../filmstrip/middleware';
 import '../follow-me/middleware';
@@ -49,5 +51,6 @@ import '../video-layout/middleware';
 import '../video-quality/middleware';
 import '../videosipgw/middleware';
 import '../visitors/middleware';
+import '../whiteboard/middleware.any';
 
 import './middleware';

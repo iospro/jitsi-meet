@@ -23,6 +23,11 @@ interface IProps extends WithTranslation {
     _areSmileysDisabled: boolean;
 
     /**
+     * The id of the message recipient, if any.
+     */
+    _privateMessageRecipientId?: string;
+
+    /**
      * Invoked to send chat messages.
      */
     dispatch: IStore['dispatch'];
@@ -90,6 +95,19 @@ class ChatInput extends Component<IProps, IState> {
         if (isMobileBrowser()) {
             // Ensure textarea is not focused when opening chat on mobile browser.
             this._textArea?.current && this._textArea.current.blur();
+        } else {
+            this._focus();
+        }
+    }
+
+    /**
+     * Implements {@code Component#componentDidUpdate}.
+     *
+     * @inheritdoc
+     */
+    componentDidUpdate(prevProps: Readonly<IProps>) {
+        if (prevProps._privateMessageRecipientId !== this.props._privateMessageRecipientId) {
+            this._textArea?.current?.focus();
         }
     }
 
@@ -117,6 +135,7 @@ class ChatInput extends Component<IProps, IState> {
                         className = 'chat-input'
                         icon = { this.props._areSmileysDisabled ? undefined : IconFaceSmile }
                         iconClick = { this._toggleSmileysPanel }
+                        id = 'chat-input-messagebox'
                         maxRows = { 5 }
                         onChange = { this._onMessageChange }
                         onKeyPress = { this._onDetectSubmit }
@@ -253,8 +272,11 @@ class ChatInput extends Component<IProps, IState> {
  * }}
  */
 const mapStateToProps = (state: IReduxState) => {
+    const { privateMessageRecipient } = state['features/chat'];
+
     return {
-        _areSmileysDisabled: areSmileysDisabled(state)
+        _areSmileysDisabled: areSmileysDisabled(state),
+        _privateMessageRecipientId: privateMessageRecipient?.id
     };
 };
 
