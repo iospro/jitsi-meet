@@ -77,10 +77,11 @@ export function appNavigate(uri?: string, options: IReloadNowOptions = {}) {
         location.protocol || (location.protocol = 'https:');
         const { contextRoot, host, hostname, pathname, room } = location;
         const locationURL = new URL(location.toString());
-        const { conference } = getConferenceState(getState());
 
         if (room) {
-            if (conference) {
+            const { conference } = getConferenceState(getState());
+
+            if (conference && uri !== undefined) {
 
                 // We need to check if the location is the same with the previous one.
                 const currentLocationURL = conference?.getConnection()[JITSI_CONNECTION_URL_KEY];
