@@ -259,9 +259,9 @@ public class JitsiMeetActivity extends AppCompatActivity
 //        JitsiMeetLogger.i("Transcription chunk received: " + extraData);
 //    }
 
-//    protected void onCustomOverflowMenuButtonPressed(HashMap<String, Object> extraData) {
-//        JitsiMeetLogger.i("Custom overflow menu button pressed: " + extraData);
-//    }
+   protected void onCustomOverflowMenuButtonPressed(HashMap<String, Object> extraData) {
+       JitsiMeetLogger.i("Custom overflow menu button pressed: " + extraData);
+   }
 
     // Activity lifecycle methods
     //
