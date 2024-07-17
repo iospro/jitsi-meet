@@ -9,7 +9,7 @@ import { SETTINGS_TABS } from '../settings/constants';
 import { iAmVisitor } from '../visitors/functions';
 
 import { registerShortcut } from './actions.any';
-import { areKeyboardShortcutsEnabled, getKeyboardShortcuts } from './functions';
+import { areKeyboardShortcutsEnabled, getKeyboardShortcuts, getPrimaryShortcutKey } from './functions';
 import logger from './logger';
 import { getKeyboardKey, getPriorityFocusedElement } from './utils';
 
@@ -95,6 +95,13 @@ export const initKeyboardShortcuts = () =>
 
             if (shortcuts.has(key)) {
                 shortcuts.get(key)?.handler(e);
+            }
+            else {
+                const pKey = getPrimaryShortcutKey(state, key);
+
+                if (shortcuts.has(pKey)) {
+                    shortcuts.get(pKey)?.handler(e);
+                }
             }
         };
 

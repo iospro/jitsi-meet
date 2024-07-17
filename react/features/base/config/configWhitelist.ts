@@ -13,6 +13,7 @@ export default [
     '_desktopSharingSourceDevice',
     '_peerConnStatusOutOfLastNTimeout',
     '_peerConnStatusRtcMuteTimeout',
+    'alternativeShortcutKeys', 
     'analytics.disabled',
     'analytics.rtcstatsEnabled',
     'analytics.watchRTCEnabled',
