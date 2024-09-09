@@ -83,12 +83,6 @@ const CHAT_TOGGLED = 'CHAT_TOGGLED';
 const CONFERENCE_TERMINATED = 'CONFERENCE_TERMINATED';
 
 /**
- * Event which will be emitted on the native side to indicate that the custom overflow menu button was pressed.
- */
-const CUSTOM_MENU_BUTTON_PRESSED = 'CUSTOM_OVERFLOW_MENU_BUTTON_PRESSED';
-
-
-/**
  * Event which will be emitted on the native side to indicate a message was received
  * through the channel.
  */
