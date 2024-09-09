@@ -361,9 +361,9 @@ public class JitsiMeetActivity extends AppCompatActivity
 //                case TRANSCRIPTION_CHUNK_RECEIVED:
 //                    onTranscriptionChunkReceived(event.getData());
 //                    break;
-                case CUSTOM_OVERFLOW_MENU_BUTTON_PRESSED:
-                    onCustomOverflowMenuButtonPressed(event.getData());
-                    break;
+                // case CUSTOM_OVERFLOW_MENU_BUTTON_PRESSED:
+                //     onCustomOverflowMenuButtonPressed(event.getData());
+                //     break;
             }
         }
     }
