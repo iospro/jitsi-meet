@@ -127,7 +127,13 @@ MiddlewareRegistry.register(store => next => action => {
                 Object.values(TRIGGER_READY_TO_CLOSE_REASONS).indexOf(reason)
             ];
 
-            dispatch(hangup(true, i18next.t(titlekey) || reason));
+            let localizedReason: string = i18next.t(titlekey) || reason;
+
+            if (reason === 'The meeting has been terminated') {
+                localizedReason = '';
+            }
+
+            dispatch(hangup(true, localizedReason));
         }
 
         releaseScreenLock();

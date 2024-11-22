@@ -178,6 +178,10 @@ export interface IConfig {
     _desktopSharingSourceDevice?: string;
     _immediateReloadThreshold?: string;
     _screenshotHistoryRegionUrl?: number;
+    alternativeShortcutKeys?: Array<{
+        alt: string;
+        key: string;
+    }>;
     analytics?: {
         amplitudeAPPKey?: string;
         amplitudeIncludeUTM?: boolean;
