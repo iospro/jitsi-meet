@@ -1,5 +1,4 @@
 import React, { ComponentType } from 'react';
-import { batch } from 'react-redux';
 
 import BaseApp from '../../../base/app/components/BaseApp';
 import { setConfig } from '../../../base/config/actions';
@@ -8,7 +7,7 @@ import GlobalStyles from '../../../base/ui/components/GlobalStyles.web';
 import JitsiThemeProvider from '../../../base/ui/components/JitsiThemeProvider.web';
 import DialogContainer from '../../../base/ui/components/web/DialogContainer';
 import { setupInitialDevices } from '../../../conference/actions.web';
-import { initPrejoin } from '../../actions.web';
+import { initPrejoin } from '../../functions.web';
 
 import PrejoinThirdParty from './PrejoinThirdParty';
 
@@ -50,9 +49,6 @@ export default class PrejoinApp extends BaseApp<Props> {
             ? store.getState()['features/base/settings']
             : { startWithAudioMuted: undefined,
                 startWithVideoMuted: undefined };
-        const { locationURL } = store
-            ? store.getState()['features/base/connection']
-            : { locationURL: undefined };
 
         dispatch?.(setConfig({
             prejoinConfig: {
@@ -60,16 +56,14 @@ export default class PrejoinApp extends BaseApp<Props> {
             },
             startWithAudioMuted,
             startWithVideoMuted
-        }, locationURL));
+        }));
 
         await dispatch?.(setupInitialDevices());
         const { tryCreateLocalTracks, errors } = createPrejoinTracks();
 
         const tracks = await tryCreateLocalTracks;
 
-        batch(() => {
-            dispatch?.(initPrejoin(tracks, errors));
-        });
+        initPrejoin(tracks, errors, dispatch);
     }
 
     /**

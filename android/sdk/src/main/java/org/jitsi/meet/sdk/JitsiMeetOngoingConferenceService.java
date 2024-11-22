@@ -17,6 +17,7 @@
 package org.jitsi.meet.sdk;
 
 import static android.Manifest.permission.POST_NOTIFICATIONS;
+import static android.Manifest.permission.RECORD_AUDIO;
 
 import android.app.Activity;
 import android.app.Notification;
@@ -38,7 +39,9 @@ import com.facebook.react.modules.core.PermissionListener;
 
 import org.jitsi.meet.sdk.log.JitsiMeetLogger;
 
+import java.util.ArrayList;
 import java.util.HashMap;
+import java.util.List;
 import java.util.Random;
 
 /**
@@ -48,30 +51,37 @@ import java.util.Random;
  *
  * See: https://developer.android.com/guide/components/services
  */
-public class JitsiMeetOngoingConferenceService extends Service
-    implements OngoingConferenceTracker.OngoingConferenceListener {
+public class JitsiMeetOngoingConferenceService extends Service implements OngoingConferenceTracker.OngoingConferenceListener {
     private static final String TAG = JitsiMeetOngoingConferenceService.class.getSimpleName();
+    private static final String ACTIVITY_DATA_KEY = "activityDataKey";
     private static final String EXTRA_DATA_KEY = "extraDataKey";
     private static final String EXTRA_DATA_BUNDLE_KEY = "extraDataBundleKey";
     private static final String IS_AUDIO_MUTED_KEY = "isAudioMuted";
+
+    private static final int PERMISSIONS_REQUEST_CODE = (int) (Math.random() * Short.MAX_VALUE);
 
     private final BroadcastReceiver broadcastReceiver = new BroadcastReceiver();
 
     private static final int POST_NOTIFICATIONS_PERMISSION_REQUEST_CODE = (int) (Math.random() * Short.MAX_VALUE);
 
     private boolean isAudioMuted;
+    private Class tapBackActivity;
 
     static final int NOTIFICATION_ID = new Random().nextInt(99999) + 10000;
 
     private static void doLaunch(Context context, HashMap<String, Object> extraData) {
 
-        OngoingNotification.createNotificationChannel((Activity) context);
+        Activity activity = (Activity) context;
+
+        OngoingNotification.createNotificationChannel(activity);
 
         Intent intent = new Intent(context, JitsiMeetOngoingConferenceService.class);
 
         Bundle extraDataBundle = new Bundle();
         extraDataBundle.putSerializable(EXTRA_DATA_KEY, extraData);
+
         intent.putExtra(EXTRA_DATA_BUNDLE_KEY, extraDataBundle);
+        intent.putExtra(ACTIVITY_DATA_KEY, activity.getClass().getCanonicalName());
 
         ComponentName componentName;
 
@@ -95,26 +105,50 @@ public class JitsiMeetOngoingConferenceService extends Service
 
 
     public static void launch(Context context, HashMap<String, Object> extraData) {
-        if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.TIRAMISU) {
-            PermissionListener listener = new PermissionListener() {
-                @Override
-                public boolean onRequestPermissionsResult(int i, String[] strings, int[] results) {
-                    if (results.length > 0 && results[0] == PackageManager.PERMISSION_GRANTED) {
-                        doLaunch(context, extraData);
+
+        List<String> permissionsList = new ArrayList<>();
+        PermissionListener listener = new PermissionListener() {
+            @Override
+            public boolean onRequestPermissionsResult(int i, String[] strings, int[] results) {
+                int counter = 0;
+
+                if (results.length > 0) {
+                    for (int result : results) {
+                        if (result == PackageManager.PERMISSION_GRANTED) {
+                            counter++;
+                        }
                     }
 
-                    return true;
+                    if (counter == results.length){
+                        doLaunch(context, extraData);
+                        JitsiMeetLogger.w(TAG + " Service launched, permissions were granted");
+                    } else {
+                        JitsiMeetLogger.w(TAG + " Couldn't launch service, permissions were not granted");
+                    }
                 }
-            };
 
+                return true;
+            }
+        };
+
+        if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.TIRAMISU) {
+            permissionsList.add(POST_NOTIFICATIONS);
+            permissionsList.add(RECORD_AUDIO);
+        }
+
+        String[] permissionsArray = new String[ permissionsList.size() ];
+        permissionsArray = permissionsList.toArray( permissionsArray );
+
+        if (permissionsArray.length > 0) {
             JitsiMeetActivityDelegate.requestPermissions(
                 (Activity) context,
-                new String[]{POST_NOTIFICATIONS},
-                POST_NOTIFICATIONS_PERMISSION_REQUEST_CODE,
+                permissionsArray,
+                PERMISSIONS_REQUEST_CODE,
                 listener
             );
         } else {
             doLaunch(context, extraData);
+            JitsiMeetLogger.w(TAG + " Service launched");
         }
     }
 
@@ -127,12 +161,14 @@ public class JitsiMeetOngoingConferenceService extends Service
     public void onCreate() {
         super.onCreate();
 
-        Notification notification = OngoingNotification.buildOngoingConferenceNotification(isAudioMuted, this);
+        Notification notification = OngoingNotification.buildOngoingConferenceNotification(isAudioMuted, this, tapBackActivity);
         if (notification == null) {
             stopSelf();
             JitsiMeetLogger.w(TAG + " Couldn't start service, notification is null");
         } else {
-            if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.Q) {
+            if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.R) {
+                startForeground(NOTIFICATION_ID, notification, ServiceInfo.FOREGROUND_SERVICE_TYPE_MEDIA_PLAYBACK | ServiceInfo.FOREGROUND_SERVICE_TYPE_MICROPHONE);
+            } else if (Build.VERSION.SDK_INT == Build.VERSION_CODES.Q) {
                 startForeground(NOTIFICATION_ID, notification, ServiceInfo.FOREGROUND_SERVICE_TYPE_MEDIA_PLAYBACK);
             } else {
                 startForeground(NOTIFICATION_ID, notification);
@@ -161,13 +197,28 @@ public class JitsiMeetOngoingConferenceService extends Service
 
     @Override
     public int onStartCommand(Intent intent, int flags, int startId) {
+        final String actionName = intent.getAction();
+        final Action action = Action.fromName(actionName);
 
-        Boolean isAudioMuted = tryParseIsAudioMuted(intent);
+        if (action != Action.HANGUP) {
+            Boolean isAudioMuted = tryParseIsAudioMuted(intent);
 
-        if (isAudioMuted != null) {
-            this.isAudioMuted = Boolean.parseBoolean(intent.getStringExtra("muted"));
+            if (isAudioMuted != null) {
+                this.isAudioMuted = Boolean.parseBoolean(intent.getStringExtra("muted"));
+            }
 
-            Notification notification = OngoingNotification.buildOngoingConferenceNotification(isAudioMuted, this);
+            if (tapBackActivity == null) {
+                String targetActivityName = intent.getExtras().getString(ACTIVITY_DATA_KEY);
+                Class<? extends Activity> targetActivity = null;
+                try {
+                    targetActivity = Class.forName(targetActivityName).asSubclass(Activity.class);
+                    tapBackActivity = targetActivity;
+                } catch (ClassNotFoundException e) {
+                    JitsiMeetLogger.w(TAG + " Could not find target Activity: " + targetActivityName);
+                }
+            }
+
+            Notification notification = OngoingNotification.buildOngoingConferenceNotification(this.isAudioMuted, this, tapBackActivity);
             if (notification == null) {
                 stopSelf();
                 JitsiMeetLogger.w(TAG + " Couldn't start service, notification is null");
@@ -176,9 +227,6 @@ public class JitsiMeetOngoingConferenceService extends Service
                 notificationManager.notify(NOTIFICATION_ID, notification);
             }
         }
-
-        final String actionName = intent.getAction();
-        final Action action = Action.fromName(actionName);
 
         // When starting the service, there is no action passed in the intent
         if (action != null) {
@@ -252,8 +300,9 @@ public class JitsiMeetOngoingConferenceService extends Service
 
         @Override
         public void onReceive(Context context, Intent intent) {
+            Class tapBackActivity = JitsiMeetOngoingConferenceService.this.tapBackActivity;
             isAudioMuted = Boolean.parseBoolean(intent.getStringExtra("muted"));
-            Notification notification = OngoingNotification.buildOngoingConferenceNotification(isAudioMuted, context);
+            Notification notification = OngoingNotification.buildOngoingConferenceNotification(isAudioMuted, context, tapBackActivity);
             if (notification == null) {
                 stopSelf();
                 JitsiMeetLogger.w(TAG + " Couldn't update service, notification is null");

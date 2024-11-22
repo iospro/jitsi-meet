@@ -4,11 +4,13 @@ import { connect } from 'react-redux';
 import { IReduxState } from '../../../app/types';
 import { translate } from '../../../base/i18n/functions';
 import { IconUsers } from '../../../base/icons/svg';
+import { getParticipantCount } from '../../../base/participants/functions';
 import AbstractButton, { IProps as AbstractButtonProps } from '../../../base/toolbox/components/AbstractButton';
 import {
     close as closeParticipantsPane,
     open as openParticipantsPane
 } from '../../../participants-pane/actions.web';
+import { closeOverflowMenuIfOpen } from '../../../toolbox/actions.web';
 import { isParticipantsPaneEnabled } from '../../functions';
 
 import ParticipantsCounter from './ParticipantsCounter';
@@ -28,13 +30,17 @@ interface IProps extends AbstractButtonProps {
      * Whether participants feature is enabled or not.
      */
     _isParticipantsPaneEnabled: boolean;
+
+    /**
+     * Participants count.
+     */
+    _participantsCount: number;
 }
 
 /**
  * Implementation of a button for accessing participants pane.
  */
 class ParticipantsPaneButton extends AbstractButton<IProps> {
-    accessibilityLabel = 'toolbar.accessibilityLabel.participants';
     toggledAccessibilityLabel = 'toolbar.accessibilityLabel.closeParticipantsPane';
     icon = IconUsers;
     label = 'toolbar.participants';
@@ -61,11 +67,32 @@ class ParticipantsPaneButton extends AbstractButton<IProps> {
     _handleClick() {
         const { dispatch, _isOpen } = this.props;
 
+        dispatch(closeOverflowMenuIfOpen());
         if (_isOpen) {
             dispatch(closeParticipantsPane());
         } else {
             dispatch(openParticipantsPane());
         }
+    }
+
+
+    /**
+     * Override the _getAccessibilityLabel method to incorporate the dynamic participant count.
+     *
+     * @override
+     * @returns {string}
+     */
+    _getAccessibilityLabel() {
+        const { t, _participantsCount, _isOpen } = this.props;
+
+        if (_isOpen) {
+            return t('toolbar.accessibilityLabel.closeParticipantsPane');
+        }
+
+        return t('toolbar.accessibilityLabel.participants', {
+            participantsCount: _participantsCount
+        });
+
     }
 
     /**
@@ -103,7 +130,8 @@ function mapStateToProps(state: IReduxState) {
 
     return {
         _isOpen: isOpen,
-        _isParticipantsPaneEnabled: isParticipantsPaneEnabled(state)
+        _isParticipantsPaneEnabled: isParticipantsPaneEnabled(state),
+        _participantsCount: getParticipantCount(state)
     };
 }
 
