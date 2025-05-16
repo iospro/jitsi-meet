@@ -54,7 +54,7 @@ class RecordingLabel extends AbstractRecordingLabel<IProps> {
         const classes = withStyles.getClasses(this.props);
         const isRecording = mode === JitsiRecordingConstants.mode.FILE;
         const icon = isRecording ? IconRecord : IconSites;
-        let content;
+        let content: string;
 
         if (_status === JitsiRecordingConstants.status.ON) {
             content = t(isRecording ? 'videoStatus.recording' : 'videoStatus.streaming');
