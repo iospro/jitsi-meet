@@ -39,24 +39,20 @@ export const THRESHOLDS = [
  */
 export const NATIVE_THRESHOLDS = [
     {
-        width: 560,
+        width: 500,
         order: [ 'microphone', 'camera', 'chat', 'screensharing', 'raisehand', 'tileview', 'overflowmenu', 'hangup' ]
     },
     {
-        width: 500,
+        width: 428,
         order: [ 'microphone', 'camera', 'chat', 'raisehand', 'tileview', 'overflowmenu', 'hangup' ]
     },
     {
-        width: 440,
+        width: 375,
         order: [ 'microphone', 'camera', 'chat', 'raisehand', 'overflowmenu', 'hangup' ]
     },
     {
-        width: 380,
-        order: [ 'microphone', 'camera', 'chat', 'overflowmenu', 'hangup' ]
-    },
-    {
         width: 320,
-        order: [ 'microphone', 'camera', 'overflowmenu', 'hangup' ]
+        order: [ 'microphone', 'camera', 'chat', 'overflowmenu', 'hangup' ]
     }
 ];
 
