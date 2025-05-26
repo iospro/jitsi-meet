@@ -50,7 +50,8 @@ var config = {
 
     // Websocket URL (XMPP)
     websocket: 'wss://jitsi-meet.example.com/' + subdir + 'xmpp-websocket',
-    websocketKeepAliveUrl: 'https://jitsi-meet.example.com/' + subdir + '_unlock',
+
+    // websocketKeepAliveUrl: 'https://jitsi-meet.example.com/' + subdir + '_unlock',
 
     // Whether BOSH should be preferred over WebSocket if both are configured.
     // preferBosh: false,
@@ -88,6 +89,9 @@ var config = {
         // Enables use of getDisplayMedia in electron
         // electronUseGetDisplayMedia: false,
 
+        // Enables AV1 codec for FF. Note: By default it is disabled.
+        // enableAV1ForFF: false,
+
         // Enables the use of the codec selection API supported by the browsers .
         // enableCodecSelectionAPI: false,
 
@@ -123,6 +127,9 @@ var config = {
 
     // Disables the reactions moderation feature.
     // disableReactionsModeration: false,
+
+    // Disables the reactions in chat feature.
+    // disableReactionsInChat: false,
 
     // Disables polls feature.
     // disablePolls: false,
@@ -397,6 +404,10 @@ var config = {
     //    // If true, mutes audio and video when a recording begins and displays a dialog
     //    // explaining the effect of unmuting.
     //    // requireConsent: true,
+    //    // If true consent will be skipped for users who are already in the meeting.
+    //    // skipConsentInMeeting: true,
+    //    // Link for the recording consent dialog's "Learn more" link.
+    //    // consentLearnMoreLink: 'https://jitsi.org/meet/consent',
     // },
 
     // recordingService: {
@@ -494,6 +505,11 @@ var config = {
     //     // Enables automatic request of subtitles when transcriber is present in the meeting, uses the default
     //     // language that is set
     //     autoCaptionOnTranscribe: false,
+    //
+    //     // Disables everything related to closed captions - the tab in the chat area, the button in the menu,
+    //     // subtitles on stage and the "Show subtitles on stage" checkbox in the settings.
+    //     // Note: Starting transcriptions from the recording dialog will still work.
+    //     disableClosedCaptions: false
     // },
 
     // Misc
@@ -519,7 +535,7 @@ var config = {
     // videoQuality: {
     //
     //    // Provides a way to set the codec preference on desktop based endpoints.
-    //    codecPreferenceOrder: [ 'VP9', 'VP8', 'H264', 'AV1' ],
+    //    codecPreferenceOrder: [ 'AV1', 'VP9', 'VP8', 'H264' ],
     //
     //    // Provides a way to set the codec for screenshare.
     //    screenshareCodec: 'AV1',
@@ -596,7 +612,7 @@ var config = {
     //    },
     //
     //    // Provides a way to set the codec preference on mobile devices, both on RN and mobile browser based endpoint
-    //    mobileCodecPreferenceOrder: [ 'VP8', 'VP9', 'H264' ],
+    //    mobileCodecPreferenceOrder: [ 'VP8', 'VP9', 'H264', 'AV1' ],
     // },
 
     // Notification timeouts
@@ -605,6 +621,7 @@ var config = {
     //     medium: 5000,
     //     long: 10000,
     //     extraLong: 60000,
+    //     sticky: 0,
     // },
 
     // // Options for the recording limit notification.
@@ -1078,10 +1095,10 @@ var config = {
 
         // Provides a way to set the codec preference on mobile devices, both on RN and mobile browser based
         // endpoints.
-        // mobileCodecPreferenceOrder: [ 'H264', 'VP8', 'VP9' ],
+        // mobileCodecPreferenceOrder: [ 'H264', 'VP8', 'VP9', 'AV1' ],
         //
         // Provides a way to set the codec preference on desktop based endpoints.
-        // codecPreferenceOrder: [ 'VP9', 'VP8', 'H264 ],
+        // codecPreferenceOrder: [ 'AV1', 'VP9', 'VP8', 'H264 ],
 
         // Provides a way to set the codec for screenshare.
         // screenshareCodec: 'AV1',
@@ -1878,6 +1895,14 @@ var config = {
 
     // If true remove the tint foreground on focused user camera in filmstrip
     // disableCameraTintForeground: false,
+
+    // File sharign service.
+    // fileSharing: {
+    //     // The URL of the file sharing service API. See resources/file-sharing.yaml for more details.
+    //     apiUrl: 'https://example.com',
+    //     // Whether the file sharing service is enabled or not.
+    //     enabled: true,
+    // },
 };
 
 // Set the default values for JaaS customers

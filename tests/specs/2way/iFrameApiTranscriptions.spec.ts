@@ -137,6 +137,10 @@ describe('Transcriptions', () => {
         await p1.getIframeAPI().executeCommand('hangup');
         await p2.getIframeAPI().executeCommand('hangup');
 
+        // sometimes events are not immediately received,
+        // let's wait for destroy event before waiting for those that depends on it
+        await webhooksProxy.waitForEvent('ROOM_DESTROYED', 10000);
+
         if (webhooksProxy) {
             const event: {
                 data: {
@@ -157,13 +161,13 @@ async function checkReceivingChunks(p1: Participant, p2: Participant, webhooksPr
     allTranscripts.push(await p1.driver.waitUntil(() => p1.getIframeAPI()
             .getEventResult('transcriptionChunkReceived'), {
         timeout: 60000,
-        timeoutMsg: 'transcriptionChunkReceived event not received on participant1 side'
+        timeoutMsg: 'transcriptionChunkReceived event not received on p1 side'
     }));
 
     allTranscripts.push(await p2.driver.waitUntil(() => p2.getIframeAPI()
             .getEventResult('transcriptionChunkReceived'), {
         timeout: 60000,
-        timeoutMsg: 'transcriptionChunkReceived event not received on participant2 side'
+        timeoutMsg: 'transcriptionChunkReceived event not received on p2 side'
     }));
 
     if (webhooksProxy) {
@@ -197,7 +201,7 @@ async function checkReceivingChunks(p1: Participant, p2: Participant, webhooksPr
 
     // @ts-ignore
     const firstEntryData = result[0].value.data;
-    const stable = firstEntryData.stable;
+    const stable = firstEntryData.stable || firstEntryData.final;
     const language = firstEntryData.language;
     const messageID = firstEntryData.messageID;
     const p1Id = await p1.getEndpointId();
@@ -210,16 +214,16 @@ async function checkReceivingChunks(p1: Participant, p2: Participant, webhooksPr
 
         return v.data;
     }).forEach(tr => {
-        const checkTranscripts = stable.includes(tr.stable) || tr.stable.includes(stable);
+        const checkTranscripts = stable.includes(tr.stable || tr.final) || (tr.stable || tr.final).includes(stable);
 
         if (!checkTranscripts) {
-            console.log('received events', result);
+            console.log('received events', JSON.stringify(result));
         }
 
         expect(checkTranscripts).toBe(true);
         expect(tr.language).toBe(language);
         expect(tr.messageID).toBe(messageID);
         expect(tr.participant.id).toBe(p1Id);
-        expect(tr.participant.name).toBe(p1.displayName);
+        expect(tr.participant.name).toBe(p1.name);
     });
 }

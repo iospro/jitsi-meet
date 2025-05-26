@@ -280,6 +280,11 @@ function extract_subdomain(room_node)
     end
 
     local subdomain, room_name = room_node:match("^%[([^%]]+)%](.+)$");
+
+    if not subdomain then
+        room_name = room_node;
+    end
+
     local _, customer_id = subdomain and subdomain:match("^(vpaas%-magic%-cookie%-)(.*)$") or nil, nil;
     local cache_value = { subdomain=subdomain, room=room_name, customer_id=customer_id };
     extract_subdomain_cache:set(room_node, cache_value);
@@ -316,8 +321,11 @@ function starts_with_one_of(str, prefixes)
     return false
 end
 
-
 function ends_with(str, ending)
+    if not str then
+        return false;
+    end
+
     return ending == "" or str:sub(-#ending) == ending
 end
 

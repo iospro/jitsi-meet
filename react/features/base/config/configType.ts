@@ -312,6 +312,7 @@ export interface IConfig {
     disablePolls?: boolean;
     disableProfile?: boolean;
     disableReactions?: boolean;
+    disableReactionsInChat?: boolean;
     disableReactionsModeration?: boolean;
     disableRecordAudioNotification?: boolean;
     disableRemoteControl?: boolean;
@@ -391,6 +392,10 @@ export interface IConfig {
     feedbackPercentage?: number;
     fileRecordingsServiceEnabled?: boolean;
     fileRecordingsServiceSharingEnabled?: boolean;
+    fileSharing?: {
+        apiUrl?: string;
+        enabled?: boolean;
+    };
     filmstrip?: {
         disableResizable?: boolean;
         disableStageFilmstrip?: boolean;
@@ -442,6 +447,7 @@ export interface IConfig {
     };
     iAmRecorder?: boolean;
     iAmSipGateway?: boolean;
+    iAmSpot?: boolean;
     ignoreStartMuted?: boolean;
     inviteAppName?: string | null;
     inviteServiceCallFlowsUrl?: string;
@@ -488,6 +494,7 @@ export interface IConfig {
         long?: number;
         medium?: number;
         short?: number;
+        sticky?: number;
     };
     notifications?: Array<string>;
     notifyOnConferenceDestruction?: boolean;
@@ -546,10 +553,12 @@ export interface IConfig {
     };
     recordingSharingUrl?: string;
     recordings?: {
+        consentLearnMoreLink?: string;
         recordAudioAndVideo?: boolean;
         requireConsent?: boolean;
         showPrejoinWarning?: boolean;
         showRecordingLink?: boolean;
+        skipConsentInMeeting?: boolean;
         suggestRecording?: boolean;
     };
     remoteVideoMenu?: {
@@ -621,6 +630,7 @@ export interface IConfig {
     transcription?: {
         autoCaptionOnTranscribe?: boolean;
         autoTranscribeOnRecord?: boolean;
+        disableClosedCaptions?: boolean;
         enabled?: boolean;
         preferredLanguage?: string;
         translationLanguages?: Array<string>;

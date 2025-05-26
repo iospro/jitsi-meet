@@ -21,14 +21,15 @@ import SecurityDialog from '../pageobjects/SecurityDialog';
 import SettingsDialog from '../pageobjects/SettingsDialog';
 import Toolbar from '../pageobjects/Toolbar';
 import VideoQualityDialog from '../pageobjects/VideoQualityDialog';
+import Visitors from '../pageobjects/Visitors';
 
 import { LOG_PREFIX, logInfo } from './browserLogger';
 import { IContext, IJoinOptions } from './types';
 
-export const P1_DISPLAY_NAME = 'p1';
-export const P2_DISPLAY_NAME = 'p2';
-export const P3_DISPLAY_NAME = 'p3';
-export const P4_DISPLAY_NAME = 'p4';
+export const P1 = 'p1';
+export const P2 = 'p2';
+export const P3 = 'p3';
+export const P4 = 'p4';
 
 interface IWaitForSendReceiveDataOptions {
     checkReceive?: boolean;
@@ -47,7 +48,6 @@ export class Participant {
      * @private
      */
     private _name: string;
-    private _displayName: string;
     private _endpointId: string;
     private _jwt?: string;
 
@@ -165,13 +165,6 @@ export class Participant {
     }
 
     /**
-     * The name.
-     */
-    get displayName() {
-        return this._displayName || this.name;
-    }
-
-    /**
      * Adds a log to the participants log file.
      *
      * @param {string} message - The message to log.
@@ -203,7 +196,7 @@ export class Participant {
         if (!options.skipDisplayName) {
             // @ts-ignore
             config.userInfo = {
-                displayName: this._displayName = options.displayName || this._name
+                displayName: this._name
             };
         }
 
@@ -578,6 +571,16 @@ export class Participant {
     }
 
     /**
+     * Returns the Visitors page object.
+     *
+     * @returns {Visitors}
+     */
+    getVisitors(): Visitors {
+        return new Visitors(this);
+    }
+
+
+    /**
      * Switches to the iframe API context
      */
     async switchToAPI() {
@@ -587,10 +590,10 @@ export class Participant {
     /**
      * Switches to the meeting page context.
      */
-    async switchInPage() {
+    switchInPage() {
         const mainFrame = this.driver.$('iframe');
 
-        await this.driver.switchFrame(mainFrame);
+        return this.driver.switchFrame(mainFrame);
     }
 
     /**
@@ -756,8 +759,7 @@ export class Participant {
     /**
      * Returns the audio level for a participant.
      *
-     * @param observer
-     * @param participant
+     * @param p
      * @return
      */
     async getRemoteAudioLevel(p: Participant) {
@@ -818,15 +820,11 @@ export class Participant {
             // When testing for muted we don't want to have
             // the condition succeeded
             if (muted) {
-                const name = await testee.displayName;
-
-                assert.fail(`There was some sound coming from muted: '${name}'`);
+                assert.fail(`There was some sound coming from muted: '${this.name}'`);
             } // else we're good for unmuted participant
         } catch (_timeoutE) {
             if (!muted) {
-                const name = await testee.displayName;
-
-                assert.fail(`There was no sound from unmuted: '${name}'`);
+                assert.fail(`There was no sound from unmuted: '${this.name}'`);
             } // else we're good for muted participant
         }
     }
@@ -844,7 +842,7 @@ export class Participant {
                     endpointId) && !await this.driver.$(
                     `//span[@id="participant_${endpointId}" and contains(@class, "display-video")]`).isExisting(), {
                 timeout: 15_000,
-                timeoutMsg: `expected remote video for ${endpointId} to not be received 15s by ${this.displayName}`
+                timeoutMsg: `expected remote video for ${endpointId} to not be received 15s by ${this.name}`
             });
         } else {
             await this.driver.waitUntil(async () =>
@@ -852,7 +850,7 @@ export class Participant {
                     endpointId) && await this.driver.$(
                     `//span[@id="participant_${endpointId}" and contains(@class, "display-video")]`).isExisting(), {
                 timeout: 15_000,
-                timeoutMsg: `expected remote video for ${endpointId} to be received 15s by ${this.displayName}`
+                timeoutMsg: `expected remote video for ${endpointId} to be received 15s by ${this.name}`
             });
         }
     }
@@ -872,7 +870,7 @@ export class Participant {
             await this.driver.$('//span[contains(@class,"videocontainer")]//span[contains(@class,"connection_ninja")]')
                 .waitForDisplayed({
                     timeout: 5_000,
-                    timeoutMsg: `expected ninja icon to be displayed in 5s by ${this.displayName}`
+                    timeoutMsg: `expected ninja icon to be displayed in 5s by ${this.name}`
                 });
         }
     }
