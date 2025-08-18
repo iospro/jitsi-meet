@@ -20,8 +20,8 @@
     "@braintree/sanitize-url": "7.0.0",
     "@emotion/react": "11.10.6",
     "@emotion/styled": "11.10.6",
-    "@giphy/js-fetch-api": "4.7.1",
-    "@giphy/react-components": "6.8.1",
+    "@giphy/js-fetch-api": "^4.9.3",
+    "@giphy/react-components": "^6.9.4",
     "@giphy/react-native-sdk": "2.3.0",
     "@jitsi/excalidraw": "https://github.com/jitsi/excalidraw/releases/download/v0.0.19/jitsi-excalidraw-0.0.19.tgz",
     "@jitsi/js-utils": "2.2.1",
@@ -80,7 +80,7 @@
     "react-dom": "18.2.0",
     "react-emoji-render": "2.0.1",
     "react-focus-on": "3.8.1",
-    "react-i18next": "10.11.4",
+    "react-i18next": "^15.6.0",
     "react-linkify": "1.0.0-alpha",
     "react-native": "0.75.5",
     "react-native-background-timer": "2.4.1",
@@ -118,7 +118,7 @@
     "seamless-scroll-polyfill": "2.1.8",
     "semver": "7.5.4",
     "text-encoding": "0.7.0",
-    "ts-ebml": "^3.0.1",
+    "ts-ebml": "^2.0.2",
     "tss-react": "4.9.4",
     "util": "0.12.1",
     "uuid": "8.3.2",
@@ -192,7 +192,7 @@
     "webpack": "5.95.0",
     "webpack-bundle-analyzer": "4.4.2",
     "webpack-cli": "5.1.4",
-    "webpack-dev-server": "5.1.0"
+    "webpack-dev-server": "^5.2.2"
   },
   "engines": {
     "node": ">=22.0.0",
