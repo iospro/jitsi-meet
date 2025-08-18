@@ -25,7 +25,7 @@ interface IProps {
     _iAmVisitor: boolean;
 
     /**
-     * The color-schemed stylesheet of the feature.
+    * The color-schemed stylesheet of the feature.
      */
     _styles: any;
 
@@ -47,6 +47,7 @@ interface IProps {
  * @returns {React$Element}
  */
 function Toolbox(props: IProps) {
+
     const {
         _iAmVisitor,
         _styles,
@@ -132,6 +133,7 @@ function Toolbox(props: IProps) {
  * @returns {IProps}
  */
 function _mapStateToProps(state: IReduxState) {
+
     return {
         _iAmVisitor: iAmVisitor(state),
         _styles: ColorSchemeRegistry.get(state, 'Toolbox'),
