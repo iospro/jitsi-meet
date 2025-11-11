@@ -126,10 +126,6 @@ MiddlewareRegistry.register(store => next => action => {
         if (errorName === JitsiConferenceErrors.CONFERENCE_DESTROYED) {
             const [ reason ] = action.error.params;
 
-            if (processDestroyConferenceEvent(state, dispatch, action.error.params)) {
-                break;
-            }
-
             const titlekey = Object.keys(TRIGGER_READY_TO_CLOSE_REASONS)[
                 Object.values(TRIGGER_READY_TO_CLOSE_REASONS).indexOf(reason)
             ];
