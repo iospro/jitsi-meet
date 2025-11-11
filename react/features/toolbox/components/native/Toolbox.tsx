@@ -5,6 +5,8 @@ import { connect, useSelector } from 'react-redux';
 
 import { IReduxState, IStore } from '../../../app/types';
 import ColorSchemeRegistry from '../../../base/color-scheme/ColorSchemeRegistry';
+import { SCREENSHARING_IN_PORTRAIT_TOOLBAR_ALWAYS_VISIBLE } from '../../../base/flags/constants';
+import { getFeatureFlag } from '../../../base/flags/functions';
 import Platform from '../../../base/react/Platform.native';
 import { iAmVisitor } from '../../../visitors/functions';
 import { customButtonPressed } from '../../actions.native';
@@ -25,7 +27,12 @@ interface IProps {
     _iAmVisitor: boolean;
 
     /**
-     * The color-schemed stylesheet of the feature.
+     * The indicator which determines whether the screen sharing button is visible in portrait toolbar.
+     */
+    _screenSharingAlwaysVisible: boolean;
+
+    /**
+    * The color-schemed stylesheet of the feature.
      */
     _styles: any;
 
@@ -47,8 +54,10 @@ interface IProps {
  * @returns {React$Element}
  */
 function Toolbox(props: IProps) {
+
     const {
         _iAmVisitor,
+        _screenSharingAlwaysVisible,
         _styles,
         _visible,
         dispatch
@@ -132,8 +141,13 @@ function Toolbox(props: IProps) {
  * @returns {IProps}
  */
 function _mapStateToProps(state: IReduxState) {
+
+    const screenSharingAlwaysVisible = Boolean(getFeatureFlag(state,
+        SCREENSHARING_IN_PORTRAIT_TOOLBAR_ALWAYS_VISIBLE, false));
+
     return {
         _iAmVisitor: iAmVisitor(state),
+        _screenSharingAlwaysVisible: screenSharingAlwaysVisible,
         _styles: ColorSchemeRegistry.get(state, 'Toolbox'),
         _visible: isToolboxVisible(state),
     };
