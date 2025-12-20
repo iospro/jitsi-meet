@@ -10,7 +10,7 @@ import {
 } from './actionTypes';
 import { closeChat, setFocusedTab } from './actions.any';
 import { ChatTabs } from './constants';
-import { beginAddPeople } from "../invite/actions.any";
+import { beginAddPeople } from '../invite/actions.any';
 
 export * from './actions.any';
 
