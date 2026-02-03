@@ -153,7 +153,7 @@ export class App extends AbstractApp<IProps> {
             }, 50);
         });
 
-        await rootNavigationReady;
+        // await rootNavigationReady;
 
         // Update specified server URL.
         if (typeof url !== 'undefined') {
