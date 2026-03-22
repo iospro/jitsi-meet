@@ -105,7 +105,7 @@ const styles = {
      * - Android: unchanged solid background.
      */
     toolboxContainer: {
-        backgroundColor: _isIOS ? 'rgba(20, 20, 20, 0.82)' : BaseTheme.palette.uiBackground,
+        backgroundColor: _isIOS ? 'rgba(255, 255, 255, 0.1)' : BaseTheme.palette.uiBackground,
         flexDirection: 'column',
         maxWidth: 580,
         marginHorizontal: 'auto',
