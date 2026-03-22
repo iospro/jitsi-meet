@@ -1,4 +1,8 @@
+import { Platform } from 'react-native';
+
 import BaseTheme from '../../../base/ui/components/BaseTheme.native';
+
+const _isIOS = Platform.OS === 'ios';
 
 export const INSECURE_ROOM_NAME_LABEL_COLOR = BaseTheme.palette.actionDanger;
 
@@ -138,17 +142,25 @@ export default {
     roomTimer: {
         ...BaseTheme.typography.bodyShortBold,
         color: BaseTheme.palette.text01,
-        lineHeight: 14,
-        textAlign: 'center'
+
+        // Removing the lineHeight override fixes vertical shift on iOS —
+        // equal lineHeight/fontSize clips ascenders and pushes text upward.
+        textAlign: 'center',
+
+        // Tabular (monospace) digits: keeps container width stable during countdown.
+        fontVariant: [ 'tabular-nums' ]
     },
 
     roomTimerView: {
-        backgroundColor: BaseTheme.palette.ui03,
-        borderRadius: BaseTheme.shape.borderRadius,
-        height: 32,
+        // iOS: semi-transparent backdrop matching the toolbar style.
+        // Android: solid ui03 token (unchanged).
+        backgroundColor: _isIOS ? 'rgba(20, 20, 20, 0.82)' : BaseTheme.palette.ui03,
+
+        // Capsule shape: borderRadius = height / 2.
+        borderRadius: 13,
+        height: 26,
         justifyContent: 'center',
         paddingHorizontal: BaseTheme.spacing[2],
-        paddingVertical: BaseTheme.spacing[1],
         minWidth: 50
     },
 
