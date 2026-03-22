@@ -1,6 +1,6 @@
-import React from 'react';
-import { Text, View, ViewStyle } from 'react-native';
-import { connect } from 'react-redux';
+import React, { useCallback } from 'react';
+import { Text, TouchableOpacity, View, ViewStyle } from 'react-native';
+import { connect, useDispatch } from 'react-redux';
 
 import { IReduxState } from '../../../app/types';
 import { getConferenceName, getConferenceTimestamp } from '../../../base/conference/functions';
@@ -12,6 +12,8 @@ import {
 import { getFeatureFlag } from '../../../base/flags/functions';
 import AudioDeviceToggleButton from '../../../mobile/audio-mode/components/AudioDeviceToggleButton';
 import PictureInPictureButton from '../../../mobile/picture-in-picture/components/PictureInPictureButton';
+import { showNotification } from '../../../notifications/actions';
+import { NOTIFICATION_TIMEOUT_TYPE } from '../../../notifications/constants';
 import ParticipantsPaneButton from '../../../participants-pane/components/native/ParticipantsPaneButton';
 import { isParticipantsPaneEnabled } from '../../../participants-pane/functions';
 import { isRoomNameEnabled } from '../../../prejoin/functions.native';
@@ -75,7 +77,12 @@ interface IProps {
  * @returns {JSX.Element}
  */
 const TitleBar = (props: IProps) => {
-    const { _isParticipantsPaneEnabled, _visible } = props;
+    const { _isParticipantsPaneEnabled, _meetingName, _visible } = props;
+    const dispatch = useDispatch();
+
+    const _onRoomNamePress = useCallback(() => {
+        dispatch(showNotification({ title: _meetingName }, NOTIFICATION_TIMEOUT_TYPE.SHORT));
+    }, [ _meetingName, dispatch ]);
 
     if (!_visible) {
         return null;
@@ -98,13 +105,15 @@ const TitleBar = (props: IProps) => {
                 }
                 {
                     props._roomNameEnabled
-                    && <View style = { styles.roomNameView as ViewStyle }>
+                    && <TouchableOpacity
+                        onPress = { _onRoomNamePress }
+                        style = { styles.roomNameView as ViewStyle }>
                         <Text
                             numberOfLines = { 1 }
                             style = { styles.roomName }>
                             { props._meetingName }
                         </Text>
-                    </View>
+                    </TouchableOpacity>
                 }
                 {/* eslint-disable-next-line react/jsx-no-bind */}
                 <Labels createOnPress = { props._createOnPress } />
