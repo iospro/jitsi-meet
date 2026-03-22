@@ -1,8 +1,12 @@
+import { Platform } from 'react-native';
+
 import ColorSchemeRegistry from '../../../base/color-scheme/ColorSchemeRegistry';
 import { schemeColor } from '../../../base/color-scheme/functions';
 import BaseTheme from '../../../base/ui/components/BaseTheme.native';
 
 const BUTTON_SIZE = 48;
+
+const _isIOS = Platform.OS === 'ios';
 
 // Toolbox, toolbar:
 
@@ -82,10 +86,12 @@ const styles = {
 
     /**
      * The style of the toolbar.
+     * On iOS the background is transparent so the toolboxContainer provides
+     * the visual surface (glass on iOS 26, semi-transparent on older iOS).
      */
     toolbox: {
         alignItems: 'center',
-        backgroundColor: BaseTheme.palette.uiBackground,
+        backgroundColor: _isIOS ? 'transparent' : BaseTheme.palette.uiBackground,
         borderTopLeftRadius: 3,
         borderTopRightRadius: 3,
         flexDirection: 'row',
@@ -94,9 +100,12 @@ const styles = {
 
     /**
      * The style of the root/top-level container of {@link Toolbox}.
+     *
+     * - iOS: semi-transparent dark backdrop.
+     * - Android: unchanged solid background.
      */
     toolboxContainer: {
-        backgroundColor: BaseTheme.palette.uiBackground,
+        backgroundColor: _isIOS ? 'rgba(20, 20, 20, 0.82)' : BaseTheme.palette.uiBackground,
         flexDirection: 'column',
         maxWidth: 580,
         marginHorizontal: 'auto',
@@ -156,7 +165,8 @@ ColorSchemeRegistry.register('Toolbox', {
         iconStyle: whiteToolbarButtonIcon,
         style: {
             ...toolbarButton,
-            backgroundColor: schemeColor('hangup')
+            backgroundColor: schemeColor('hangup'),
+            borderRadius: BUTTON_SIZE / 2
         },
         underlayColor: BaseTheme.palette.ui04
     },
