@@ -3,17 +3,12 @@ import { connect } from 'react-redux';
 
 import { IReduxState } from '../../../../app/types';
 import { openDialog } from '../../../../base/dialog/actions';
-import {
-    IGNORE_JWT_RECORDING_TRANSCRIPTION_FEATURES,
-    IOS_RECORDING_ENABLED,
-    RECORDING_ENABLED
-} from '../../../../base/flags/constants';
+import { IOS_RECORDING_ENABLED, RECORDING_ENABLED } from '../../../../base/flags/constants';
 import { getFeatureFlag } from '../../../../base/flags/functions';
 import { translate } from '../../../../base/i18n/functions';
 import { navigate }
     from '../../../../mobile/navigation/components/conference/ConferenceNavigationContainerRef';
 import { screen } from '../../../../mobile/navigation/routes';
-import { isRecordingRunning } from '../../../functions';
 import {
     IProps, _mapStateToProps as abstractStartLiveStreamDialogMapStateToProps
 } from '../../LiveStream/AbstractStartLiveStreamDialog';
@@ -61,14 +56,12 @@ class RecordButton extends AbstractRecordButton<Props> {
 export function mapStateToProps(state: IReduxState) {
     const enabled = getFeatureFlag(state, RECORDING_ENABLED, true);
     const iosEnabled = Platform.OS !== 'ios' || getFeatureFlag(state, IOS_RECORDING_ENABLED, false);
-    const ignoreJWTFeatures = getFeatureFlag(state, IGNORE_JWT_RECORDING_TRANSCRIPTION_FEATURES, false);
     const abstractProps = _abstractMapStateToProps(state);
 
     return {
         ...abstractProps,
         ...abstractStartLiveStreamDialogMapStateToProps(state),
-        _isRecordingRunning: ignoreJWTFeatures ? isRecordingRunning(state) : abstractProps._isRecordingRunning,
-        visible: Boolean(enabled && iosEnabled && (ignoreJWTFeatures || abstractProps.visible))
+        visible: Boolean(enabled && iosEnabled && abstractProps.visible)
     };
 }
 

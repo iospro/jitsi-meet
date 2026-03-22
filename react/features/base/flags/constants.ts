@@ -213,15 +213,6 @@ export const REACTIONS_ENABLED = 'reactions.enabled';
 export const RECORDING_ENABLED = 'recording.enabled';
 
 /**
- * Flag indicating if JWT-based recording and transcription feature checks
- * should be ignored for the purposes of showing the recording button.
- * When enabled, button visibility relies solely on RECORDING_ENABLED and
- * IOS_RECORDING_ENABLED flags, bypassing server-side JWT feature gates.
- * Default: disabled (false).
- */
-export const IGNORE_JWT_RECORDING_TRANSCRIPTION_FEATURES = 'ignoreJWTRecordingAndTranscriptionFeatures.enabled';
-
-/**
  * Flag indicating if the user should join the conference with the replaceParticipant functionality.
  * Default: (false).
  */
