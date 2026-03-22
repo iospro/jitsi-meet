@@ -1,10 +1,12 @@
 import { Platform } from 'react-native';
 
 import ColorSchemeRegistry from '../../../base/color-scheme/ColorSchemeRegistry';
-import { schemeColor } from '../../../base/color-scheme/functions';
 import BaseTheme from '../../../base/ui/components/BaseTheme.native';
 
 const BUTTON_SIZE = 48;
+
+// Smaller circular hangup button to keep it visually compact in the toolbar.
+const HANGUP_BUTTON_SIZE = 40;
 
 const _isIOS = Platform.OS === 'ios';
 
@@ -101,17 +103,19 @@ const styles = {
     /**
      * The style of the root/top-level container of {@link Toolbox}.
      *
-     * - iOS: semi-transparent dark backdrop.
+     * - iOS: semi-transparent capsule backdrop with safe-area-aware padding.
      * - Android: unchanged solid background.
      */
     toolboxContainer: {
-        backgroundColor: _isIOS ? 'rgba(20, 20, 20, 0.82)' : BaseTheme.palette.uiBackground,
+        backgroundColor: _isIOS ? 'rgba(128, 128, 128, 0.5)' : BaseTheme.palette.uiBackground,
+        borderRadius: _isIOS ? 28 : 0,
         flexDirection: 'column',
         maxWidth: 580,
-        marginHorizontal: 'auto',
+        marginHorizontal: _isIOS ? BaseTheme.spacing[2] : 'auto',
+        marginBottom: _isIOS ? BaseTheme.spacing[2] : 0,
         marginVertical: BaseTheme.spacing[0],
         paddingHorizontal: BaseTheme.spacing[2],
-        width: '100%'
+        width: _isIOS ? undefined : '100%'
     },
 
     toolboxButtonIconContainer: {
@@ -166,7 +170,9 @@ ColorSchemeRegistry.register('Toolbox', {
         style: {
             ...toolbarButton,
             backgroundColor: BaseTheme.palette.actionDanger,
-            borderRadius: BUTTON_SIZE / 2
+            borderRadius: HANGUP_BUTTON_SIZE / 2,
+            height: HANGUP_BUTTON_SIZE,
+            width: HANGUP_BUTTON_SIZE
         },
         underlayColor: BaseTheme.palette.ui04
     },

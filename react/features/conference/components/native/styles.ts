@@ -157,11 +157,10 @@ export default {
         backgroundColor: _isIOS ? 'rgba(20, 20, 20, 0.82)' : BaseTheme.palette.ui03,
 
         // Capsule shape: borderRadius = height / 2.
-        borderRadius: 16,
-        height: 32,
+        borderRadius: 13,
+        height: 26,
         justifyContent: 'center',
         paddingHorizontal: BaseTheme.spacing[2],
-        paddingVertical: BaseTheme.spacing[1],
         minWidth: 50
     },
 
