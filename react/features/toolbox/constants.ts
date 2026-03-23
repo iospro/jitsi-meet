@@ -61,30 +61,73 @@ export const THRESHOLDS = [
 ];
 
 /**
- * Thresholds for displaying native toolbox buttons.
+ * Width correction for native toolbox thresholds.
+ * Accounts for toolboxContainer.marginHorizontal (12×2 = 24pt) and safe inset
+ * from borderRadius: 30 rounded corners (6pt per side = 12pt), totalling 36pt.
  */
-export const NATIVE_THRESHOLDS = [
+const NATIVE_TOOLBAR_WIDTH_CORRECTION = 36;
+
+/**
+ * Thresholds for displaying native toolbox buttons on iOS devices.
+ * Breakpoints match real iPhone screen widths (points):
+ *   500 - above all iPhones (8+ buttons)
+ *   428 - iPhone Pro Max
+ *   390 - iPhone 14/15
+ *   375 - iPhone SE / 8
+ *   320 - fallback
+ */
+export const IOS_THRESHOLDS = [
     {
-        width: 560,
-        order: [ 'microphone', 'camera', 'chat', 'desktop', 'raisehand', 'tileview', 'overflowmenu', 'hangup' ]
+        width: 500 - NATIVE_TOOLBAR_WIDTH_CORRECTION,
+        order: [ 'microphone', 'camera', 'chat', 'screensharing', 'raisehand', 'tileview', 'overflowmenu', 'hangup' ]
     },
     {
-        width: 500,
+        width: 428 - NATIVE_TOOLBAR_WIDTH_CORRECTION,
         order: [ 'microphone', 'camera', 'chat', 'raisehand', 'tileview', 'overflowmenu', 'hangup' ]
     },
     {
-        width: 440,
+        width: 375 - NATIVE_TOOLBAR_WIDTH_CORRECTION,
         order: [ 'microphone', 'camera', 'chat', 'raisehand', 'overflowmenu', 'hangup' ]
     },
     {
-        width: 380,
+        width: 320 - NATIVE_TOOLBAR_WIDTH_CORRECTION,
         order: [ 'microphone', 'camera', 'chat', 'overflowmenu', 'hangup' ]
-    },
-    {
-        width: 320,
-        order: [ 'microphone', 'camera', 'overflowmenu', 'hangup' ]
     }
 ];
+
+/**
+ * Thresholds for displaying native toolbox buttons on Android devices.
+ * Breakpoints match common Android screen widths (dp):
+ *   500 - large tablets / foldables unfolded
+ *   412 - Pixel / Samsung flagship (e.g. Pixel 7, Galaxy S24+)
+ *   393 - Samsung Galaxy S24
+ *   360 - mid-range Android (e.g. Samsung A-series)
+ *   320 - fallback
+ */
+export const ANDROID_THRESHOLDS = [
+    {
+        width: 500 - NATIVE_TOOLBAR_WIDTH_CORRECTION,
+        order: [ 'microphone', 'camera', 'chat', 'screensharing', 'raisehand', 'tileview', 'overflowmenu', 'hangup' ]
+    },
+    {
+        width: 412 - NATIVE_TOOLBAR_WIDTH_CORRECTION,
+        order: [ 'microphone', 'camera', 'chat', 'raisehand', 'tileview', 'overflowmenu', 'hangup' ]
+    },
+    {
+        width: 360 - NATIVE_TOOLBAR_WIDTH_CORRECTION,
+        order: [ 'microphone', 'camera', 'chat', 'raisehand', 'overflowmenu', 'hangup' ]
+    },
+    {
+        width: 320 - NATIVE_TOOLBAR_WIDTH_CORRECTION,
+        order: [ 'microphone', 'camera', 'chat', 'overflowmenu', 'hangup' ]
+    }
+];
+
+/**
+ * Default native thresholds (iOS). Used as initial Redux state before
+ * middleware overrides with platform-specific thresholds.
+ */
+export const NATIVE_THRESHOLDS = IOS_THRESHOLDS;
 
 /**
  * Main toolbar buttons priority used to determine which button should be picked to fill empty spaces for disabled

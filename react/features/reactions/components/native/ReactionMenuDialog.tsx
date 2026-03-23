@@ -1,5 +1,6 @@
 import React, { ComponentType, PureComponent } from 'react';
 import { TouchableWithoutFeedback, View } from 'react-native';
+import { useSafeAreaInsets } from 'react-native-safe-area-context';
 import { connect } from 'react-redux';
 
 import { IReduxState, IStore } from '../../../app/types';
@@ -9,6 +10,23 @@ import { isDialogOpen } from '../../../base/dialog/functions';
 import { StyleType } from '../../../base/styles/functions.native';
 
 import ReactionMenu from './ReactionMenu';
+
+// toolbar: paddingVertical(6*2) + button(48) + marginBottom(12) = 72pt above safe area
+const TOOLBAR_HEIGHT_ABOVE_SAFE_AREA = 72;
+const PANEL_GAP = 16;
+
+const ReactionPanel: React.FC<{ onCancel: () => void }> = ({ onCancel }) => {
+    const insets = useSafeAreaInsets();
+    const bottom = insets.bottom + TOOLBAR_HEIGHT_ABOVE_SAFE_AREA + PANEL_GAP;
+
+    return (
+        <View style = { { bottom, left: 12, position: 'absolute', right: 12 } }>
+            <ReactionMenu
+                onCancel = { onCancel }
+                overflowMenu = { false } />
+        </View>
+    );
+};
 
 /**
  * The type of the React {@code Component} props of {@link ReactionMenuDialog}.
@@ -70,16 +88,7 @@ class ReactionMenuDialog extends PureComponent<IProps> {
             <TouchableWithoutFeedback
                 onPress = { this._onCancel }>
                 <View style = { _styles }>
-                    <View style = { {
-                        bottom: 109,
-                        left: 12,
-                        position: 'absolute',
-                        right: 12
-                    } }>
-                        <ReactionMenu
-                            onCancel = { this._onCancel }
-                            overflowMenu = { false } />
-                    </View>
+                    <ReactionPanel onCancel = { this._onCancel } />
                 </View>
             </TouchableWithoutFeedback>
         );

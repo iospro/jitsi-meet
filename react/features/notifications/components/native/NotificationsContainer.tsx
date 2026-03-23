@@ -196,7 +196,7 @@ class NotificationsContainer extends Component<IProps> {
 
         return (
             <SafeAreaView
-                edges = { [ Platform.OS === 'ios' && 'bottom', 'left', 'right' ].filter(Boolean) as Edge[] }
+                edges = { [ Platform.OS === 'ios' ? 'bottom' : null ].filter(Boolean) as Edge[] }
                 style = { notificationsContainerStyle as any }>
                 <NotificationsTransition>
                     {

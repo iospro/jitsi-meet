@@ -195,6 +195,8 @@ const Notification = ({
         }
     };
 
+    const buttons = mapAppearanceToButtons();
+
     return (
         <Animated.View
             pointerEvents = 'box-none'
@@ -214,14 +216,17 @@ const Notification = ({
                 pointerEvents = 'box-none'
                 style = { styles.contentColumn as ViewStyle }>
                 { _renderContent() }
-                <View style = { styles.btnContainer as ViewStyle }>
-                    { mapAppearanceToButtons() }
-                </View>
+                { buttons.length > 0 && (
+                    <View style = { styles.btnContainer as ViewStyle }>
+                        { buttons }
+                    </View>
+                ) }
             </View>
             <IconButton
                 color = '#FFFFFF'
                 onPress = { onDismiss }
                 src = { IconCloseLarge }
+                style = {{ borderRadius: 10, height: 20, marginRight: 8, width: 20 }}
                 type = { BUTTON_TYPES.TERTIARY } />
         </Animated.View>
     );

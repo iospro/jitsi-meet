@@ -16,7 +16,7 @@ export default {
     indicatorStyle: {
         width: INDICATOR_SIZE,
         height: INDICATOR_SIZE,
-        marginRight: 4,
+        marginRight: 8,
         marginLeft: 0,
         marginBottom: 0,
         backgroundColor: BaseTheme.palette.iconError,

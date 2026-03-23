@@ -12,12 +12,13 @@ const notification = {
     borderRadius: 29,
     display: 'flex',
     flexDirection: 'row',
-    marginHorizontal: 8,
+    marginHorizontal: 12,
     marginVertical: BaseTheme.spacing[1],
     maxWidth: 416,
     minHeight: 52,
     overflow: 'hidden',
-    paddingHorizontal: 12,
+    paddingLeft: 12,
+    paddingRight: 0,
     paddingVertical: 4,
     width: '100%'
 };
