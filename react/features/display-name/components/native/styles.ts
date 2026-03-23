@@ -3,9 +3,10 @@ import BaseTheme from '../../../base/ui/components/BaseTheme.native';
 export default {
     displayNameBackdrop: {
         alignSelf: 'center',
-        backgroundColor: BaseTheme.palette.ui01,
-        borderRadius: BaseTheme.shape.borderRadius,
-        padding: 6
+        backgroundColor: 'rgba(17, 17, 17, 0.8)',
+        borderRadius: 100,
+        paddingVertical: 4,
+        paddingHorizontal: 12
     },
 
     displayNamePadding: {

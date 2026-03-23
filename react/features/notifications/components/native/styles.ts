@@ -7,12 +7,11 @@ const contentColumn = {
 };
 
 const notification = {
-    backgroundColor: BaseTheme.palette.ui10,
-    borderRadius: BaseTheme.shape.borderRadius,
-    borderLeftColor: BaseTheme.palette.link01Active,
-    borderLeftWidth: BaseTheme.spacing[1],
+    backgroundColor: 'rgba(17, 17, 17, 0.8)',
+    borderRadius: 20,
     display: 'flex',
     flexDirection: 'row',
+    marginHorizontal: 8,
     marginVertical: BaseTheme.spacing[1],
     maxWidth: 416,
     width: '100%'
@@ -44,26 +43,26 @@ export default {
     },
 
     contentText: {
-        color: BaseTheme.palette.text04,
+        color: '#FFFFFF',
         paddingLeft: BaseTheme.spacing[4],
         paddingTop: BaseTheme.spacing[1]
     },
 
     contentTextDescription: {
-        color: BaseTheme.palette.text04,
+        color: '#FFFFFF',
         paddingLeft: BaseTheme.spacing[4],
         paddingTop: BaseTheme.spacing[2]
     },
 
     contentTextTitleDescription: {
-        color: BaseTheme.palette.text04,
+        color: '#FFFFFF',
         fontWeight: 'bold',
         paddingLeft: BaseTheme.spacing[4],
         paddingTop: BaseTheme.spacing[2]
     },
 
     contentTextTitle: {
-        color: BaseTheme.palette.text04,
+        color: '#FFFFFF',
         fontWeight: 'bold',
         paddingLeft: BaseTheme.spacing[4],
         paddingTop: BaseTheme.spacing[3]
@@ -73,7 +72,7 @@ export default {
      * Dismiss icon style.
      */
     dismissIcon: {
-        color: BaseTheme.palette.icon04,
+        color: '#FFFFFF',
         fontSize: 20
     },
 
@@ -95,7 +94,7 @@ export default {
     },
 
     participantName: {
-        color: BaseTheme.palette.text04,
+        color: '#FFFFFF',
         overflow: 'hidden'
     },
 
@@ -117,23 +116,28 @@ export default {
     },
 
     withToolbox: {
+        alignItems: 'center',
         bottom: 64,
         position: 'absolute',
         width: '100%'
     },
 
     withToolboxTileView: {
+        alignItems: 'center',
         bottom: 64,
         position: 'absolute',
         width: '100%'
     },
 
     withoutToolbox: {
+        alignItems: 'center',
+        bottom: 0,
         position: 'absolute',
         width: '100%'
     },
 
     withoutToolboxTileView: {
+        alignItems: 'center',
         bottom: 0,
         position: 'absolute',
         width: '100%'

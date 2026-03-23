@@ -86,8 +86,8 @@ const styles = {
     toolbox: {
         alignItems: 'center',
         backgroundColor: 'rgba(17, 17, 17, 0.8)',
-        borderTopLeftRadius: 3,
-        borderTopRightRadius: 3,
+        borderTopLeftRadius: 12,
+        borderTopRightRadius: 12,
         flexDirection: 'row',
         justifyContent: 'space-between'
     },
@@ -97,6 +97,8 @@ const styles = {
      */
     toolboxContainer: {
         backgroundColor: 'rgba(17, 17, 17, 0.8)',
+        borderTopLeftRadius: 12,
+        borderTopRightRadius: 12,
         flexDirection: 'column',
         maxWidth: 580,
         marginHorizontal: 'auto',

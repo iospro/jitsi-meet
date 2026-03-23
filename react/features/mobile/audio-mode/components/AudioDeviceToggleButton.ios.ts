@@ -1,4 +1,6 @@
-import { ActionSheetIOS, NativeModules } from 'react-native';
+import { MenuView } from '@react-native-menu/menu';
+import React from 'react';
+import { NativeModules } from 'react-native';
 import { connect } from 'react-redux';
 
 import { IReduxState } from '../../../app/types';
@@ -21,6 +23,17 @@ const DEVICE_TEXT_MAP: Record<string, string> = {
     SPEAKER: 'audioDevices.speaker'
 };
 
+/**
+ * SF Symbols for each device type (iOS 13+).
+ */
+const DEVICE_ICON_MAP: Record<string, string | undefined> = {
+    BLUETOOTH: 'wave.3.right',
+    CAR: 'car',
+    EARPIECE: 'phone',
+    HEADPHONES: 'headphones',
+    SPEAKER: 'speaker.wave.3'
+};
+
 interface IProps extends AbstractButtonProps {
 
     /**
@@ -31,7 +44,8 @@ interface IProps extends AbstractButtonProps {
 
 /**
  * iOS-specific version of AudioDeviceToggleButton.
- * Shows a native ActionSheetIOS instead of a custom bottom sheet.
+ * Shows a native UIMenu instead of an ActionSheet or bottom sheet.
+ * The currently selected device is highlighted with a native system checkmark.
  */
 class AudioDeviceToggleButton extends AbstractButton<IProps> {
     override accessibilityLabel = 'toolbar.accessibilityLabel.audioRoute';
@@ -39,47 +53,58 @@ class AudioDeviceToggleButton extends AbstractButton<IProps> {
     override label = 'toolbar.accessibilityLabel.audioRoute';
 
     /**
-     * Handles clicking / pressing the button.
-     * Shows a native iOS action sheet to select an audio device.
+     * Renders the button wrapped in a native UIMenu.
+     * Uses React.createElement to avoid JSX syntax in a .ts file.
      *
-     * @private
-     * @returns {void}
+     * @returns {React.ReactNode}
      */
-    override _handleClick() {
+    override render() {
         const { _devices: rawDevices, t } = this.props;
-
-        // Trigger a device list refresh before showing the picker.
-        AudioMode.updateDeviceList?.();
 
         const devices = (rawDevices ?? []).filter(d => DEVICE_TEXT_MAP[d.type]);
 
-        const options = devices.map(device => {
+        const actions = devices.map(device => {
+            let title: string;
+
             // iOS provides descriptive names for Bluetooth/Car — use them.
             if ((device.type === 'BLUETOOTH' || device.type === 'CAR') && device.name) {
-                return device.name;
+                title = device.name;
+            } else {
+                title = t(DEVICE_TEXT_MAP[device.type]);
             }
 
-            return t(DEVICE_TEXT_MAP[device.type]);
+            return {
+                id: device.uid || device.type,
+                title,
+                image: DEVICE_ICON_MAP[device.type],
+                imageColor: '#FFFFFF',
+
+                // `state: 'on'` renders the native system checkmark next to the item.
+                state: device.selected ? 'on' as const : 'off' as const
+            };
         });
 
-        // Add a "Cancel" option at the end (iOS convention).
-        const cancelButtonIndex = options.length;
+        const handlePressAction = (
+                { nativeEvent }: { nativeEvent: { event: string } }
+        ) => {
+            const device = devices.find(d => (d.uid || d.type) === nativeEvent.event);
 
-        options.push(t('dialog.cancel'));
-
-        ActionSheetIOS.showActionSheetWithOptions(
-            { options, cancelButtonIndex },
-            buttonIndex => {
-                if (buttonIndex === cancelButtonIndex) {
-                    return;
-                }
-
-                const device = devices[buttonIndex];
-
-                if (device) {
-                    AudioMode.setAudioDevice(device.uid || device.type);
-                }
+            if (device) {
+                AudioMode.setAudioDevice(device.uid || device.type);
             }
+        };
+
+        // Wrap the AbstractButton UI in MenuView.
+        // shouldOpenOnLongPress=false means the menu opens on a single tap;
+        // the inner button's onPress is not invoked by MenuView.
+        return React.createElement(
+            MenuView,
+            {
+                actions,
+                onPressAction: handlePressAction,
+                shouldOpenOnLongPress: false
+            },
+            super.render()
         );
     }
 }

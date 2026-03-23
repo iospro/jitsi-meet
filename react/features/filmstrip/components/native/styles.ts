@@ -140,7 +140,8 @@ export default {
         position: 'absolute',
         maxWidth: '95%',
         overflow: 'hidden',
-        padding: BaseTheme.spacing[0]
+        paddingHorizontal: 6,
+        paddingVertical: 0
     },
 
     bottomIndicatorsContainer: {

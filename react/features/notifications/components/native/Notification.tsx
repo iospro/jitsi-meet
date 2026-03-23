@@ -29,10 +29,10 @@ import styles from './styles';
  */
 
 const ICON_COLOR = {
-    error: BaseTheme.palette.iconError,
-    normal: BaseTheme.palette.iconNormal,
-    success: BaseTheme.palette.iconSuccess,
-    warning: BaseTheme.palette.iconWarning
+    error: '#FFFFFF',
+    normal: '#FFFFFF',
+    success: '#FFFFFF',
+    warning: '#FFFFFF'
 };
 
 
@@ -224,7 +224,7 @@ const Notification = ({
                 </View>
             </View>
             <IconButton
-                color = { BaseTheme.palette.icon04 }
+                color = '#FFFFFF'
                 onPress = { onDismiss }
                 src = { IconCloseLarge }
                 type = { BUTTON_TYPES.TERTIARY } />
