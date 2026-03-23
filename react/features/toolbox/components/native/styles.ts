@@ -85,7 +85,7 @@ const styles = {
      */
     toolbox: {
         alignItems: 'center',
-        backgroundColor: '#202020',
+        backgroundColor: 'rgba(32, 32, 32, 0.8)',
         borderRadius: 30,
         flexDirection: 'row',
         justifyContent: 'space-between'
@@ -95,7 +95,7 @@ const styles = {
      * The style of the root/top-level container of {@link Toolbox}.
      */
     toolboxContainer: {
-        backgroundColor: '#202020',
+        backgroundColor: 'rgba(32, 32, 32, 0.8)',
         borderRadius: 30,
         flexDirection: 'column',
         marginHorizontal: 12,
@@ -156,9 +156,9 @@ ColorSchemeRegistry.register('Toolbox', {
         style: {
             ...toolbarButton,
             backgroundColor: schemeColor('hangup'),
-            borderRadius: 11,
-            height: 22,
-            width: 22
+            borderRadius: 9,
+            height: 19,
+            width: 19
         },
         underlayColor: BaseTheme.palette.ui04
     },

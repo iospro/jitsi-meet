@@ -153,7 +153,7 @@ const Notification = ({
             return (
                 <>
                     <Text
-                        numberOfLines = { 1 }
+                        numberOfLines = { 2 }
                         style = { styles.contentTextTitleDescription as TextStyle }>
                         { titleText }
                     </Text>
@@ -161,6 +161,7 @@ const Notification = ({
                         descriptionArray.map((line, index) => (
                             <Text
                                 key = { index }
+                                numberOfLines = { 10 }
                                 style = { styles.contentText }>
                                 { line.length >= CHAR_LIMIT ? line : replaceNonUnicodeEmojis(line) }
                             </Text>
@@ -175,6 +176,7 @@ const Notification = ({
                         descriptionArray.map((line, index) => (
                             <Text
                                 key = { index }
+                                numberOfLines = { 10 }
                                 style = { styles.contentTextTitle as TextStyle }>
                                 { line.length >= CHAR_LIMIT ? line : replaceNonUnicodeEmojis(line) }
                             </Text>
@@ -185,7 +187,7 @@ const Notification = ({
         } else {
             return (
                 <Text
-                    numberOfLines = { 1 }
+                    numberOfLines = { 2 }
                     style = { styles.contentTextTitle as TextStyle }>
                     { titleText }
                 </Text>

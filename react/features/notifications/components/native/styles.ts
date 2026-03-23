@@ -7,8 +7,9 @@ const contentColumn = {
 };
 
 const notification = {
-    backgroundColor: 'rgba(17, 17, 17, 0.8)',
-    borderRadius: 26,
+    backgroundColor: 'rgba(32, 32, 32, 0.8)',
+    alignItems: 'center',
+    borderRadius: 29,
     display: 'flex',
     flexDirection: 'row',
     marginHorizontal: 8,
@@ -16,6 +17,7 @@ const notification = {
     maxWidth: 416,
     minHeight: 52,
     overflow: 'hidden',
+    paddingVertical: BaseTheme.spacing[2],
     width: '100%'
 };
 
@@ -81,8 +83,7 @@ export default {
     },
 
     notificationWithDescription: {
-        ...notification,
-        paddingBottom: BaseTheme.spacing[2]
+        ...notification
     },
 
     /**
