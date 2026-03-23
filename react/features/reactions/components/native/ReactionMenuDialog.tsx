@@ -71,7 +71,7 @@ class ReactionMenuDialog extends PureComponent<IProps> {
                 onPress = { this._onCancel }>
                 <View style = { _styles }>
                     <View style = { {
-                        bottom: 116,
+                        bottom: 109,
                         left: 12,
                         position: 'absolute',
                         right: 12

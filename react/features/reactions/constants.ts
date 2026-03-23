@@ -190,13 +190,6 @@ export const REACTIONS: IReactions = {
         shortcutChar: 'H',
         soundId: HEART_SOUND_ID,
         soundFiles: HEART_SOUND_FILES
-    },
-    pray: {
-        message: ':pray:',
-        emoji: '🙏',
-        shortcutChar: 'P',
-        soundId: `${REACTION_SOUND}_PRAY_`,
-        soundFiles: []
     }
 };
 
