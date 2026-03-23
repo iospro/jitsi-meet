@@ -87,20 +87,20 @@ const styles = {
         alignItems: 'center',
         borderRadius: 30,
         flexDirection: 'row',
-        justifyContent: 'space-between'
+        justifyContent: 'space-evenly'
     },
 
     /**
      * The style of the root/top-level container of {@link Toolbox}.
      */
     toolboxContainer: {
-        backgroundColor: 'rgba(32, 32, 32, 0.9)',
+        backgroundColor: 'rgba(32, 32, 32, 0.95)',
         borderRadius: 30,
         flexDirection: 'column',
         marginHorizontal: 12,
         marginBottom: 12,
         overflow: 'hidden',
-        paddingHorizontal: BaseTheme.spacing[2]
+        paddingHorizontal: 6
     },
 
     toolboxButtonIconContainer: {
