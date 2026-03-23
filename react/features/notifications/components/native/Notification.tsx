@@ -175,7 +175,7 @@ const Notification = ({
                         descriptionArray.map((line, index) => (
                             <Text
                                 key = { index }
-                                style = { styles.contentTextDescription }>
+                                style = { styles.contentTextTitle as TextStyle }>
                                 { line.length >= CHAR_LIMIT ? line : replaceNonUnicodeEmojis(line) }
                             </Text>
                         ))

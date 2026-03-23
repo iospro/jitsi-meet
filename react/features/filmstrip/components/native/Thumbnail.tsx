@@ -384,7 +384,7 @@ class Thumbnail extends PureComponent<IProps> {
                     style = { styles.thumbnailGif as ImageStyle } />
                     : <>
                         <ParticipantView
-                            avatarSize = { tileView ? SMALL_THUMBNAIL_SIZE / 2 : AVATAR_SIZE }
+                            avatarSize = { tileView ? (height ?? SMALL_THUMBNAIL_SIZE) / 2 : AVATAR_SIZE }
                             disableVideo = { !tileView && (isScreenShare || _fakeParticipant) }
                             participantId = { participantId }
                             zOrder = { 1 } />

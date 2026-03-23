@@ -7,6 +7,7 @@ const contentColumn = {
 };
 
 const notification = {
+    alignItems: 'center',
     backgroundColor: 'rgba(17, 17, 17, 0.8)',
     borderRadius: 20,
     display: 'flex',

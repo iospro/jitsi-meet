@@ -22,8 +22,6 @@ const titleBarSafeView = {
 const alwaysOnTitleBar = {
     alignItems: 'center',
     alignSelf: 'flex-end',
-    backgroundColor: 'rgba(0, 0, 0, .5)',
-    borderRadius: BaseTheme.shape.borderRadius,
     flexDirection: 'row',
     justifyContent: 'center',
     marginTop: BaseTheme.spacing[3],
@@ -114,7 +112,8 @@ export default {
     },
 
     titleBarSafeViewTransparent: {
-        ...titleBarSafeView
+        ...titleBarSafeView,
+        backgroundColor: '#111111'
     },
 
     titleBarWrapper: {
