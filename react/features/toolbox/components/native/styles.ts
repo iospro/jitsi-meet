@@ -176,9 +176,10 @@ ColorSchemeRegistry.register('Toolbox', {
 
     reactionMenu: {
         ...reactionMenu,
+        backgroundColor: 'rgba(32, 32, 32, 0.95)',
+        borderRadius: 30,
         paddingHorizontal: BaseTheme.spacing[3],
-        borderRadius: 3,
-        width: 360
+        paddingVertical: BaseTheme.spacing[3]
     },
 
     reactionRow: {

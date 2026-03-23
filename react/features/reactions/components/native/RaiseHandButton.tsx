@@ -16,7 +16,6 @@ import {
 import { ILocalParticipant } from '../../../base/participants/types';
 import { IProps as AbstractButtonProps } from '../../../base/toolbox/components/AbstractButton';
 import Button from '../../../base/ui/components/native/Button';
-import { BUTTON_TYPES } from '../../../base/ui/constants.native';
 
 import styles from './styles';
 
@@ -143,11 +142,12 @@ class RaiseHandButton extends Component<IProps> {
         return (
             <Button
                 accessibilityLabel = { this.accessibilityLabel }
+                color = '#000000'
                 icon = { this._renderRaiseHandEmoji }
                 labelKey = { this._getLabel() }
+                labelStyle = { { color: '#FFFFFF' } }
                 onClick = { this._onClick }
-                style = { styles.raiseHandButton }
-                type = { BUTTON_TYPES.SECONDARY } />
+                style = { styles.raiseHandButton } />
         );
     }
 }

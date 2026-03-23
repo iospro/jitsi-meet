@@ -6,7 +6,6 @@ import { IReduxState, IStore } from '../../../app/types';
 import ColorSchemeRegistry from '../../../base/color-scheme/ColorSchemeRegistry';
 import { hideDialog } from '../../../base/dialog/actions';
 import { isDialogOpen } from '../../../base/dialog/functions';
-import { getParticipantCount } from '../../../base/participants/functions';
 import { StyleType } from '../../../base/styles/functions.native';
 
 import ReactionMenu from './ReactionMenu';
@@ -17,29 +16,14 @@ import ReactionMenu from './ReactionMenu';
 interface IProps {
 
     /**
-    * The height of the screen.
-    */
-    _height: number;
-
-    /**
      * True if the dialog is currently visible, false otherwise.
      */
     _isOpen: boolean;
 
     /**
-     * Number of conference participants.
-     */
-    _participantCount: number;
-
-    /**
      * The color-schemed stylesheet of the feature.
      */
     _styles: StyleType;
-
-    /**
-     * The width of the screen.
-     */
-    _width: number;
 
     /**
      * Used for hiding the dialog when the selection was completed.
@@ -80,21 +64,22 @@ class ReactionMenuDialog extends PureComponent<IProps> {
      * @returns {ReactElement}
      */
     override render() {
-        const { _height, _participantCount, _styles, _width } = this.props;
+        const { _styles } = this.props;
 
         return (
             <TouchableWithoutFeedback
                 onPress = { this._onCancel }>
-                <View
-                    style = { [
-                        _styles,
-                        {
-                            left: (_width - 360) / 2,
-                            top: _height - (_participantCount > 1 ? 144 : 80) - 80
-                        } ] }>
-                    <ReactionMenu
-                        onCancel = { this._onCancel }
-                        overflowMenu = { false } />
+                <View style = { _styles }>
+                    <View style = { {
+                        bottom: 116,
+                        left: 12,
+                        position: 'absolute',
+                        right: 12
+                    } }>
+                        <ReactionMenu
+                            onCancel = { this._onCancel }
+                            overflowMenu = { false } />
+                    </View>
                 </View>
             </TouchableWithoutFeedback>
         );
@@ -127,10 +112,7 @@ class ReactionMenuDialog extends PureComponent<IProps> {
 function _mapStateToProps(state: IReduxState) {
     return {
         _isOpen: isDialogOpen(state, ReactionMenu_), // @ts-ignore
-        _styles: ColorSchemeRegistry.get(state, 'Toolbox').reactionDialog,
-        _width: state['features/base/responsive-ui'].clientWidth,
-        _height: state['features/base/responsive-ui'].clientHeight,
-        _participantCount: getParticipantCount(state)
+        _styles: ColorSchemeRegistry.get(state, 'Toolbox').reactionDialog
     };
 }
 

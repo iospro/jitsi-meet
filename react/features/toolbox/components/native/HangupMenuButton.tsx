@@ -25,10 +25,13 @@ const HangupMenuButton = (): JSX.Element => {
         dispatch(openSheet(HangupMenu));
     }, [ dispatch ]);
 
+    const iconSize = hangupButtonStyles?.iconStyle?.fontSize ?? 24;
+
     return (
         <IconButton
             accessibilityLabel = 'toolbar.accessibilityLabel.hangup'
             onPress = { onSelect }
+            size = { iconSize }
             src = { IconHangup }
             style = { hangupButtonStyles?.style }
             type = { BUTTON_TYPES.DESTRUCTIVE } />
