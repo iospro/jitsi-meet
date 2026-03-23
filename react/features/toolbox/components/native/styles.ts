@@ -85,7 +85,7 @@ const styles = {
      */
     toolbox: {
         alignItems: 'center',
-        backgroundColor: BaseTheme.palette.uiBackground,
+        backgroundColor: 'rgba(17, 17, 17, 0.8)',
         borderTopLeftRadius: 3,
         borderTopRightRadius: 3,
         flexDirection: 'row',
@@ -96,7 +96,7 @@ const styles = {
      * The style of the root/top-level container of {@link Toolbox}.
      */
     toolboxContainer: {
-        backgroundColor: BaseTheme.palette.uiBackground,
+        backgroundColor: 'rgba(17, 17, 17, 0.8)',
         flexDirection: 'column',
         maxWidth: 580,
         marginHorizontal: 'auto',
@@ -156,7 +156,8 @@ ColorSchemeRegistry.register('Toolbox', {
         iconStyle: whiteToolbarButtonIcon,
         style: {
             ...toolbarButton,
-            backgroundColor: schemeColor('hangup')
+            backgroundColor: schemeColor('hangup'),
+            borderRadius: BUTTON_SIZE / 2
         },
         underlayColor: BaseTheme.palette.ui04
     },

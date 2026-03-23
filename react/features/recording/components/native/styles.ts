@@ -13,6 +13,7 @@ export default createStyleSheet({
         marginRight: 4,
         marginLeft: 0,
         marginBottom: 0,
-        backgroundColor: BaseTheme.palette.iconError
+        backgroundColor: BaseTheme.palette.iconError,
+        borderRadius: 14
     }
 });

@@ -62,8 +62,9 @@ export default {
         minWidth: BaseTheme.spacing[3],
         color: BaseTheme.palette.text01,
         ...BaseTheme.typography.labelBold,
+        fontSize: 11,
         position: 'absolute',
-        right: -3,
+        right: 0,
         top: -3,
         textAlign: 'center',
         paddingHorizontal: 2

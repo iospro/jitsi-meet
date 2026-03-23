@@ -63,7 +63,7 @@ export default {
         borderRadius: 3,
         height: BaseTheme.spacing[7],
         marginTop: BaseTheme.spacing[1],
-        marginRight: BaseTheme.spacing[1],
+        marginRight: BaseTheme.spacing[2],
         zIndex: 1,
         width: BaseTheme.spacing[7]
     },
@@ -110,7 +110,7 @@ export default {
 
     titleBarSafeViewColor: {
         ...titleBarSafeView,
-        backgroundColor: BaseTheme.palette.uiBackground
+        backgroundColor: 'rgba(17, 17, 17, 0.8)'
     },
 
     titleBarSafeViewTransparent: {
@@ -152,9 +152,7 @@ export default {
     },
 
     roomTimerView: {
-        // iOS: semi-transparent backdrop matching the toolbar style.
-        // Android: solid ui03 token (unchanged).
-        backgroundColor: _isIOS ? 'rgba(20, 20, 20, 0.82)' : BaseTheme.palette.ui03,
+        backgroundColor: 'rgba(17, 17, 17, 0.8)',
 
         // Capsule shape: borderRadius = height / 2.
         borderRadius: 13,
@@ -180,6 +178,7 @@ export default {
     },
 
     roomNameWrapper: {
+        alignItems: 'center',
         flexDirection: 'row',
         marginRight: 10,
         marginLeft: 8,

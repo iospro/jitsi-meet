@@ -8,8 +8,8 @@ export const AVATAR_SIZE = 50;
 
 const indicatorContainer = {
     alignItems: 'center',
-    backgroundColor: 'rgba(0, 0, 0, 0.7)',
-    borderRadius: BaseTheme.shape.borderRadius,
+    backgroundColor: 'rgba(17, 17, 17, 0.8)',
+    borderRadius: 12,
     height: 24,
     margin: 2,
     padding: 2

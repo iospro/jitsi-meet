@@ -117,13 +117,13 @@ export default {
     },
 
     withToolbox: {
-        bottom: 56,
+        bottom: 64,
         position: 'absolute',
         width: '100%'
     },
 
     withToolboxTileView: {
-        bottom: 56,
+        bottom: 64,
         position: 'absolute',
         width: '100%'
     },
