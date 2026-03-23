@@ -108,7 +108,7 @@ export default {
 
     titleBarSafeViewColor: {
         ...titleBarSafeView,
-        backgroundColor: '#111111'
+        backgroundColor: '#000000'
     },
 
     titleBarSafeViewTransparent: {
@@ -126,7 +126,7 @@ export default {
 
     alwaysOnTitleBar: {
         ...alwaysOnTitleBar,
-        marginRight: BaseTheme.spacing[2]
+        marginRight: BaseTheme.spacing[2] + 2
     },
 
     alwaysOnTitleBarWide: {

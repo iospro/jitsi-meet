@@ -53,22 +53,19 @@ export default {
 
     contentTextDescription: {
         color: '#FFFFFF',
-        paddingLeft: BaseTheme.spacing[4],
-        paddingTop: BaseTheme.spacing[2]
+        paddingLeft: BaseTheme.spacing[4]
     },
 
     contentTextTitleDescription: {
         color: '#FFFFFF',
         fontWeight: 'bold',
-        paddingLeft: BaseTheme.spacing[4],
-        paddingTop: BaseTheme.spacing[2]
+        paddingLeft: BaseTheme.spacing[4]
     },
 
     contentTextTitle: {
         color: '#FFFFFF',
         fontWeight: 'bold',
-        paddingLeft: BaseTheme.spacing[4],
-        paddingTop: BaseTheme.spacing[3]
+        paddingLeft: BaseTheme.spacing[4]
     },
 
     /**
@@ -123,14 +120,14 @@ export default {
 
     withToolbox: {
         alignItems: 'center',
-        bottom: 64,
+        bottom: 76,
         position: 'absolute',
         width: '100%'
     },
 
     withToolboxTileView: {
         alignItems: 'center',
-        bottom: 64,
+        bottom: 76,
         position: 'absolute',
         width: '100%'
     },
