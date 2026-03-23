@@ -141,13 +141,12 @@ export default {
         position: 'absolute',
         maxWidth: '95%',
         overflow: 'hidden',
-        paddingHorizontal: 6,
-        paddingVertical: 0
+        padding: 0
     },
 
     bottomIndicatorsContainer: {
         flexDirection: 'row',
-        padding: BaseTheme.spacing[1]
+        padding: 2
     },
 
     thumbnailTopLeftIndicatorContainer: {
