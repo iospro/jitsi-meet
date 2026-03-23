@@ -61,6 +61,15 @@ export default {
         borderRadius: 3,
         height: BaseTheme.spacing[7],
         marginTop: BaseTheme.spacing[1],
+        marginRight: BaseTheme.spacing[1],
+        zIndex: 1,
+        width: BaseTheme.spacing[7]
+    },
+
+    titleBarButtonContainerLast: {
+        borderRadius: 3,
+        height: BaseTheme.spacing[7],
+        marginTop: BaseTheme.spacing[1],
         marginRight: BaseTheme.spacing[2],
         zIndex: 1,
         width: BaseTheme.spacing[7]

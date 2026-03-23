@@ -1,6 +1,8 @@
 import React, { useCallback } from 'react';
-import { useDispatch } from 'react-redux';
+import { useDispatch, useSelector } from 'react-redux';
 
+import { IReduxState } from '../../../app/types';
+import ColorSchemeRegistry from '../../../base/color-scheme/ColorSchemeRegistry';
 import { openSheet } from '../../../base/dialog/actions';
 import { IconHangup } from '../../../base/icons/svg';
 import IconButton from '../../../base/ui/components/native/IconButton';
@@ -15,6 +17,9 @@ import HangupMenu from './HangupMenu';
  */
 const HangupMenuButton = (): JSX.Element => {
     const dispatch = useDispatch();
+    const { hangupButtonStyles } = useSelector(
+        (state: IReduxState) => ColorSchemeRegistry.get(state, 'Toolbox')
+    );
 
     const onSelect = useCallback(() => {
         dispatch(openSheet(HangupMenu));
@@ -25,7 +30,7 @@ const HangupMenuButton = (): JSX.Element => {
             accessibilityLabel = 'toolbar.accessibilityLabel.hangup'
             onPress = { onSelect }
             src = { IconHangup }
-            style = {{ borderRadius: 18, height: 36, width: 36 }}
+            style = { hangupButtonStyles?.style }
             type = { BUTTON_TYPES.DESTRUCTIVE } />
     );
 };

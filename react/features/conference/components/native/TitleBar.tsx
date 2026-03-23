@@ -132,7 +132,7 @@ const TitleBar = (props: IProps) => {
             }
             {
                 _isParticipantsPaneEnabled
-                && <View style = { styles.titleBarButtonContainer }>
+                && <View style = { styles.titleBarButtonContainerLast }>
                     <ParticipantsPaneButton
                         styles = { styles.titleBarButton } />
                 </View>
