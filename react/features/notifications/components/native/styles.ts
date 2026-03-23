@@ -3,7 +3,7 @@ import BaseTheme from '../../../base/ui/components/BaseTheme.native';
 const contentColumn = {
     flex: 1,
     flexDirection: 'column',
-    paddingLeft: BaseTheme.spacing[2]
+    marginHorizontal: BaseTheme.spacing[2]
 };
 
 const notification = {
@@ -17,7 +17,8 @@ const notification = {
     maxWidth: 416,
     minHeight: 52,
     overflow: 'hidden',
-    paddingVertical: BaseTheme.spacing[2],
+    paddingHorizontal: 12,
+    paddingVertical: 4,
     width: '100%'
 };
 
@@ -43,31 +44,25 @@ export default {
      * Test style of the notification.
      */
 
-    contentContainer: {
-        paddingHorizontal: BaseTheme.spacing[2]
-    },
+    contentContainer: {},
 
     contentText: {
         color: '#FFFFFF',
-        paddingLeft: BaseTheme.spacing[4],
         paddingTop: BaseTheme.spacing[1]
     },
 
     contentTextDescription: {
-        color: '#FFFFFF',
-        paddingLeft: BaseTheme.spacing[4]
+        color: '#FFFFFF'
     },
 
     contentTextTitleDescription: {
         color: '#FFFFFF',
-        fontWeight: 'bold',
-        paddingLeft: BaseTheme.spacing[4]
+        fontWeight: 'bold'
     },
 
     contentTextTitle: {
         color: '#FFFFFF',
-        fontWeight: 'bold',
-        paddingLeft: BaseTheme.spacing[4]
+        fontWeight: 'bold'
     },
 
     /**
@@ -115,7 +110,6 @@ export default {
     btnContainer: {
         display: 'flex',
         flexDirection: 'row',
-        paddingLeft: BaseTheme.spacing[3],
         paddingTop: BaseTheme.spacing[1]
     },
 

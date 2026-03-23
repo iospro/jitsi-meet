@@ -206,32 +206,23 @@ const Notification = ({
                     opacity: notificationOpacityAnimation
                 }
             ] as ViewStyle[] }>
+            <Icon
+                color = { ICON_COLOR[appearance as keyof typeof ICON_COLOR] }
+                size = { 24 }
+                src = { getIcon() } />
             <View
-                style = { (icon === NOTIFICATION_ICON.PARTICIPANTS
-                    ? styles.contentColumn
-                    : styles.interactiveContentColumn) as ViewStyle }>
-                <View style = { styles.iconContainer as ViewStyle }>
-                    <Icon
-                        color = { ICON_COLOR[appearance as keyof typeof ICON_COLOR] }
-                        size = { 24 }
-                        src = { getIcon() } />
-                </View>
-                <View
-                    pointerEvents = 'box-none'
-                    style = { styles.contentContainer }>
-                    { _renderContent() }
-                </View>
+                pointerEvents = 'box-none'
+                style = { styles.contentColumn as ViewStyle }>
+                { _renderContent() }
                 <View style = { styles.btnContainer as ViewStyle }>
                     { mapAppearanceToButtons() }
                 </View>
             </View>
-            <View style = {{ alignSelf: 'center' }}>
-                <IconButton
-                    color = '#FFFFFF'
-                    onPress = { onDismiss }
-                    src = { IconCloseLarge }
-                    type = { BUTTON_TYPES.TERTIARY } />
-            </View>
+            <IconButton
+                color = '#FFFFFF'
+                onPress = { onDismiss }
+                src = { IconCloseLarge }
+                type = { BUTTON_TYPES.TERTIARY } />
         </Animated.View>
     );
 

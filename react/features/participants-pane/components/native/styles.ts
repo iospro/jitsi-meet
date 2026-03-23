@@ -63,9 +63,10 @@ export default {
         color: BaseTheme.palette.text01,
         ...BaseTheme.typography.labelBold,
         fontSize: 11,
+        lineHeight: BaseTheme.spacing[3],
         position: 'absolute',
         right: 0,
-        top: -3,
+        top: 1,
         textAlign: 'center',
         paddingHorizontal: 2
     },
