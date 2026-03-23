@@ -223,11 +223,13 @@ const Notification = ({
                     { mapAppearanceToButtons() }
                 </View>
             </View>
-            <IconButton
-                color = '#FFFFFF'
-                onPress = { onDismiss }
-                src = { IconCloseLarge }
-                type = { BUTTON_TYPES.TERTIARY } />
+            <View style = {{ alignSelf: 'center' }}>
+                <IconButton
+                    color = '#FFFFFF'
+                    onPress = { onDismiss }
+                    src = { IconCloseLarge }
+                    type = { BUTTON_TYPES.TERTIARY } />
+            </View>
         </Animated.View>
     );
 

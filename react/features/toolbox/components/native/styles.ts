@@ -98,11 +98,10 @@ const styles = {
         backgroundColor: 'rgba(17, 17, 17, 0.8)',
         borderRadius: 12,
         flexDirection: 'column',
-        maxWidth: 580,
-        marginHorizontal: 'auto',
-        marginVertical: BaseTheme.spacing[0],
-        paddingHorizontal: BaseTheme.spacing[2],
-        width: '100%'
+        marginHorizontal: 12,
+        marginBottom: 12,
+        overflow: 'hidden',
+        paddingHorizontal: BaseTheme.spacing[2]
     },
 
     toolboxButtonIconContainer: {
@@ -157,9 +156,9 @@ ColorSchemeRegistry.register('Toolbox', {
         style: {
             ...toolbarButton,
             backgroundColor: schemeColor('hangup'),
-            borderRadius: 17,
-            height: 34,
-            width: 34
+            borderRadius: 14,
+            height: 28,
+            width: 28
         },
         underlayColor: BaseTheme.palette.ui04
     },

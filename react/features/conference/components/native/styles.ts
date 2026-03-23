@@ -113,7 +113,7 @@ export default {
 
     titleBarSafeViewTransparent: {
         ...titleBarSafeView,
-        backgroundColor: '#111111'
+        backgroundColor: 'transparent'
     },
 
     titleBarWrapper: {

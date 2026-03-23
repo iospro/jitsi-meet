@@ -9,6 +9,7 @@ import { openHighlightDialog } from '../../../recording/actions.native';
 import HighlightButton from '../../../recording/components/Recording/native/HighlightButton';
 import RecordingLabel from '../../../recording/components/native/RecordingLabel';
 import { isLiveStreamingRunning } from '../../../recording/functions';
+import { isTranscribing } from '../../../transcribing/functions';
 import VisitorsCountLabel from '../../../visitors/components/native/VisitorsCountLabel';
 
 import RaisedHandsCountLabel from './RaisedHandsCountLabel';
@@ -30,19 +31,26 @@ interface IProps {
 const AlwaysOnLabels = ({ createOnPress }: IProps) => {
     const dispatch = useDispatch();
     const isStreaming = useSelector(isLiveStreamingRunning);
+    const isTranscribingActive = useSelector(isTranscribing);
     const openHighlightDialogCallback = useCallback(() =>
         dispatch(openHighlightDialog()), [ dispatch ]);
 
     // Show a bottom notification instead of the top expanded-label banner.
     const onRecordingLabelPress = useCallback(() => {
         dispatch(showNotification(
-            {
-                descriptionKey: 'recording.expandedOn',
-                uid: 'recording-status-info'
-            },
+            isTranscribingActive
+                ? {
+                    titleKey: 'recording.expandedOn',
+                    descriptionKey: 'transcribing.expandedLabel',
+                    uid: 'recording-status-info'
+                }
+                : {
+                    descriptionKey: 'recording.expandedOn',
+                    uid: 'recording-status-info'
+                },
             NOTIFICATION_TIMEOUT_TYPE.MEDIUM
         ));
-    }, [ dispatch ]);
+    }, [ dispatch, isTranscribingActive ]);
 
     const onStreamingLabelPress = useCallback(() => {
         dispatch(showNotification(

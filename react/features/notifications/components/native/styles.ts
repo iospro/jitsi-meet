@@ -7,14 +7,15 @@ const contentColumn = {
 };
 
 const notification = {
-    alignItems: 'center',
     backgroundColor: 'rgba(17, 17, 17, 0.8)',
-    borderRadius: 20,
+    borderRadius: 26,
     display: 'flex',
     flexDirection: 'row',
     marginHorizontal: 8,
     marginVertical: BaseTheme.spacing[1],
     maxWidth: 416,
+    minHeight: 52,
+    overflow: 'hidden',
     width: '100%'
 };
 
@@ -27,7 +28,8 @@ export default {
      * The content (left) column of the notification.
      */
     interactiveContentColumn: {
-        ...contentColumn
+        ...contentColumn,
+        justifyContent: 'center'
     },
 
     contentColumn: {
@@ -100,9 +102,12 @@ export default {
     },
 
     iconContainer: {
-        position: 'absolute',
+        alignItems: 'center',
+        bottom: 0,
+        justifyContent: 'center',
         left: BaseTheme.spacing[2],
-        top: 12
+        position: 'absolute',
+        top: 0
     },
 
     btn: {
