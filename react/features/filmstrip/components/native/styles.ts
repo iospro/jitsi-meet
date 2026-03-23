@@ -60,7 +60,7 @@ export default {
         flexDirection: 'column',
         flexGrow: 0,
         position: 'absolute',
-        right: 12,
+        right: 10,
         top: BaseTheme.spacing[0]
     },
 

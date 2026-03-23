@@ -151,7 +151,7 @@ export default {
     },
 
     roomTimerView: {
-        backgroundColor: 'rgba(32, 32, 32, 0.8)',
+        backgroundColor: '#303030',
 
         // Capsule shape: borderRadius = height / 2.
         borderRadius: 13,

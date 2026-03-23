@@ -124,7 +124,8 @@ export const bottomSheetStyles = {
      */
     sheet: {
         backgroundColor: 'rgba(32, 32, 32, 0.8)',
-        borderRadius: 16
+        borderRadius: 16,
+        overflow: 'hidden'
     },
 
     /**

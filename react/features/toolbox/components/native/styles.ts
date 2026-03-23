@@ -94,7 +94,7 @@ const styles = {
      * The style of the root/top-level container of {@link Toolbox}.
      */
     toolboxContainer: {
-        backgroundColor: 'rgba(32, 32, 32, 0.8)',
+        backgroundColor: 'rgba(32, 32, 32, 0.9)',
         borderRadius: 30,
         flexDirection: 'column',
         marginHorizontal: 12,
@@ -155,9 +155,9 @@ ColorSchemeRegistry.register('Toolbox', {
         style: {
             ...toolbarButton,
             backgroundColor: schemeColor('hangup'),
-            borderRadius: 22,
-            height: 45,
-            width: 45
+            borderRadius: 18,
+            height: 36,
+            width: 36
         },
         underlayColor: BaseTheme.palette.ui04
     },
