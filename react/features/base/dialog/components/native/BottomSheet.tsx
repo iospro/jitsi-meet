@@ -145,7 +145,7 @@ class BottomSheet extends PureComponent<Props> {
                             style = { [
                                 renderFooter && styles.sheet,
                                 addScrollViewPadding && styles.scrollView
-                            ] } >
+                            ] as any } >
                             { this.props.children }
                         </ScrollView>
                         { renderFooter?.() }
