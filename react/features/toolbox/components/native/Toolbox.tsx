@@ -1,15 +1,14 @@
 import React from 'react';
 import { View, ViewStyle } from 'react-native';
-import { Edge, SafeAreaView } from 'react-native-safe-area-context';
+import { SafeAreaView, useSafeAreaInsets } from 'react-native-safe-area-context';
 import { connect, useSelector } from 'react-redux';
 
 import { IReduxState, IStore } from '../../../app/types';
 import ColorSchemeRegistry from '../../../base/color-scheme/ColorSchemeRegistry';
-import Platform from '../../../base/react/Platform.native';
 import { iAmVisitor } from '../../../visitors/functions';
 import { customButtonPressed } from '../../actions.native';
-import { getVisibleNativeButtons, isToolboxVisible } from '../../functions.native';
-import { useNativeToolboxButtons } from '../../hooks.native';
+import { isToolboxVisible } from '../../functions.native';
+import { useNativeToolbarLayout } from '../../hooks.native';
 import { IToolboxNativeButton } from '../../types';
 
 import styles from './styles';
@@ -58,25 +57,10 @@ function Toolbox(props: IProps) {
         return null;
     }
 
-    const { clientWidth } = useSelector((state: IReduxState) => state['features/base/responsive-ui']);
-    const { customToolbarButtons } = useSelector((state: IReduxState) => state['features/base/config']);
     const toolbarBackgroundColor = useSelector((state: IReduxState) => state['features/base/config'].toolbarConfig?.backgroundColor);
-    const {
-        mainToolbarButtonsThresholds,
-        toolbarButtons
-    } = useSelector((state: IReduxState) => state['features/toolbox']);
+    const { containerStyle, isLandscape, mainMenuButtons } = useNativeToolbarLayout();
 
-    const allButtons = useNativeToolboxButtons(customToolbarButtons);
-
-    const { mainMenuButtons } = getVisibleNativeButtons({
-        allButtons,
-        clientWidth,
-        iAmVisitor: _iAmVisitor,
-        mainToolbarButtonsThresholds,
-        toolbarButtons
-    });
-
-    const bottomEdge = Platform.OS === 'ios' && _visible;
+    const insets = useSafeAreaInsets();
     const { buttonStylesBorderless, hangupButtonStyles } = _styles;
     const style = { ...styles.toolbox };
 
@@ -85,8 +69,8 @@ function Toolbox(props: IProps) {
         style.backgroundColor = toolbarBackgroundColor as any;
     }
 
-    // We have only hangup and raisehand button in _iAmVisitor mode
-    if (_iAmVisitor) {
+    // In landscape or visitor mode: center buttons to avoid space-evenly gaps
+    if (_iAmVisitor || isLandscape) {
         style.justifyContent = 'center';
     }
 
@@ -114,10 +98,10 @@ function Toolbox(props: IProps) {
 
     return (
         <View
-            style = { styles.toolboxContainer as ViewStyle }>
+            style = { [ styles.toolboxContainer, containerStyle, { marginBottom: isLandscape ? 16 : insets.bottom + 12 } ] as ViewStyle[] }>
             <SafeAreaView
                 accessibilityRole = 'toolbar'
-                edges = { [ bottomEdge && 'bottom' ].filter(Boolean) as Edge[] }
+                edges = { [] }
                 pointerEvents = 'box-none'
                 style = { style as ViewStyle }>
                 { renderToolboxButtons() }

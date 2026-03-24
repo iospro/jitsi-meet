@@ -27,7 +27,7 @@ import { iAmVisitor } from '../../../visitors/functions';
 import WhiteboardButton from '../../../whiteboard/components/native/WhiteboardButton';
 import { customButtonPressed } from '../../actions.native';
 import { getVisibleNativeButtons } from '../../functions.native';
-import { useNativeToolboxButtons } from '../../hooks.native';
+import { useNativeToolbarLayout, useNativeToolboxButtons } from '../../hooks.native';
 import { IToolboxNativeButton } from '../../types';
 
 import AudioOnlyButton from './AudioOnlyButton';
@@ -80,6 +80,11 @@ interface IProps {
     * Whether or not any reactions buttons should be displayed.
     */
     _shouldDisplayReactionsButtons: boolean;
+
+    /**
+     * Sheet style override passed from the toolbar layout hook (landscape support).
+     */
+    _sheetStyle?: object;
 
     /**
      * Used for hiding the dialog when the selection was completed.
@@ -151,9 +156,12 @@ class OverflowMenu extends PureComponent<IProps, IState> {
             }
         };
 
+        const { _sheetStyle } = this.props;
+
         return (
             <BottomSheet
-                renderFooter = { this._renderReactionMenu }>
+                renderFooter = { this._renderReactionMenu }
+                style = { _sheetStyle }>
                 <OpenCarmodeButton { ...topButtonProps } />
                 <AudioOnlyButton { ...buttonProps } />
                 { this._renderRaiseHandButton(buttonProps) }
@@ -304,12 +312,18 @@ export default connect(_mapStateToProps)(props => {
         iAmVisitor: _iAmVisitor
     });
 
+    const { containerWidth, isLandscape } = useNativeToolbarLayout();
+    const sheetStyle = isLandscape
+        ? { alignSelf: 'center' as const, marginHorizontal: 0, paddingHorizontal: 0, width: containerWidth }
+        : {};
+
     return (
         <OverflowMenu
 
             // @ts-ignore
             { ... props }
             _mainMenuButtons = { mainMenuButtons }
-            _overflowMenuButtons = { overflowMenuButtons } />
+            _overflowMenuButtons = { overflowMenuButtons }
+            _sheetStyle = { sheetStyle } />
     );
 });

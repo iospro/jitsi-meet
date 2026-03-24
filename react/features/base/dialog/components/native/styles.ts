@@ -76,15 +76,11 @@ export const bottomSheetStyles = {
         flex: 1,
         flexDirection: 'column',
         justifyContent: 'flex-end',
-        maxWidth: 500,
-        marginLeft: 'auto',
-        marginRight: 'auto',
         width: '100%'
     },
 
     sheetItemContainer: {
         flex: -1,
-        marginBottom: 12,
         marginHorizontal: 12,
         maxHeight: '75%'
     },
@@ -123,7 +119,7 @@ export const bottomSheetStyles = {
      * Bottom sheet's base style.
      */
     sheet: {
-        backgroundColor: 'rgba(32, 32, 32, 0.8)',
+        backgroundColor: 'rgba(32, 32, 32, 0.9)',
         borderRadius: 16,
         overflow: 'hidden'
     },
@@ -132,14 +128,14 @@ export const bottomSheetStyles = {
      * Bottom sheet's base style with header.
      */
     sheetHeader: {
-        backgroundColor: 'rgba(32, 32, 32, 0.8)'
+        backgroundColor: 'rgba(32, 32, 32, 0.9)'
     },
 
     /**
      * Bottom sheet's background color with footer.
      */
     sheetFooter: {
-        backgroundColor: 'rgba(32, 32, 32, 0.8)'
+        backgroundColor: 'rgba(32, 32, 32, 0.9)'
     }
 };
 

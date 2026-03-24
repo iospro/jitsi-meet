@@ -8,19 +8,28 @@ import ColorSchemeRegistry from '../../../base/color-scheme/ColorSchemeRegistry'
 import { hideDialog } from '../../../base/dialog/actions';
 import { isDialogOpen } from '../../../base/dialog/functions';
 import { StyleType } from '../../../base/styles/functions.native';
+import { useNativeToolbarLayout } from '../../../toolbox/hooks.native';
 
 import ReactionMenu from './ReactionMenu';
 
-// toolbar: paddingVertical(6*2) + button(48) + marginBottom(12) = 72pt above safe area
-const TOOLBAR_HEIGHT_ABOVE_SAFE_AREA = 72;
-const PANEL_GAP = 16;
+// toolbar: paddingVertical(6*2) + button(44) = 56pt
+const TOOLBAR_HEIGHT = 56;
+const PANEL_GAP = 8;
 
 const ReactionPanel: React.FC<{ onCancel: () => void }> = ({ onCancel }) => {
     const insets = useSafeAreaInsets();
-    const bottom = insets.bottom + TOOLBAR_HEIGHT_ABOVE_SAFE_AREA + PANEL_GAP;
+    const { containerStyle, containerWidth, isLandscape } = useNativeToolbarLayout();
+    const toolbarMarginBottom = isLandscape ? 16 : insets.bottom + 12;
+    const bottom = toolbarMarginBottom + TOOLBAR_HEIGHT + PANEL_GAP;
+
+    // Match toolbar positioning: explicit width+center in landscape, margins in portrait
+    const panelStyle = isLandscape
+        ? { alignSelf: 'center' as const, bottom, position: 'absolute' as const, width: containerWidth }
+        : { bottom, left: containerStyle.marginHorizontal ?? 12, position: 'absolute' as const,
+            right: containerStyle.marginHorizontal ?? 12 };
 
     return (
-        <View style = { { bottom, left: 12, position: 'absolute', right: 12 } }>
+        <View style = { panelStyle }>
             <ReactionMenu
                 onCancel = { onCancel }
                 overflowMenu = { false } />

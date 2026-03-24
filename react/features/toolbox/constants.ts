@@ -61,73 +61,31 @@ export const THRESHOLDS = [
 ];
 
 /**
- * Width correction for native toolbox thresholds.
- * Accounts for toolboxContainer.marginHorizontal (12×2 = 24pt) and safe inset
- * from borderRadius: 30 rounded corners (6pt per side = 12pt), totalling 36pt.
+ * Thresholds for displaying native toolbox buttons.
+ * Each width = N × BUTTON_SLOT(56) + margins(24) + padding(12)
+ *    8 buttons:  8×56 + 36 = 484
+ *    7 buttons:  7×56 + 36 = 428
+ *    6 buttons:  6×56 + 36 = 372
+ *    5 buttons:  5×56 + 36 = 316
  */
-const NATIVE_TOOLBAR_WIDTH_CORRECTION = 36;
-
-/**
- * Thresholds for displaying native toolbox buttons on iOS devices.
- * Breakpoints match real iPhone screen widths (points):
- *   500 - above all iPhones (8+ buttons)
- *   428 - iPhone Pro Max
- *   390 - iPhone 14/15
- *   375 - iPhone SE / 8
- *   320 - fallback
- */
-export const IOS_THRESHOLDS = [
+export const NATIVE_THRESHOLDS = [
     {
-        width: 500 - NATIVE_TOOLBAR_WIDTH_CORRECTION,
-        order: [ 'microphone', 'camera', 'chat', 'screensharing', 'raisehand', 'tileview', 'overflowmenu', 'hangup' ]
+        width: 484,
+        order: [ 'microphone', 'camera', 'chat', 'desktop', 'raisehand', 'tileview', 'overflowmenu', 'hangup' ]
     },
     {
-        width: 428 - NATIVE_TOOLBAR_WIDTH_CORRECTION,
+        width: 428,
         order: [ 'microphone', 'camera', 'chat', 'raisehand', 'tileview', 'overflowmenu', 'hangup' ]
     },
     {
-        width: 375 - NATIVE_TOOLBAR_WIDTH_CORRECTION,
+        width: 372,
         order: [ 'microphone', 'camera', 'chat', 'raisehand', 'overflowmenu', 'hangup' ]
     },
     {
-        width: 320 - NATIVE_TOOLBAR_WIDTH_CORRECTION,
+        width: 316,
         order: [ 'microphone', 'camera', 'chat', 'overflowmenu', 'hangup' ]
     }
 ];
-
-/**
- * Thresholds for displaying native toolbox buttons on Android devices.
- * Breakpoints match common Android screen widths (dp):
- *   500 - large tablets / foldables unfolded
- *   412 - Pixel / Samsung flagship (e.g. Pixel 7, Galaxy S24+)
- *   393 - Samsung Galaxy S24
- *   360 - mid-range Android (e.g. Samsung A-series)
- *   320 - fallback
- */
-export const ANDROID_THRESHOLDS = [
-    {
-        width: 500 - NATIVE_TOOLBAR_WIDTH_CORRECTION,
-        order: [ 'microphone', 'camera', 'chat', 'screensharing', 'raisehand', 'tileview', 'overflowmenu', 'hangup' ]
-    },
-    {
-        width: 412 - NATIVE_TOOLBAR_WIDTH_CORRECTION,
-        order: [ 'microphone', 'camera', 'chat', 'raisehand', 'tileview', 'overflowmenu', 'hangup' ]
-    },
-    {
-        width: 360 - NATIVE_TOOLBAR_WIDTH_CORRECTION,
-        order: [ 'microphone', 'camera', 'chat', 'raisehand', 'overflowmenu', 'hangup' ]
-    },
-    {
-        width: 320 - NATIVE_TOOLBAR_WIDTH_CORRECTION,
-        order: [ 'microphone', 'camera', 'chat', 'overflowmenu', 'hangup' ]
-    }
-];
-
-/**
- * Default native thresholds (iOS). Used as initial Redux state before
- * middleware overrides with platform-specific thresholds.
- */
-export const NATIVE_THRESHOLDS = IOS_THRESHOLDS;
 
 /**
  * Main toolbar buttons priority used to determine which button should be picked to fill empty spaces for disabled

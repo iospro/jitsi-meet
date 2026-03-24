@@ -1,16 +1,22 @@
 import React, { Component } from 'react';
 import { WithTranslation } from 'react-i18next';
-import { Platform } from 'react-native';
-import { Edge, SafeAreaView } from 'react-native-safe-area-context';
+import { ViewStyle } from 'react-native';
+import { SafeAreaView, useSafeAreaInsets } from 'react-native-safe-area-context';
 import { connect } from 'react-redux';
 
 import { IReduxState, IStore } from '../../../app/types';
+import { useNativeToolbarLayout } from '../../../toolbox/hooks.native';
 import { hideNotification } from '../../actions';
 import { areThereNotifications } from '../../functions';
 import NotificationsTransition from '../NotificationsTransition';
 
 import Notification from './Notification';
 import styles from './styles';
+
+// Toolbar metrics (must match toolbox/components/native/styles.ts)
+const TOOLBAR_HEIGHT = 56; // BUTTON_SIZE(44) + marginVertical(6) * 2
+const TOOLBAR_MARGIN_BOTTOM = 12;
+const NOTIFICATIONS_GAP = 8;
 
 
 interface IProps extends WithTranslation {
@@ -36,6 +42,67 @@ interface IProps extends WithTranslation {
      */
     toolboxVisible: boolean;
 }
+
+interface INotificationsViewProps {
+    notifications: Array<Object>;
+    onDismissed: (uid: any) => void;
+    shouldDisplayTileView: boolean;
+    toolboxVisible: boolean;
+}
+
+/**
+ * Functional inner component that renders the notifications list with
+ * dynamic bottom positioning based on safe area insets.
+ */
+const NotificationsView: React.FC<INotificationsViewProps> = ({
+    notifications,
+    onDismissed,
+    shouldDisplayTileView,
+    toolboxVisible
+}) => {
+    const insets = useSafeAreaInsets();
+    const { containerWidth, isLandscape, windowWidth } = useNativeToolbarLayout();
+
+    let baseStyle;
+
+    if (shouldDisplayTileView) {
+        baseStyle = toolboxVisible ? styles.withToolboxTileView : styles.withoutToolboxTileView;
+    } else {
+        baseStyle = toolboxVisible ? styles.withToolbox : styles.withoutToolbox;
+    }
+
+    const toolbarBottom = isLandscape ? 16 : insets.bottom + TOOLBAR_MARGIN_BOTTOM;
+    const bottomWithToolbox = toolbarBottom + TOOLBAR_HEIGHT + NOTIFICATIONS_GAP;
+    const bottom = toolboxVisible ? bottomWithToolbox : (isLandscape ? 0 : insets.bottom);
+
+    const TOOLBAR_MARGIN = 12;
+    const alignStyle: ViewStyle = isLandscape
+        ? { width: containerWidth, left: (windowWidth - containerWidth) / 2 }
+        : { left: TOOLBAR_MARGIN, right: TOOLBAR_MARGIN };
+
+    return (
+        <SafeAreaView
+            edges = { [] }
+            style = { [ baseStyle, { bottom }, alignStyle ] as ViewStyle[] }>
+            <NotificationsTransition>
+                {
+                    notifications.map(notification => {
+                        // @ts-ignore
+                        const { props, uid } = notification;
+
+                        return (
+                            <Notification
+                                { ...props }
+                                key = { uid }
+                                onDismissed = { onDismissed }
+                                uid = { uid } />
+                        );
+                    })
+                }
+            </NotificationsTransition>
+        </SafeAreaView>
+    );
+};
 
 /**
  * Implements a React {@link Component} which displays notifications and handles
@@ -179,42 +246,13 @@ class NotificationsContainer extends Component<IProps> {
      */
     override render() {
         const { _notifications, shouldDisplayTileView, toolboxVisible } = this.props;
-        let notificationsContainerStyle;
-
-        if (shouldDisplayTileView) {
-
-            if (toolboxVisible) {
-                notificationsContainerStyle = styles.withToolboxTileView;
-            } else {
-                notificationsContainerStyle = styles.withoutToolboxTileView;
-            }
-
-        } else {
-            notificationsContainerStyle
-                = toolboxVisible ? styles.withToolbox : styles.withoutToolbox;
-        }
 
         return (
-            <SafeAreaView
-                edges = { [ Platform.OS === 'ios' ? 'bottom' : null ].filter(Boolean) as Edge[] }
-                style = { notificationsContainerStyle as any }>
-                <NotificationsTransition>
-                    {
-                        _notifications.map(notification => {
-                            // @ts-ignore
-                            const { props, uid } = notification;
-
-                            return (
-                                <Notification
-                                    { ...props }
-                                    key = { uid }
-                                    onDismissed = { this._onDismissed }
-                                    uid = { uid } />
-                            );
-                        })
-                    }
-                </NotificationsTransition>
-            </SafeAreaView>
+            <NotificationsView
+                notifications = { _notifications }
+                onDismissed = { this._onDismissed }
+                shouldDisplayTileView = { shouldDisplayTileView }
+                toolboxVisible = { toolboxVisible } />
         );
     }
 }

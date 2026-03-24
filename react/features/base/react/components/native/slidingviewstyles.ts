@@ -19,11 +19,11 @@ export default {
     },
 
     /**
-     * The opaque area that covers the rest of the screen, when the side bar is
-     * open.
+     * The tap-to-dismiss area behind the bottom sheet.
+     * Background is transparent — the sheet panel provides its own visual separation.
      */
     sliderViewShadow: {
         ...StyleSheet.absoluteFillObject,
-        backgroundColor: 'rgba(0, 0, 0, 0.5)'
+        backgroundColor: 'transparent'
     }
 };

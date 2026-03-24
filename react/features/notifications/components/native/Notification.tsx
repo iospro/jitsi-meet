@@ -226,7 +226,7 @@ const Notification = ({
                 color = '#FFFFFF'
                 onPress = { onDismiss }
                 src = { IconCloseLarge }
-                style = {{ borderRadius: 10, height: 20, marginRight: 8, width: 20 }}
+                style = {{ borderRadius: 10, height: 20, marginRight: 16, width: 20 }}
                 type = { BUTTON_TYPES.TERTIARY } />
         </Animated.View>
     );

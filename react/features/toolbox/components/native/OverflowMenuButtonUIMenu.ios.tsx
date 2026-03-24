@@ -372,7 +372,8 @@ const OverflowMenuButton = (_props: any) => {
         <MenuView
             actions = { actions }
             onPressAction = { handleAction }
-            shouldOpenOnLongPress = { false }>
+            shouldOpenOnLongPress = { false }
+            themeVariant = 'dark'>
             <View style = { styles.toolboxButtonIconContainer as ViewStyle }>
                 <Icon
                     color = { BaseTheme.palette.icon04 }

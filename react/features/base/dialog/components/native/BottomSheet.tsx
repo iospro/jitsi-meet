@@ -1,6 +1,6 @@
 import React, { PureComponent, ReactNode } from 'react';
 import { ScrollView, View, ViewStyle } from 'react-native';
-import { SafeAreaView } from 'react-native-safe-area-context';
+import { SafeAreaView, useSafeAreaInsets } from 'react-native-safe-area-context';
 import { connect } from 'react-redux';
 
 import { IStore } from '../../../../app/types';
@@ -54,6 +54,11 @@ type Props = {
      * The component's external style.
      */
     style?: Object;
+
+    /**
+     * Safe area bottom inset injected by BottomSheetWithSafeArea wrapper.
+     */
+    bottomInset?: number;
 };
 
 /**
@@ -104,6 +109,7 @@ class BottomSheet extends PureComponent<Props> {
     override render() {
         const {
             addScrollViewPadding,
+            bottomInset = 0,
             renderHeader,
             renderFooter,
             showSlidingView,
@@ -126,6 +132,7 @@ class BottomSheet extends PureComponent<Props> {
                         edges = { [ 'left', 'right' ] }
                         style = { [
                             styles.sheetItemContainer,
+                            { marginBottom: bottomInset },
                             renderHeader
                                 ? styles.sheetHeader
                                 : styles.sheet,
@@ -149,4 +156,16 @@ class BottomSheet extends PureComponent<Props> {
     }
 }
 
-export default connect()(BottomSheet);
+const BottomSheetConnected = connect()(BottomSheet);
+
+/**
+ * Wrapper that injects the safe-area bottom inset so the sheet's bottom
+ * edge aligns with the safe area boundary.
+ */
+const BottomSheetWithSafeArea = (props: any) => {
+    const insets = useSafeAreaInsets();
+
+    return <BottomSheetConnected { ...props } bottomInset = { insets.bottom } />;
+};
+
+export default BottomSheetWithSafeArea;

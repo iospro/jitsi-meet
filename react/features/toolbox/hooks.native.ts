@@ -1,5 +1,7 @@
+import { useWindowDimensions } from 'react-native';
 import { useSelector } from 'react-redux';
 
+import { IReduxState } from '../app/types';
 import ChatButton from '../chat/components/native/ChatButton';
 import RaiseHandContainerButtons from '../reactions/components/native/RaiseHandContainerButtons';
 import TileViewButton from '../video-layout/components/TileViewButton';
@@ -11,9 +13,8 @@ import HangupContainerButtons from './components/native/HangupContainerButtons';
 import OverflowMenuButton from './components/native/OverflowMenuButton';
 import ScreenSharingButton from './components/native/ScreenSharingButton';
 import VideoMuteButton from './components/native/VideoMuteButton';
-import { isDesktopShareButtonDisabled } from './functions.native';
+import { getVisibleNativeButtons, isDesktopShareButtonDisabled } from './functions.native';
 import { ICustomToolbarButton, IToolboxNativeButton, NativeToolbarButton } from './types';
-
 
 const microphone = {
     key: 'microphone',
@@ -178,4 +179,47 @@ export function useNativeToolboxButtons(
         ...buttons,
         ...customButtons
     };
+}
+
+// Slot width = BUTTON_SIZE(44) + marginHorizontal(6)×2 = 56
+const BUTTON_SLOT = 56;
+
+// paddingHorizontal(6)×2 = 12
+const PADDING_TOTAL = 12;
+
+/**
+ * A hook that returns toolbar container layout properties for the current
+ * orientation. In portrait the toolbar stretches edge-to-edge (with margins);
+ * in landscape it is centered with explicit width to avoid space-evenly gaps.
+ *
+ * @returns {{ containerStyle, containerWidth, isLandscape, mainMenuButtons }}
+ */
+export function useNativeToolbarLayout() {
+    const { width: windowWidth, height: windowHeight } = useWindowDimensions();
+    const isLandscape = windowWidth > windowHeight;
+
+    const { clientWidth } = useSelector((state: IReduxState) => state['features/base/responsive-ui']);
+    const { customToolbarButtons } = useSelector((state: IReduxState) => state['features/base/config']);
+    const { mainToolbarButtonsThresholds, toolbarButtons } = useSelector((state: IReduxState) => state['features/toolbox']);
+    const _iAmVisitor = useSelector(iAmVisitor);
+    const allButtons = useNativeToolboxButtons(customToolbarButtons);
+    // Use windowWidth for thresholds — it updates instantly on rotation,
+    // while clientWidth from redux lags behind (waits for onLayout).
+    const { mainMenuButtons } = getVisibleNativeButtons({
+        allButtons,
+        clientWidth: Math.max(clientWidth, windowWidth),
+        iAmVisitor: _iAmVisitor,
+        mainToolbarButtonsThresholds,
+        toolbarButtons
+    });
+
+    const buttonCount = mainMenuButtons?.length ?? 0;
+    const containerWidth = buttonCount * BUTTON_SLOT + PADDING_TOTAL;
+
+    // In landscape: explicit width + center; in portrait: stretch with fixed margins.
+    const containerStyle = isLandscape
+        ? { alignSelf: 'center' as const, width: containerWidth }
+        : { marginHorizontal: 12 };
+
+    return { containerStyle, containerWidth, isLandscape, mainMenuButtons, windowWidth };
 }

@@ -3,24 +3,23 @@ import BaseTheme from '../../../base/ui/components/BaseTheme.native';
 const contentColumn = {
     flex: 1,
     flexDirection: 'column',
-    marginHorizontal: BaseTheme.spacing[2]
+    marginLeft: BaseTheme.spacing[3],
+    marginRight: BaseTheme.spacing[2]
 };
 
 const notification = {
-    backgroundColor: 'rgba(32, 32, 32, 0.8)',
+    backgroundColor: 'rgba(32, 32, 32, 0.95)',
     alignItems: 'center',
+    alignSelf: 'stretch',
     borderRadius: 29,
     display: 'flex',
     flexDirection: 'row',
-    marginHorizontal: 12,
     marginVertical: BaseTheme.spacing[1],
-    maxWidth: 416,
     minHeight: 52,
     overflow: 'hidden',
-    paddingLeft: 12,
+    paddingLeft: 20,
     paddingRight: 0,
-    paddingVertical: 4,
-    width: '100%'
+    paddingVertical: 4
 };
 
 /**
@@ -99,7 +98,7 @@ export default {
         alignItems: 'center',
         bottom: 0,
         justifyContent: 'center',
-        left: BaseTheme.spacing[2],
+        left: BaseTheme.spacing[3],
         position: 'absolute',
         top: 0
     },
@@ -116,29 +115,21 @@ export default {
 
     withToolbox: {
         alignItems: 'center',
-        bottom: 76,
-        position: 'absolute',
-        width: '100%'
+        position: 'absolute'
     },
 
     withToolboxTileView: {
         alignItems: 'center',
-        bottom: 76,
-        position: 'absolute',
-        width: '100%'
+        position: 'absolute'
     },
 
     withoutToolbox: {
         alignItems: 'center',
-        bottom: 0,
-        position: 'absolute',
-        width: '100%'
+        position: 'absolute'
     },
 
     withoutToolboxTileView: {
         alignItems: 'center',
-        bottom: 0,
-        position: 'absolute',
-        width: '100%'
+        position: 'absolute'
     }
 };

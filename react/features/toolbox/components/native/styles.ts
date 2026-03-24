@@ -2,7 +2,7 @@ import ColorSchemeRegistry from '../../../base/color-scheme/ColorSchemeRegistry'
 import { schemeColor } from '../../../base/color-scheme/functions';
 import BaseTheme from '../../../base/ui/components/BaseTheme.native';
 
-const BUTTON_SIZE = 48;
+const BUTTON_SIZE = 44;
 
 // Toolbox, toolbar:
 
@@ -27,7 +27,7 @@ const toolbarButton = {
 const toolbarButtonIcon = {
     alignSelf: 'center',
     color: BaseTheme.palette.icon04,
-    fontSize: 24
+    fontSize: 20
 };
 
 
@@ -98,7 +98,6 @@ const styles = {
         borderRadius: 30,
         flexDirection: 'column',
         marginHorizontal: 12,
-        marginBottom: 12,
         overflow: 'hidden',
         paddingHorizontal: 6
     },
@@ -151,13 +150,19 @@ ColorSchemeRegistry.register('Toolbox', {
     },
 
     hangupButtonStyles: {
+        iconBackground: {
+            alignItems: 'center',
+            backgroundColor: schemeColor('hangup'),
+            borderRadius: 20,
+            height: 40,
+            justifyContent: 'center',
+            width: 40
+        },
         iconStyle: whiteToolbarButtonIcon,
         style: {
             ...toolbarButton,
-            backgroundColor: schemeColor('hangup'),
-            borderRadius: 18,
-            height: 36,
-            width: 36
+            alignItems: 'center',
+            backgroundColor: 'transparent'
         },
         underlayColor: BaseTheme.palette.ui04
     },
