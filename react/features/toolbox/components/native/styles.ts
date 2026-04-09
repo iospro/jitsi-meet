@@ -27,7 +27,7 @@ const toolbarButton = {
 const toolbarButtonIcon = {
     alignSelf: 'center',
     color: BaseTheme.palette.icon04,
-    fontSize: 20
+    fontSize: 40
 };
 
 
@@ -153,10 +153,10 @@ ColorSchemeRegistry.register('Toolbox', {
         iconBackground: {
             alignItems: 'center',
             backgroundColor: schemeColor('hangup'),
-            borderRadius: 20,
-            height: 40,
+            borderRadius: BUTTON_SIZE/2,
+            height: BUTTON_SIZE,
             justifyContent: 'center',
-            width: 40
+            width: BUTTON_SIZE
         },
         iconStyle: whiteToolbarButtonIcon,
         style: {
