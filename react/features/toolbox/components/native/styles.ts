@@ -16,7 +16,7 @@ const toolbarButton = {
     flexDirection: 'row',
     height: BUTTON_SIZE,
     justifyContent: 'center',
-    marginHorizontal: 8,
+    marginHorizontal: 6,
     marginVertical: 8,
     width: BUTTON_SIZE
 };
