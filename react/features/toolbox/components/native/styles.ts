@@ -16,8 +16,8 @@ const toolbarButton = {
     flexDirection: 'row',
     height: BUTTON_SIZE,
     justifyContent: 'center',
-    marginHorizontal: 6,
-    marginVertical: 6,
+    marginHorizontal: 8,
+    marginVertical: 8,
     width: BUTTON_SIZE
 };
 
@@ -27,7 +27,7 @@ const toolbarButton = {
 const toolbarButtonIcon = {
     alignSelf: 'center',
     color: BaseTheme.palette.icon04,
-    fontSize: 40
+    fontSize: 28
 };
 
 
