@@ -49,7 +49,9 @@ interface IProps {
 
 const RootNavigationContainer = ({ dispatch, isWelcomePageAvailable }: IProps) => {
     const initialRouteName = isWelcomePageAvailable
-        ? screen.welcome.main : screen.connecting;
+
+        // ? screen.welcome.main : screen.connecting;
+        ? screen.welcome.main : screen.conference.root;
     const onReady = useCallback(() => {
         dispatch({
             type: _ROOT_NAVIGATION_READY,
