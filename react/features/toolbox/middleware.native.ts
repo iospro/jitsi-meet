@@ -1,3 +1,5 @@
+import { Platform } from 'react-native';
+
 import { OVERWRITE_CONFIG, SET_CONFIG, UPDATE_CONFIG } from '../base/config/actionTypes';
 import MiddlewareRegistry from '../base/redux/MiddlewareRegistry';
 import { I_AM_VISITOR_MODE } from '../visitors/actionTypes';
