@@ -76,14 +76,12 @@ export const bottomSheetStyles = {
         flex: 1,
         flexDirection: 'column',
         justifyContent: 'flex-end',
-        maxWidth: 500,
-        marginLeft: 'auto',
-        marginRight: 'auto',
         width: '100%'
     },
 
     sheetItemContainer: {
         flex: -1,
+        marginHorizontal: 12,
         maxHeight: '75%'
     },
 
@@ -121,23 +119,23 @@ export const bottomSheetStyles = {
      * Bottom sheet's base style.
      */
     sheet: {
-        backgroundColor: BaseTheme.palette.ui02,
-        borderTopLeftRadius: 16,
-        borderTopRightRadius: 16
+        backgroundColor: 'rgba(32, 32, 32, 0.9)',
+        borderRadius: 16,
+        overflow: 'hidden' as const
     },
 
     /**
      * Bottom sheet's base style with header.
      */
     sheetHeader: {
-        backgroundColor: BaseTheme.palette.ui02
+        backgroundColor: 'rgba(32, 32, 32, 0.9)'
     },
 
     /**
      * Bottom sheet's background color with footer.
      */
     sheetFooter: {
-        backgroundColor: BaseTheme.palette.ui01
+        backgroundColor: 'rgba(32, 32, 32, 0.9)'
     }
 };
 

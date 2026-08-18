@@ -3,19 +3,23 @@ import BaseTheme from '../../../base/ui/components/BaseTheme.native';
 const contentColumn = {
     flex: 1,
     flexDirection: 'column',
-    paddingLeft: BaseTheme.spacing[2]
+    marginLeft: BaseTheme.spacing[3],
+    marginRight: BaseTheme.spacing[2]
 };
 
 const notification = {
-    backgroundColor: BaseTheme.palette.ui10,
-    borderRadius: BaseTheme.shape.borderRadius,
-    borderLeftColor: BaseTheme.palette.link01Active,
-    borderLeftWidth: BaseTheme.spacing[1],
+    backgroundColor: 'rgba(32, 32, 32, 0.95)',
+    alignItems: 'center',
+    alignSelf: 'stretch',
+    borderRadius: 29,
     display: 'flex',
     flexDirection: 'row',
     marginVertical: BaseTheme.spacing[1],
-    maxWidth: 416,
-    width: '100%'
+    minHeight: 52,
+    overflow: 'hidden',
+    paddingLeft: 20,
+    paddingRight: 0,
+    paddingVertical: 4
 };
 
 /**
@@ -27,7 +31,8 @@ export default {
      * The content (left) column of the notification.
      */
     interactiveContentColumn: {
-        ...contentColumn
+        ...contentColumn,
+        justifyContent: 'center'
     },
 
     contentColumn: {
@@ -39,41 +44,32 @@ export default {
      * Test style of the notification.
      */
 
-    contentContainer: {
-        paddingHorizontal: BaseTheme.spacing[2]
-    },
+    contentContainer: {},
 
     contentText: {
-        color: BaseTheme.palette.text04,
-        paddingLeft: BaseTheme.spacing[4],
+        color: '#FFFFFF',
         paddingTop: BaseTheme.spacing[1]
     },
 
     contentTextDescription: {
-        color: BaseTheme.palette.text04,
-        paddingLeft: BaseTheme.spacing[4],
-        paddingTop: BaseTheme.spacing[2]
+        color: '#FFFFFF'
     },
 
     contentTextTitleDescription: {
-        color: BaseTheme.palette.text04,
-        fontWeight: 'bold',
-        paddingLeft: BaseTheme.spacing[4],
-        paddingTop: BaseTheme.spacing[2]
+        color: '#FFFFFF',
+        fontWeight: 'bold'
     },
 
     contentTextTitle: {
-        color: BaseTheme.palette.text04,
-        fontWeight: 'bold',
-        paddingLeft: BaseTheme.spacing[4],
-        paddingTop: BaseTheme.spacing[3]
+        color: '#FFFFFF',
+        fontWeight: 'bold'
     },
 
     /**
      * Dismiss icon style.
      */
     dismissIcon: {
-        color: BaseTheme.palette.icon04,
+        color: '#FFFFFF',
         fontSize: 20
     },
 
@@ -82,8 +78,7 @@ export default {
     },
 
     notificationWithDescription: {
-        ...notification,
-        paddingBottom: BaseTheme.spacing[2]
+        ...notification
     },
 
     /**
@@ -95,14 +90,17 @@ export default {
     },
 
     participantName: {
-        color: BaseTheme.palette.text04,
+        color: '#FFFFFF',
         overflow: 'hidden'
     },
 
     iconContainer: {
+        alignItems: 'center',
+        bottom: 0,
+        justifyContent: 'center',
+        left: BaseTheme.spacing[3],
         position: 'absolute',
-        left: BaseTheme.spacing[2],
-        top: 12
+        top: 0
     },
 
     btn: {
@@ -112,30 +110,26 @@ export default {
     btnContainer: {
         display: 'flex',
         flexDirection: 'row',
-        paddingLeft: BaseTheme.spacing[3],
         paddingTop: BaseTheme.spacing[1]
     },
 
     withToolbox: {
-        bottom: 56,
-        position: 'absolute',
-        width: '100%'
+        alignItems: 'center',
+        position: 'absolute'
     },
 
     withToolboxTileView: {
-        bottom: 56,
-        position: 'absolute',
-        width: '100%'
+        alignItems: 'center',
+        position: 'absolute'
     },
 
     withoutToolbox: {
-        position: 'absolute',
-        width: '100%'
+        alignItems: 'center',
+        position: 'absolute'
     },
 
     withoutToolboxTileView: {
-        bottom: 0,
-        position: 'absolute',
-        width: '100%'
+        alignItems: 'center',
+        position: 'absolute'
     }
 };

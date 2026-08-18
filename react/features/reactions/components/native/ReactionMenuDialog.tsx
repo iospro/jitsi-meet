@@ -1,15 +1,41 @@
 import React, { ComponentType, PureComponent } from 'react';
 import { TouchableWithoutFeedback, View } from 'react-native';
+import { useSafeAreaInsets } from 'react-native-safe-area-context';
 import { connect } from 'react-redux';
 
 import { IReduxState, IStore } from '../../../app/types';
 import ColorSchemeRegistry from '../../../base/color-scheme/ColorSchemeRegistry';
 import { hideDialog } from '../../../base/dialog/actions';
 import { isDialogOpen } from '../../../base/dialog/functions';
-import { getParticipantCount } from '../../../base/participants/functions';
 import { StyleType } from '../../../base/styles/functions.native';
+import { useNativeToolbarLayout } from '../../../toolbox/hooks.native';
 
 import ReactionMenu from './ReactionMenu';
+
+// toolbar: paddingVertical(6*2) + button(44) = 56pt
+const TOOLBAR_HEIGHT = 56;
+const PANEL_GAP = 8;
+
+const ReactionPanel: React.FC<{ onCancel: () => void }> = ({ onCancel }) => {
+    const insets = useSafeAreaInsets();
+    const { containerStyle, containerWidth, isLandscape } = useNativeToolbarLayout();
+    const toolbarMarginBottom = isLandscape ? 16 : insets.bottom + 12;
+    const bottom = toolbarMarginBottom + TOOLBAR_HEIGHT + PANEL_GAP;
+
+    // Match toolbar positioning: explicit width+center in landscape, margins in portrait
+    const panelStyle = isLandscape
+        ? { alignSelf: 'center' as const, bottom, position: 'absolute' as const, width: containerWidth }
+        : { bottom, left: containerStyle.marginHorizontal ?? 12, position: 'absolute' as const,
+            right: containerStyle.marginHorizontal ?? 12 };
+
+    return (
+        <View style = { panelStyle }>
+            <ReactionMenu
+                onCancel = { onCancel }
+                overflowMenu = { false } />
+        </View>
+    );
+};
 
 /**
  * The type of the React {@code Component} props of {@link ReactionMenuDialog}.
@@ -17,29 +43,14 @@ import ReactionMenu from './ReactionMenu';
 interface IProps {
 
     /**
-    * The height of the screen.
-    */
-    _height: number;
-
-    /**
      * True if the dialog is currently visible, false otherwise.
      */
     _isOpen: boolean;
 
     /**
-     * Number of conference participants.
-     */
-    _participantCount: number;
-
-    /**
      * The color-schemed stylesheet of the feature.
      */
     _styles: StyleType;
-
-    /**
-     * The width of the screen.
-     */
-    _width: number;
 
     /**
      * Used for hiding the dialog when the selection was completed.
@@ -80,21 +91,13 @@ class ReactionMenuDialog extends PureComponent<IProps> {
      * @returns {ReactElement}
      */
     override render() {
-        const { _height, _participantCount, _styles, _width } = this.props;
+        const { _styles } = this.props;
 
         return (
             <TouchableWithoutFeedback
                 onPress = { this._onCancel }>
-                <View
-                    style = { [
-                        _styles,
-                        {
-                            left: (_width - 360) / 2,
-                            top: _height - (_participantCount > 1 ? 144 : 80) - 80
-                        } ] }>
-                    <ReactionMenu
-                        onCancel = { this._onCancel }
-                        overflowMenu = { false } />
+                <View style = { _styles }>
+                    <ReactionPanel onCancel = { this._onCancel } />
                 </View>
             </TouchableWithoutFeedback>
         );
@@ -127,10 +130,7 @@ class ReactionMenuDialog extends PureComponent<IProps> {
 function _mapStateToProps(state: IReduxState) {
     return {
         _isOpen: isDialogOpen(state, ReactionMenu_), // @ts-ignore
-        _styles: ColorSchemeRegistry.get(state, 'Toolbox').reactionDialog,
-        _width: state['features/base/responsive-ui'].clientWidth,
-        _height: state['features/base/responsive-ui'].clientHeight,
-        _participantCount: getParticipantCount(state)
+        _styles: ColorSchemeRegistry.get(state, 'Toolbox').reactionDialog
     };
 }
 

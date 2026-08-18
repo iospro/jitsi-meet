@@ -135,6 +135,13 @@ interface IReactions {
 }
 
 export const REACTIONS: IReactions = {
+    fire: {
+        message: ':fire:',
+        emoji: '🔥',
+        shortcutChar: 'F',
+        soundId: `${REACTION_SOUND}_FIRE_`,
+        soundFiles: []
+    },
     like: {
         message: ':thumbs_up:',
         emoji: '👍',

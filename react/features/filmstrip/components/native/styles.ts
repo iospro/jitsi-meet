@@ -8,8 +8,8 @@ export const AVATAR_SIZE = 50;
 
 const indicatorContainer = {
     alignItems: 'center',
-    backgroundColor: 'rgba(0, 0, 0, 0.7)',
-    borderRadius: BaseTheme.shape.borderRadius,
+    backgroundColor: 'rgba(17, 17, 17, 0.8)',
+    borderRadius: 12,
     height: 24,
     margin: 2,
     padding: 2
@@ -45,7 +45,8 @@ export default {
         flexDirection: 'row',
         flexGrow: 0,
         justifyContent: 'flex-end',
-        margin: 6
+        margin: 6,
+        marginRight: 10
     },
 
     /**
@@ -60,7 +61,7 @@ export default {
         flexDirection: 'column',
         flexGrow: 0,
         position: 'absolute',
-        right: BaseTheme.spacing[0],
+        right: 10,
         top: BaseTheme.spacing[0]
     },
 
@@ -140,12 +141,12 @@ export default {
         position: 'absolute',
         maxWidth: '95%',
         overflow: 'hidden',
-        padding: BaseTheme.spacing[0]
+        padding: 0
     },
 
     bottomIndicatorsContainer: {
         flexDirection: 'row',
-        padding: BaseTheme.spacing[1]
+        padding: 2
     },
 
     thumbnailTopLeftIndicatorContainer: {

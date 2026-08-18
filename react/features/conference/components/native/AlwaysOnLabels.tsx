@@ -3,18 +3,19 @@ import { TouchableOpacity } from 'react-native';
 import { useDispatch, useSelector } from 'react-redux';
 
 import { JitsiRecordingConstants } from '../../../base/lib-jitsi-meet';
+import { showNotification } from '../../../notifications/actions';
+import { NOTIFICATION_TIMEOUT_TYPE } from '../../../notifications/constants';
 import { openHighlightDialog } from '../../../recording/actions.native';
 import HighlightButton from '../../../recording/components/Recording/native/HighlightButton';
 import RecordingLabel from '../../../recording/components/native/RecordingLabel';
 import TranscribingLabel from '../../../recording/components/native/TranscribingLabel';
 import { isLiveStreamingRunning } from '../../../recording/functions';
+import { isTranscribing } from '../../../transcribing/functions';
 import VisitorsCountLabel from '../../../visitors/components/native/VisitorsCountLabel';
 
 import RaisedHandsCountLabel from './RaisedHandsCountLabel';
 import {
     LABEL_ID_RAISED_HANDS_COUNT,
-    LABEL_ID_RECORDING,
-    LABEL_ID_STREAMING,
     LABEL_ID_TRANSCRIBING,
     LABEL_ID_VISITORS_COUNT,
     LabelHitSlop
@@ -32,20 +33,48 @@ interface IProps {
 const AlwaysOnLabels = ({ createOnPress }: IProps) => {
     const dispatch = useDispatch();
     const isStreaming = useSelector(isLiveStreamingRunning);
+    const isTranscribingActive = useSelector(isTranscribing);
     const openHighlightDialogCallback = useCallback(() =>
         dispatch(openHighlightDialog()), [ dispatch ]);
+
+    // Show a bottom notification instead of the top expanded-label banner.
+    const onRecordingLabelPress = useCallback(() => {
+        dispatch(showNotification(
+            isTranscribingActive
+                ? {
+                    titleKey: 'recording.expandedOn',
+                    descriptionKey: 'transcribing.expandedLabel',
+                    uid: 'recording-status-info'
+                }
+                : {
+                    descriptionKey: 'recording.expandedOn',
+                    uid: 'recording-status-info'
+                },
+            NOTIFICATION_TIMEOUT_TYPE.MEDIUM
+        ));
+    }, [ dispatch, isTranscribingActive ]);
+
+    const onStreamingLabelPress = useCallback(() => {
+        dispatch(showNotification(
+            {
+                descriptionKey: 'liveStreaming.expandedOn',
+                uid: 'streaming-status-info'
+            },
+            NOTIFICATION_TIMEOUT_TYPE.MEDIUM
+        ));
+    }, [ dispatch ]);
 
     return (<>
         <TouchableOpacity
             hitSlop = { LabelHitSlop }
-            onPress = { createOnPress(LABEL_ID_RECORDING) } >
+            onPress = { onRecordingLabelPress } >
             <RecordingLabel mode = { JitsiRecordingConstants.mode.FILE } />
         </TouchableOpacity>
         {
             isStreaming
             && <TouchableOpacity
                 hitSlop = { LabelHitSlop }
-                onPress = { createOnPress(LABEL_ID_STREAMING) } >
+                onPress = { onStreamingLabelPress } >
                 <RecordingLabel mode = { JitsiRecordingConstants.mode.STREAM } />
             </TouchableOpacity>
         }

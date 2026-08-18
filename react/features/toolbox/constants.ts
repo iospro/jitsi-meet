@@ -62,27 +62,28 @@ export const THRESHOLDS = [
 
 /**
  * Thresholds for displaying native toolbox buttons.
+ * Each width = N × BUTTON_SLOT(56) + margins(24) + padding(12)
+ *    8 buttons:  8×56 + 36 = 484
+ *    7 buttons:  7×56 + 36 = 428
+ *    6 buttons:  6×56 + 36 = 372
+ *    5 buttons:  5×56 + 36 = 316
  */
 export const NATIVE_THRESHOLDS = [
     {
-        width: 560,
+        width: 484,
         order: [ 'microphone', 'camera', 'chat', 'desktop', 'raisehand', 'tileview', 'overflowmenu', 'hangup' ]
     },
     {
-        width: 500,
+        width: 428,
         order: [ 'microphone', 'camera', 'chat', 'raisehand', 'tileview', 'overflowmenu', 'hangup' ]
     },
     {
-        width: 440,
+        width: 372,
         order: [ 'microphone', 'camera', 'chat', 'raisehand', 'overflowmenu', 'hangup' ]
     },
     {
-        width: 380,
+        width: 316,
         order: [ 'microphone', 'camera', 'chat', 'overflowmenu', 'hangup' ]
-    },
-    {
-        width: 320,
-        order: [ 'microphone', 'camera', 'overflowmenu', 'hangup' ]
     }
 ];
 

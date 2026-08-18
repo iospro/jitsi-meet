@@ -34,7 +34,7 @@ import {
 } from '../../../participants-pane/actions.native';
 import { toggleToolboxVisible } from '../../../toolbox/actions.native';
 import { shouldDisplayTileView } from '../../../video-layout/functions.native';
-import { SQUARE_TILE_ASPECT_RATIO } from '../../constants';
+import { SMALL_THUMBNAIL_SIZE, SQUARE_TILE_ASPECT_RATIO } from '../../constants';
 
 import AudioMutedIndicator from './AudioMutedIndicator';
 import ModeratorIndicator from './ModeratorIndicator';
@@ -318,7 +318,7 @@ class Thumbnail extends PureComponent<IProps> {
                     style = { styles.thumbnailGif as ImageStyle } />
                     : <>
                         <ParticipantView
-                            avatarSize = { tileView ? AVATAR_SIZE * 1.5 : AVATAR_SIZE }
+                            avatarSize = { tileView ? (height ?? SMALL_THUMBNAIL_SIZE) * 0.4 : AVATAR_SIZE }
                             disableVideo = { !tileView && (isScreenShare || _fakeParticipant) }
                             participantId = { participantId }
                             zOrder = { 1 } />

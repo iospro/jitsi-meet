@@ -1,10 +1,12 @@
 import React, { useCallback } from 'react';
-import { useDispatch } from 'react-redux';
+import { TouchableHighlight, View, ViewStyle } from 'react-native';
+import { useDispatch, useSelector } from 'react-redux';
 
+import { IReduxState } from '../../../app/types';
+import ColorSchemeRegistry from '../../../base/color-scheme/ColorSchemeRegistry';
 import { openSheet } from '../../../base/dialog/actions';
 import { IconHangup } from '../../../base/icons/svg';
-import IconButton from '../../../base/ui/components/native/IconButton';
-import { BUTTON_TYPES } from '../../../base/ui/constants.native';
+import Icon from '../../../base/icons/components/Icon';
 
 import HangupMenu from './HangupMenu';
 
@@ -15,17 +17,27 @@ import HangupMenu from './HangupMenu';
  */
 const HangupMenuButton = (): JSX.Element => {
     const dispatch = useDispatch();
+    const { hangupButtonStyles } = useSelector(
+        (state: IReduxState) => ColorSchemeRegistry.get(state, 'Toolbox')
+    );
 
     const onSelect = useCallback(() => {
         dispatch(openSheet(HangupMenu));
     }, [ dispatch ]);
 
     return (
-        <IconButton
+        <TouchableHighlight
             accessibilityLabel = 'toolbar.accessibilityLabel.hangup'
             onPress = { onSelect }
-            src = { IconHangup }
-            type = { BUTTON_TYPES.PRIMARY } />
+            style = { hangupButtonStyles?.style as ViewStyle }
+            underlayColor = { hangupButtonStyles?.underlayColor }>
+            <View style = { hangupButtonStyles?.iconBackground as ViewStyle }>
+                <Icon
+                    color = { hangupButtonStyles?.iconStyle?.color }
+                    size = { hangupButtonStyles?.iconStyle?.fontSize }
+                    src = { IconHangup } />
+            </View>
+        </TouchableHighlight>
     );
 };
 
