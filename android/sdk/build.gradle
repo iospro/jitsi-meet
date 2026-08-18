@@ -235,13 +235,37 @@ android.libraryVariants.all { def variant ->
     mergeAssetsTask.doLast {
         def assetsDir = mergeAssetsTask.outputDir.get()
 
-        // Bundle sounds
-        //
+        // Bundle sounds, keeping only the languages this build offers.
+        // lang/languages.json is the single source of truth (same file that
+        // drives the language picker, the locale detector and metro.config.js).
+        // Files without a language postfix are the 'en' defaults and are always
+        // kept; files like 'foo_fr.mp3' are kept only when that language is
+        // offered. 'fr-CA' keys are normalized to 'frCA' to match file naming.
+        def bundledSoundLangs = []
+        def languagesJson = file("${projectDir}/../../lang/languages.json")
+
+        if (languagesJson.exists()) {
+            def langs = new groovy.json.JsonSlurper().parse(languagesJson)
+
+            bundledSoundLangs = langs.keySet()
+                .collect { it.replace('-', '') }
+                .findAll { it != 'en' }
+        }
+
         copy {
             from("${projectDir}/../../sounds")
             include("*.wav")
             include("*.mp3")
             into("${assetsDir}/sounds")
+
+            eachFile { fcp ->
+                def name = fcp.name
+                def m = (name =~ /^(.+?)_([A-Za-z]+)\.[^.]+$/)
+
+                if (m.find() && !bundledSoundLangs.contains(m[0][2])) {
+                    fcp.exclude()
+                }
+            }
         }
 
         // Copy React assets
