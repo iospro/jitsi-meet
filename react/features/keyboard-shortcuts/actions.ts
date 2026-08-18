@@ -200,6 +200,13 @@ export function initKeyboardShortcuts() {
                     shortcuts.get(pKey)?.handler(e);
                 }
             }
+            else {
+                const pKey = getPrimaryShortcutKey(state, key);
+
+                if (pKey && shortcuts.has(pKey)) {
+                    shortcuts.get(pKey)?.handler(e);
+                }
+            }
         };
 
         keyDownHandler = (e: KeyboardEvent) => {
