@@ -10,6 +10,7 @@ import { arePollsDisabled } from '../../../conference/functions.any';
 import { navigate } from '../../../mobile/navigation/components/conference/ConferenceNavigationContainerRef';
 import { screen } from '../../../mobile/navigation/routes';
 import { getUnreadPollCount } from '../../../polls/functions';
+import { openChat } from '../../actions.any';
 import { getUnreadCount, getUnreadFilesCount, isChatDisabled } from '../../functions';
 import { openChat } from '../../actions.any';
 
@@ -80,9 +81,12 @@ function _mapStateToProps(state: IReduxState, ownProps: any) {
     const { visible = enabled } = ownProps;
     const chatCustomActionEnabled = Boolean(getFeatureFlag(state, CHAT_CUSTOM_OPEN_ENABLED, false));
 
+    const chatCustomActionEnabled = Boolean(getFeatureFlag(state, CHAT_CUSTOM_OPEN_ENABLED, false));
+
     return {
         _chatCustomActionEnabled: chatCustomActionEnabled,
         _isPollsDisabled: arePollsDisabled(state),
+        _chatCustomActionEnabled: chatCustomActionEnabled,
         _unreadMessageCount: getUnreadCount(state) || getUnreadPollCount(state) || getUnreadFilesCount(state),
         visible
     };
