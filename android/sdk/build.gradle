@@ -206,6 +206,45 @@ android.libraryVariants.all { def variant ->
         enabled !devEnabled
     }
 
+    // Compile the produced JS bundle to Hermes bytecode on release builds,
+    // mirroring BundleHermesCTask for RN apps. Without this the release bundle
+    // ships as plain JS (~11 MB) and Hermes has to parse it at every launch.
+    def hermescTask = tasks.create(
+            name: "hermesc${targetName}",
+            type: Exec) {
+        group = "react"
+        description = "Compile the ${targetName} JS bundle to Hermes bytecode."
+
+        def hermesc = [
+                "${projectDir}/../../node_modules/hermes-compiler/hermesc/osx-bin/hermesc",
+                "${projectDir}/../../node_modules/hermes-compiler/hermesc/linux64-bin/hermesc"]
+            .collect { file(it) }
+            .find { it.exists() }
+
+        def bytecodeFile = file("${jsBundleFile}.hbc")
+
+        def devEnabled = !targetName.toLowerCase().contains("release")
+
+        workingDir file("${projectDir}/../../")
+
+        enabled = !devEnabled && hermesc != null
+
+        commandLine hermesc,
+                "-w",
+                "-emit-binary",
+                "-max-diagnostic-width=80",
+                "-out", bytecodeFile,
+                jsBundleFile
+
+        dependsOn currentBundleTask
+
+        doLast {
+            bytecodeFile.renameTo(jsBundleFile)
+        }
+    }
+
+    currentBundleTask.finalizedBy hermescTask
+
     // Ensure proper task ordering for Gradle 8.14+ strict dependency validation
     currentBundleTask.configure {
         mustRunAfter {
