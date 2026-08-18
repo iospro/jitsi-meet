@@ -39,7 +39,7 @@ MiddlewareRegistry.register(store => next => action => {
             Object.values(TRIGGER_READY_TO_CLOSE_REASONS).indexOf(reason)
         ];
 
-        if (reason === 'The meeting has been terminated') {
+        if (reason === TRIGGER_READY_TO_CLOSE_REASONS['dialog.sessTerminatedReason']) {
             localizedReason = '';
         }
 
