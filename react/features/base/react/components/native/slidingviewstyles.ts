@@ -23,7 +23,7 @@ export default {
      * Background is transparent — the sheet panel provides its own visual separation.
      */
     sliderViewShadow: {
-        ...StyleSheet.absoluteFillObject,
+        ...StyleSheet.absoluteFill,
         backgroundColor: 'transparent'
     }
 };
