@@ -2,7 +2,7 @@ import ColorSchemeRegistry from '../../../base/color-scheme/ColorSchemeRegistry'
 import { schemeColor } from '../../../base/color-scheme/functions';
 import BaseTheme from '../../../base/ui/components/BaseTheme.native';
 
-const BUTTON_SIZE = 48;
+const BUTTON_SIZE = 44;
 
 // Toolbox, toolbar:
 
@@ -17,7 +17,7 @@ const toolbarButton = {
     height: BUTTON_SIZE,
     justifyContent: 'center',
     marginHorizontal: 6,
-    marginVertical: 6,
+    marginVertical: 8,
     width: BUTTON_SIZE
 };
 
@@ -27,7 +27,7 @@ const toolbarButton = {
 const toolbarButtonIcon = {
     alignSelf: 'center',
     color: BaseTheme.palette.icon04,
-    fontSize: 24
+    fontSize: 28
 };
 
 
@@ -85,24 +85,21 @@ const styles = {
      */
     toolbox: {
         alignItems: 'center',
-        backgroundColor: BaseTheme.palette.uiBackground,
-        borderTopLeftRadius: 3,
-        borderTopRightRadius: 3,
+        borderRadius: 30,
         flexDirection: 'row',
-        justifyContent: 'space-between'
+        justifyContent: 'space-evenly'
     },
 
     /**
      * The style of the root/top-level container of {@link Toolbox}.
      */
     toolboxContainer: {
-        backgroundColor: BaseTheme.palette.uiBackground,
+        backgroundColor: 'rgba(32, 32, 32, 0.95)',
+        borderRadius: 30,
         flexDirection: 'column',
-        maxWidth: 580,
-        marginHorizontal: 'auto',
-        marginVertical: BaseTheme.spacing[0],
-        paddingHorizontal: BaseTheme.spacing[2],
-        width: '100%'
+        marginHorizontal: 12,
+        overflow: 'hidden',
+        paddingHorizontal: 6
     },
 
     toolboxButtonIconContainer: {
@@ -153,10 +150,19 @@ ColorSchemeRegistry.register('Toolbox', {
     },
 
     hangupButtonStyles: {
+        iconBackground: {
+            alignItems: 'center',
+            backgroundColor: schemeColor('hangup'),
+            borderRadius: BUTTON_SIZE/2,
+            height: BUTTON_SIZE,
+            justifyContent: 'center',
+            width: BUTTON_SIZE
+        },
         iconStyle: whiteToolbarButtonIcon,
         style: {
             ...toolbarButton,
-            backgroundColor: BaseTheme.palette.actionDanger // schemeColor('hangup')
+            alignItems: 'center',
+            backgroundColor: 'transparent'
         },
         underlayColor: BaseTheme.palette.ui04
     },
@@ -175,9 +181,10 @@ ColorSchemeRegistry.register('Toolbox', {
 
     reactionMenu: {
         ...reactionMenu,
+        backgroundColor: 'rgba(32, 32, 32, 0.95)',
+        borderRadius: 30,
         paddingHorizontal: BaseTheme.spacing[3],
-        borderRadius: 3,
-        width: 360
+        paddingVertical: BaseTheme.spacing[3]
     },
 
     reactionRow: {

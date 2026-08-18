@@ -5,7 +5,8 @@ import BaseTheme from '../../../base/ui/components/BaseTheme.native';
  */
 export default {
     raiseHandButton: {
-        marginVertical: BaseTheme.spacing[3],
-        width: 240
+        borderRadius: 22,
+        marginTop: BaseTheme.spacing[2],
+        width: '100%'
     }
 };

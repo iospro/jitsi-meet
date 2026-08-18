@@ -67,15 +67,15 @@ MiddlewareRegistry.register((store: IStore) => (next: Function) => (action: AnyA
     case APP_WILL_MOUNT:
         batch(() => {
             Object.keys(REACTIONS).forEach(key => {
-                for (let i = 0; i < SOUNDS_THRESHOLDS.length; i++) {
-                    dispatch(registerSound(
-                        `${REACTIONS[key].soundId}${SOUNDS_THRESHOLDS[i]}`,
-                        REACTIONS[key].soundFiles[i]
-                    )
-                    );
+                if (REACTIONS[key].soundFiles.length > 0) {
+                    for (let i = 0; i < SOUNDS_THRESHOLDS.length; i++) {
+                        dispatch(registerSound(
+                            `${REACTIONS[key].soundId}${SOUNDS_THRESHOLDS[i]}`,
+                            REACTIONS[key].soundFiles[i]
+                        ));
+                    }
                 }
-            }
-            );
+            });
             dispatch(registerSound(RAISE_HAND_SOUND_ID, RAISE_HAND_SOUND_FILE));
         });
         break;
@@ -83,8 +83,10 @@ MiddlewareRegistry.register((store: IStore) => (next: Function) => (action: AnyA
     case APP_WILL_UNMOUNT:
         batch(() => {
             Object.keys(REACTIONS).forEach(key => {
-                for (let i = 0; i < SOUNDS_THRESHOLDS.length; i++) {
-                    dispatch(unregisterSound(`${REACTIONS[key].soundId}${SOUNDS_THRESHOLDS[i]}`));
+                if (REACTIONS[key].soundFiles.length > 0) {
+                    for (let i = 0; i < SOUNDS_THRESHOLDS.length; i++) {
+                        dispatch(unregisterSound(`${REACTIONS[key].soundId}${SOUNDS_THRESHOLDS[i]}`));
+                    }
                 }
             });
             dispatch(unregisterSound(RAISE_HAND_SOUND_ID));

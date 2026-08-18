@@ -1,4 +1,8 @@
+import { Platform } from 'react-native';
+
 import BaseTheme from '../../../base/ui/components/BaseTheme.native';
+
+const _isIOS = Platform.OS === 'ios';
 
 export const INSECURE_ROOM_NAME_LABEL_COLOR = BaseTheme.palette.actionDanger;
 
@@ -18,8 +22,6 @@ const titleBarSafeView = {
 const alwaysOnTitleBar = {
     alignItems: 'center',
     alignSelf: 'flex-end',
-    backgroundColor: 'rgba(0, 0, 0, .5)',
-    borderRadius: BaseTheme.shape.borderRadius,
     flexDirection: 'row',
     justifyContent: 'center',
     marginTop: BaseTheme.spacing[3],
@@ -58,8 +60,15 @@ export default {
     titleBarButtonContainer: {
         borderRadius: 3,
         height: BaseTheme.spacing[7],
-        marginTop: BaseTheme.spacing[1],
-        marginRight: BaseTheme.spacing[1],
+        marginRight: 2,
+        zIndex: 1,
+        width: BaseTheme.spacing[7]
+    },
+
+    titleBarButtonContainerLast: {
+        borderRadius: 3,
+        height: BaseTheme.spacing[7],
+        marginRight: BaseTheme.spacing[2],
         zIndex: 1,
         width: BaseTheme.spacing[7]
     },
@@ -106,11 +115,12 @@ export default {
 
     titleBarSafeViewColor: {
         ...titleBarSafeView,
-        backgroundColor: BaseTheme.palette.uiBackground
+        backgroundColor: '#000000'
     },
 
     titleBarSafeViewTransparent: {
-        ...titleBarSafeView
+        ...titleBarSafeView,
+        backgroundColor: 'transparent'
     },
 
     titleBarWrapper: {
@@ -123,7 +133,7 @@ export default {
 
     alwaysOnTitleBar: {
         ...alwaysOnTitleBar,
-        marginRight: BaseTheme.spacing[2]
+        marginRight: BaseTheme.spacing[2] + 2
     },
 
     alwaysOnTitleBarWide: {
@@ -138,17 +148,23 @@ export default {
     roomTimer: {
         ...BaseTheme.typography.bodyShortBold,
         color: BaseTheme.palette.text01,
-        lineHeight: 14,
-        textAlign: 'center'
+
+        // Removing the lineHeight override fixes vertical shift on iOS —
+        // equal lineHeight/fontSize clips ascenders and pushes text upward.
+        textAlign: 'center',
+
+        // Tabular (monospace) digits: keeps container width stable during countdown.
+        fontVariant: [ 'tabular-nums' ]
     },
 
     roomTimerView: {
-        backgroundColor: BaseTheme.palette.ui03,
-        borderRadius: BaseTheme.shape.borderRadius,
-        height: 32,
+        backgroundColor: '#303030',
+
+        // Capsule shape: borderRadius = height / 2.
+        borderRadius: 13,
+        height: 26,
         justifyContent: 'center',
         paddingHorizontal: BaseTheme.spacing[2],
-        paddingVertical: BaseTheme.spacing[1],
         minWidth: 50
     },
 
@@ -168,6 +184,7 @@ export default {
     },
 
     roomNameWrapper: {
+        alignItems: 'center',
         flexDirection: 'row',
         marginRight: 10,
         marginLeft: 8,

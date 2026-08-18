@@ -8,6 +8,11 @@ import { TOOLTIP_POSITION } from '../../ui/constants.any';
 export type Styles = {
 
     /**
+     * Optional background view style to wrap the icon (e.g. colored circle).
+     */
+    iconBackground?: StyleType;
+
+    /**
      * Style for the item's icon.
      */
     iconStyle?: StyleType;

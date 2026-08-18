@@ -29,10 +29,10 @@ import styles from './styles';
  */
 
 const ICON_COLOR = {
-    error: BaseTheme.palette.iconError,
-    normal: BaseTheme.palette.iconNormal,
-    success: BaseTheme.palette.iconSuccess,
-    warning: BaseTheme.palette.iconWarning
+    error: '#FFFFFF',
+    normal: '#FFFFFF',
+    success: '#FFFFFF',
+    warning: '#FFFFFF'
 };
 
 
@@ -153,7 +153,7 @@ const Notification = ({
             return (
                 <>
                     <Text
-                        numberOfLines = { 1 }
+                        numberOfLines = { 2 }
                         style = { styles.contentTextTitleDescription as TextStyle }>
                         { titleText }
                     </Text>
@@ -161,6 +161,7 @@ const Notification = ({
                         descriptionArray.map((line, index) => (
                             <Text
                                 key = { index }
+                                numberOfLines = { 10 }
                                 style = { styles.contentText }>
                                 { line.length >= CHAR_LIMIT ? line : replaceNonUnicodeEmojis(line) }
                             </Text>
@@ -175,7 +176,8 @@ const Notification = ({
                         descriptionArray.map((line, index) => (
                             <Text
                                 key = { index }
-                                style = { styles.contentTextDescription }>
+                                numberOfLines = { 10 }
+                                style = { styles.contentTextTitle as TextStyle }>
                                 { line.length >= CHAR_LIMIT ? line : replaceNonUnicodeEmojis(line) }
                             </Text>
                         ))
@@ -185,13 +187,15 @@ const Notification = ({
         } else {
             return (
                 <Text
-                    numberOfLines = { 1 }
+                    numberOfLines = { 2 }
                     style = { styles.contentTextTitle as TextStyle }>
                     { titleText }
                 </Text>
             );
         }
     };
+
+    const buttons = mapAppearanceToButtons();
 
     return (
         <Animated.View
@@ -204,29 +208,25 @@ const Notification = ({
                     opacity: notificationOpacityAnimation
                 }
             ] as ViewStyle[] }>
+            <Icon
+                color = { ICON_COLOR[appearance as keyof typeof ICON_COLOR] }
+                size = { 24 }
+                src = { getIcon() } />
             <View
-                style = { (icon === NOTIFICATION_ICON.PARTICIPANTS
-                    ? styles.contentColumn
-                    : styles.interactiveContentColumn) as ViewStyle }>
-                <View style = { styles.iconContainer as ViewStyle }>
-                    <Icon
-                        color = { ICON_COLOR[appearance as keyof typeof ICON_COLOR] }
-                        size = { 24 }
-                        src = { getIcon() } />
-                </View>
-                <View
-                    pointerEvents = 'box-none'
-                    style = { styles.contentContainer }>
-                    { _renderContent() }
-                </View>
-                <View style = { styles.btnContainer as ViewStyle }>
-                    { mapAppearanceToButtons() }
-                </View>
+                pointerEvents = 'box-none'
+                style = { styles.contentColumn as ViewStyle }>
+                { _renderContent() }
+                { buttons.length > 0 && (
+                    <View style = { styles.btnContainer as ViewStyle }>
+                        { buttons }
+                    </View>
+                ) }
             </View>
             <IconButton
-                color = { BaseTheme.palette.icon04 }
+                color = '#FFFFFF'
                 onPress = { onDismiss }
                 src = { IconCloseLarge }
+                style = {{ borderRadius: 10, height: 20, marginRight: 16, width: 20 }}
                 type = { BUTTON_TYPES.TERTIARY } />
         </Animated.View>
     );

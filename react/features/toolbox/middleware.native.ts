@@ -9,7 +9,6 @@ import { setMainToolbarThresholds } from './actions.native';
 import { NATIVE_THRESHOLDS, NATIVE_TOOLBAR_BUTTONS } from './constants';
 import { getToolbarButtons } from './functions.native';
 
-
 /**
  * Middleware which intercepts Toolbox actions to handle changes to the
  * visibility timeout of the Toolbox.

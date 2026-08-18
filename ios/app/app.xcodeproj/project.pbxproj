@@ -38,6 +38,27 @@
 			remoteGlobalIDString = 4EB06022260E026600F524C5;
 			remoteInfo = "JitsiMeetBroadcast Extension";
 		};
+		5352BBCE2F87C68900EE431D /* PBXContainerItemProxy */ = {
+			isa = PBXContainerItemProxy;
+			containerPortal = A1B2C3D4E5F6A7B8C9D0E1F2 /* sdk.xcodeproj */;
+			proxyType = 2;
+			remoteGlobalIDString = 0BD906E51EC0C00300C8C18E;
+			remoteInfo = JitsiMeetSDK;
+		};
+		5352BBD02F87C68900EE431D /* PBXContainerItemProxy */ = {
+			isa = PBXContainerItemProxy;
+			containerPortal = A1B2C3D4E5F6A7B8C9D0E1F2 /* sdk.xcodeproj */;
+			proxyType = 2;
+			remoteGlobalIDString = DE9A016F289A9A9A00E41CBB;
+			remoteInfo = JitsiMeetSDKLite;
+		};
+		A1B2C3D4E5F6A7B8C9D0E1F3 /* PBXContainerItemProxy */ = {
+			isa = PBXContainerItemProxy;
+			containerPortal = A1B2C3D4E5F6A7B8C9D0E1F2 /* sdk.xcodeproj */;
+			proxyType = 1;
+			remoteGlobalIDString = 0BD906E41EC0C00300C8C18E;
+			remoteInfo = JitsiMeetSDK;
+		};
 /* End PBXContainerItemProxy section */
 
 /* Begin PBXCopyFilesBuildPhase section */
@@ -98,6 +119,7 @@
 		4EC49B8625BED71300E76218 /* ReplayKit.framework */ = {isa = PBXFileReference; lastKnownFileType = wrapper.framework; name = ReplayKit.framework; path = System/Library/Frameworks/ReplayKit.framework; sourceTree = SDKROOT; };
 		5C1BE20ECD5DEEB48FED90B5 /* PrivacyInfo.xcprivacy */ = {isa = PBXFileReference; includeInIndex = 1; lastKnownFileType = text.xml; path = PrivacyInfo.xcprivacy; sourceTree = "<group>"; };
 		756FCE06C08D9B947653C98A /* Pods-JitsiMeet.debug.xcconfig */ = {isa = PBXFileReference; includeInIndex = 1; lastKnownFileType = text.xcconfig; name = "Pods-JitsiMeet.debug.xcconfig"; path = "Target Support Files/Pods-JitsiMeet/Pods-JitsiMeet.debug.xcconfig"; sourceTree = "<group>"; };
+		A1B2C3D4E5F6A7B8C9D0E1F2 /* sdk.xcodeproj */ = {isa = PBXFileReference; lastKnownFileType = "wrapper.pb-project"; name = sdk.xcodeproj; path = ../sdk/sdk.xcodeproj; sourceTree = "<group>"; };
 		B3B083EB1D4955FF0069CEE7 /* app.entitlements */ = {isa = PBXFileReference; lastKnownFileType = text.plist.entitlements; path = app.entitlements; sourceTree = "<group>"; };
 		D6152FF9E9F7B0E86F70A21D /* libPods-JitsiMeet.a */ = {isa = PBXFileReference; explicitFileType = archive.ar; includeInIndex = 0; path = "libPods-JitsiMeet.a"; sourceTree = BUILT_PRODUCTS_DIR; };
 		DE050388256E904600DEE3A5 /* WebRTC.xcframework */ = {isa = PBXFileReference; lastKnownFileType = wrapper.xcframework; name = WebRTC.xcframework; path = "../../node_modules/react-native-webrtc/apple/WebRTC.xcframework"; sourceTree = "<group>"; };
@@ -178,10 +200,20 @@
 			sourceTree = "<group>";
 			tabWidth = 4;
 		};
+		5352BBCA2F87C68700EE431D /* Products */ = {
+			isa = PBXGroup;
+			children = (
+				5352BBCF2F87C68900EE431D /* JitsiMeetSDK.framework */,
+				5352BBD12F87C68900EE431D /* JitsiMeetSDK.framework */,
+			);
+			name = Products;
+			sourceTree = "<group>";
+		};
 		83CBB9F61A601CBA00E9B192 = {
 			isa = PBXGroup;
 			children = (
 				B3B083EB1D4955FF0069CEE7 /* app.entitlements */,
+				A1B2C3D4E5F6A7B8C9D0E1F2 /* sdk.xcodeproj */,
 				0B26BE711EC5BC4D00EEFB41 /* Frameworks */,
 				83CBBA001A601CBA00E9B192 /* Products */,
 				13B07FAE1A68108700A75B9A /* src */,
@@ -245,6 +277,7 @@
 			buildRules = (
 			);
 			dependencies = (
+				A1B2C3D4E5F6A7B8C9D0E1F4 /* PBXTargetDependency */,
 				4EB0602A260E026600F524C5 /* PBXTargetDependency */,
 			);
 			name = JitsiMeet;
@@ -306,6 +339,12 @@
 			mainGroup = 83CBB9F61A601CBA00E9B192;
 			productRefGroup = 83CBBA001A601CBA00E9B192 /* Products */;
 			projectDirPath = "";
+			projectReferences = (
+				{
+					ProductGroup = 5352BBCA2F87C68700EE431D /* Products */;
+					ProjectRef = A1B2C3D4E5F6A7B8C9D0E1F2 /* sdk.xcodeproj */;
+				},
+			);
 			projectRoot = "";
 			targets = (
 				13B07F861A680F5B00A75B9A /* JitsiMeet */,
@@ -313,6 +352,23 @@
 			);
 		};
 /* End PBXProject section */
+
+/* Begin PBXReferenceProxy section */
+		5352BBCF2F87C68900EE431D /* JitsiMeetSDK.framework */ = {
+			isa = PBXReferenceProxy;
+			fileType = wrapper.framework;
+			path = JitsiMeetSDK.framework;
+			remoteRef = 5352BBCE2F87C68900EE431D /* PBXContainerItemProxy */;
+			sourceTree = BUILT_PRODUCTS_DIR;
+		};
+		5352BBD12F87C68900EE431D /* JitsiMeetSDK.framework */ = {
+			isa = PBXReferenceProxy;
+			fileType = wrapper.framework;
+			path = JitsiMeetSDK.framework;
+			remoteRef = 5352BBD02F87C68900EE431D /* PBXContainerItemProxy */;
+			sourceTree = BUILT_PRODUCTS_DIR;
+		};
+/* End PBXReferenceProxy section */
 
 /* Begin PBXResourcesBuildPhase section */
 		13B07F8E1A680F5B00A75B9A /* Resources */ = {
@@ -456,9 +512,13 @@
 			inputFileListPaths = (
 				"${PODS_ROOT}/Target Support Files/Pods-JitsiMeet/Pods-JitsiMeet-resources-${CONFIGURATION}-input-files.xcfilelist",
 			);
+			inputPaths = (
+			);
 			name = "[CP] Copy Pods Resources";
 			outputFileListPaths = (
 				"${PODS_ROOT}/Target Support Files/Pods-JitsiMeet/Pods-JitsiMeet-resources-${CONFIGURATION}-output-files.xcfilelist",
+			);
+			outputPaths = (
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 			shellPath = /bin/sh;
@@ -496,6 +556,11 @@
 			isa = PBXTargetDependency;
 			target = 4EB06022260E026600F524C5 /* JitsiMeetBroadcastExtension */;
 			targetProxy = 4EB06029260E026600F524C5 /* PBXContainerItemProxy */;
+		};
+		A1B2C3D4E5F6A7B8C9D0E1F4 /* PBXTargetDependency */ = {
+			isa = PBXTargetDependency;
+			name = JitsiMeetSDK;
+			targetProxy = A1B2C3D4E5F6A7B8C9D0E1F3 /* PBXContainerItemProxy */;
 		};
 /* End PBXTargetDependency section */
 
