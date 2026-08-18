@@ -3,6 +3,9 @@ import { Image, View } from 'react-native';
 import { Text } from 'react-native-paper';
 import { connect } from 'react-redux';
 
+import { IReduxState } from '../../../../app/types';
+import { IGNORE_JWT_RECORDING_TRANSCRIPTION_FEATURES } from '../../../../base/flags/constants';
+import { getFeatureFlag } from '../../../../base/flags/functions';
 import { translate } from '../../../../base/i18n/functions';
 import Icon from '../../../../base/icons/components/Icon';
 import { IconArrowDown, IconArrowRight } from '../../../../base/icons/svg';
@@ -12,7 +15,9 @@ import Switch from '../../../../base/ui/components/native/Switch';
 import { BUTTON_TYPES } from '../../../../base/ui/constants.native';
 import { RECORDING_TYPES } from '../../../constants';
 import { getRecordingDurationEstimation } from '../../../functions';
-import AbstractStartRecordingDialogContent, { mapStateToProps } from '../AbstractStartRecordingDialogContent';
+import AbstractStartRecordingDialogContent, {
+    mapStateToProps as abstractMapStateToProps
+} from '../AbstractStartRecordingDialogContent';
 import {
     DROPBOX_LOGO,
     ICON_CLOUD,
@@ -378,6 +383,29 @@ class StartRecordingDialogContent extends AbstractStartRecordingDialogContent {
             </View>
         );
     }
+}
+
+/**
+ * Maps (parts of) the redux state to the associated props for this component.
+ *
+ * @param {IReduxState} state - The redux state.
+ * @private
+ * @returns {IProps}
+ */
+function mapStateToProps(state: IReduxState) {
+    const abstractProps = abstractMapStateToProps(state);
+    const ignoreJWTFeatures = getFeatureFlag(state, IGNORE_JWT_RECORDING_TRANSCRIPTION_FEATURES, false);
+
+    if (!ignoreJWTFeatures) {
+        return abstractProps;
+    }
+
+    const { transcription } = state['features/base/config'];
+
+    return {
+        ...abstractProps,
+        _canStartTranscribing: Boolean(transcription?.enabled)
+    };
 }
 
 export default translate(connect(mapStateToProps)(StartRecordingDialogContent));
