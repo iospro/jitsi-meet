@@ -73,7 +73,8 @@ import {
     getUnreadCount,
     isChatDisabled,
     isSendGroupChatDisabled,
-    isVisitorChatParticipant
+    isVisitorChatParticipant,
+    sanitizeChatMessage
 } from './functions';
 import { INCOMING_MSG_SOUND_FILE } from './sounds';
 import './subscriber';
@@ -286,22 +287,23 @@ MiddlewareRegistry.register(store => next => action => {
 
             const { privateMessageRecipient, isLobbyChatActive, lobbyMessageRecipient }
                 = state['features/chat'];
+            const message = sanitizeChatMessage(action.message);
 
             if (typeof APP !== 'undefined') {
-                APP.API.notifySendingChatMessage(action.message, Boolean(privateMessageRecipient));
+                APP.API.notifySendingChatMessage(message, Boolean(privateMessageRecipient));
             }
 
             if (isLobbyChatActive && lobbyMessageRecipient) {
                 conference.sendLobbyMessage({
                     type: LOBBY_CHAT_MESSAGE,
-                    message: action.message
+                    message
                 }, lobbyMessageRecipient.id);
-                _persistSentPrivateMessage(store, lobbyMessageRecipient, action.message, true);
+                _persistSentPrivateMessage(store, lobbyMessageRecipient, message, true);
             } else if (privateMessageRecipient) {
-                conference.sendPrivateTextMessage(privateMessageRecipient.id, action.message, 'body', isVisitorChatParticipant(privateMessageRecipient));
-                _persistSentPrivateMessage(store, privateMessageRecipient, action.message);
+                conference.sendPrivateTextMessage(privateMessageRecipient.id, message, 'body', isVisitorChatParticipant(privateMessageRecipient));
+                _persistSentPrivateMessage(store, privateMessageRecipient, message);
             } else {
-                conference.sendTextMessage(action.message);
+                conference.sendTextMessage(message);
             }
         }
         break;

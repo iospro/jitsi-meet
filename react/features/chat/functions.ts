@@ -24,6 +24,19 @@ import { ChatTabs, MESSAGE_TYPE_ERROR, MESSAGE_TYPE_LOCAL, TIMESTAMP_FORMAT } fr
 import { IMessage } from './types';
 
 /**
+ * Removes characters that are not allowed in XML 1.0 text nodes.
+ *
+ * Keep tab, line feed and carriage return, as they are valid XML characters.
+ * This is required before chat messages are passed to the XMPP transport.
+ *
+ * @param {string} message - The message to sanitize.
+ * @returns {string}
+ */
+export function sanitizeChatMessage(message: string): string {
+    return message.replace(/[\u0000-\u0008\u000B\u000C\u000E-\u001F]/g, '');
+}
+
+/**
  * An ASCII emoticon regexp array to find and replace old-style ASCII
  * emoticons (such as :O) with the new Unicode representation, so that
  * devices and browsers that support them can render these natively
